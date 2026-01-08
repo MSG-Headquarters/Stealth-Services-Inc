@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AXIS Fit | AI-Powered Fitness</title>
+    <title>AXIS Fit v2.6 | AI-Powered Fitness</title>
     
     <!-- PWA Meta Tags -->
     <meta name="description" content="AI-powered fitness tracking with video workout logging, nutrition scanning, and community features">
@@ -900,6 +900,122 @@
             color: var(--white);
         }
 
+        /* SENTINEL Status */
+        .sentinel-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            font-size: 10px;
+            color: var(--prism-emerald);
+        }
+
+        .sentinel-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--prism-emerald);
+            border-radius: 50%;
+            animation: sentinelPulse 2s infinite;
+        }
+
+        @keyframes sentinelPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* AI Parse Indicator */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: linear-gradient(135deg, var(--prism-violet), var(--prism-cyan));
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            margin-left: 8px;
+        }
+
+        .ai-parsing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--prism-violet);
+        }
+
+        .ai-parsing-indicator.active { display: flex; }
+
+        /* Settings Modal Styles */
+        .settings-section-title {
+            font-family: var(--font-display);
+            font-size: 11px;
+            color: var(--white-50);
+            letter-spacing: 1px;
+            margin: 20px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--white-10);
+        }
+
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--white-10);
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--graphite);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch.active { background: var(--prism-emerald); }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active::after { transform: translateX(20px); }
+
+        .api-key-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--graphite);
+            border: 1px solid var(--white-10);
+            border-radius: 10px;
+            color: var(--white);
+            font-family: var(--font-display);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .api-key-input::placeholder {
+            font-family: var(--font-body);
+            color: var(--white-30);
+        }
+
         /* Loading */
         .loading {
             display: flex;
@@ -1040,9 +1156,15 @@
         <!-- Header -->
         <header class="header">
             <div class="header-logo">AXIS FIT</div>
-            <div class="header-profile" onclick="showView('profile')">
-                <div class="header-avatar" id="headerAvatar">💪</div>
-                <div class="header-code" id="headerCode">AXIS-XXXX</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="sentinel-badge" id="sentinelBadge">
+                    <span class="sentinel-dot"></span>
+                    SENTINEL
+                </div>
+                <div class="header-profile" onclick="showView('profile')">
+                    <div class="header-avatar" id="headerAvatar">💪</div>
+                    <div class="header-code" id="headerCode">AXIS-XXXX</div>
+                </div>
             </div>
         </header>
 
@@ -1157,7 +1279,7 @@
                         </div>
                         <span class="settings-arrow">›</span>
                     </div>
-                    <div class="settings-item" onclick="exportData()">
+                    <div class="settings-item" onclick="exportAllData()">
                         <div class="settings-item-left">
                             <span class="settings-icon">📤</span>
                             <span class="settings-label">Export Data</span>
@@ -1222,8 +1344,12 @@
                     <input type="text" id="workoutTitle" placeholder="e.g., Push Day, Leg Day">
                 </div>
                 <div class="form-group">
-                    <label>Quick Log (AI Parse)</label>
+                    <label>Quick Log <span class="ai-badge">🤖 AI</span></label>
                     <textarea id="workoutQuickLog" rows="4" placeholder="Type naturally: 'Bench press 135x10, 155x8, 175x6. Incline DB press 50x12x3'" style="width:100%;padding:14px;background:var(--graphite);border:1px solid var(--white-10);border-radius:12px;color:var(--white);font-size:14px;resize:none;"></textarea>
+                    <div class="ai-parsing-indicator" id="aiParsingIndicator">
+                        <div class="spinner" style="width:16px;height:16px;"></div>
+                        <span>AI parsing workout...</span>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1249,6 +1375,63 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('joinTeamModal')" style="flex:1;">Cancel</button>
                 <button class="btn btn-primary" onclick="joinTeam()" style="flex:1;">Join Team</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">⚙️ Settings</span>
+                <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section-title">AI INTEGRATION</div>
+                <div class="form-group">
+                    <label>Claude API Key</label>
+                    <input type="password" class="api-key-input" id="claudeApiKey" placeholder="sk-ant-...">
+                    <div style="font-size:11px;color:var(--white-30);margin-top:6px;">
+                        For AI workout parsing. Get key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--prism-cyan);">console.anthropic.com</a>
+                    </div>
+                </div>
+
+                <div class="settings-section-title">MONITORING</div>
+                <div class="settings-toggle">
+                    <div>
+                        <div style="font-weight:500;">SENTINEL Monitoring</div>
+                        <div style="font-size:12px;color:var(--white-50);">Error tracking & performance</div>
+                    </div>
+                    <div class="toggle-switch active" id="sentinelToggle" onclick="toggleSentinel()"></div>
+                </div>
+
+                <div class="settings-section-title">DATA SYNC</div>
+                <div class="settings-toggle" onclick="exportToiAXIS()">
+                    <div>
+                        <div style="font-weight:500;">📤 Export to iAXIS Hub</div>
+                        <div style="font-size:12px;color:var(--white-50);">Create JSON for iAXIS import</div>
+                    </div>
+                    <span style="color:var(--white-30);">›</span>
+                </div>
+                <div class="settings-toggle" onclick="document.getElementById('iaxisImportFile').click()">
+                    <div>
+                        <div style="font-weight:500;">📥 Import from iAXIS Hub</div>
+                        <div style="font-size:12px;color:var(--white-50);">Import wellness data</div>
+                    </div>
+                    <span style="color:var(--white-30);">›</span>
+                </div>
+                <input type="file" id="iaxisImportFile" accept=".json" style="display:none;" onchange="importFromiAXIS(event)">
+                
+                <div class="settings-toggle" onclick="exportAllData()">
+                    <div>
+                        <div style="font-weight:500;">📦 Full Backup</div>
+                        <div style="font-size:12px;color:var(--white-50);">Export all AXIS Fit data</div>
+                    </div>
+                    <span style="color:var(--white-30);">›</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveSettings()" style="width:100%;">Save Settings</button>
             </div>
         </div>
     </div>
@@ -1419,6 +1602,7 @@
             document.getElementById('appContainer').style.display = 'flex';
             updateHeaderProfile();
             loadFeed();
+            initSentinel(); // Initialize SENTINEL monitoring
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1884,8 +2068,8 @@
                 return;
             }
             
-            // Parse the quick log (simple parsing for now)
-            const exercises = parseQuickLog(quickLog);
+            // Parse with AI if API key available, otherwise simple parser
+            const exercises = await parseWorkoutWithAI(quickLog);
             const totalVolume = calculateVolume(exercises);
             
             try {
@@ -2056,14 +2240,6 @@
             showToast('Food scanning coming soon!');
         }
 
-        function openSettingsModal() {
-            showToast('Settings coming soon!');
-        }
-
-        function exportData() {
-            showToast('Export coming soon!');
-        }
-
         function showAllWorkouts() {
             showToast('Full workout history coming soon!');
         }
@@ -2106,6 +2282,301 @@
             setTimeout(() => {
                 toast.classList.remove('visible');
             }, 3000);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SENTINEL MONITORING
+        // ═══════════════════════════════════════════════════════════════
+        let sentinelEnabled = localStorage.getItem('sentinel_enabled') !== 'false';
+        
+        function initSentinel() {
+            if (!sentinelEnabled) {
+                document.getElementById('sentinelBadge').style.display = 'none';
+                return;
+            }
+            
+            // Global error handler
+            window.onerror = function(msg, url, line, col, error) {
+                logSentinelEvent('error', { msg, url, line, col, stack: error?.stack });
+                return false;
+            };
+            
+            // Unhandled promise rejections
+            window.onunhandledrejection = function(event) {
+                logSentinelEvent('rejection', { reason: event.reason?.message || event.reason });
+            };
+            
+            // Performance monitoring
+            if (window.performance) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const timing = performance.timing;
+                        const loadTime = timing.loadEventEnd - timing.navigationStart;
+                        logSentinelEvent('performance', { loadTime, url: window.location.href });
+                    }, 100);
+                });
+            }
+            
+            console.log('[SENTINEL] ✓ Monitoring active for AXIS Fit');
+        }
+        
+        function logSentinelEvent(type, data) {
+            const event = {
+                type,
+                data,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                profile: currentProfile?.athlete_code
+            };
+            
+            // Store locally (could send to SENTINEL API in production)
+            const logs = JSON.parse(localStorage.getItem('sentinel_logs') || '[]');
+            logs.push(event);
+            if (logs.length > 100) logs.shift();
+            localStorage.setItem('sentinel_logs', JSON.stringify(logs));
+            
+            if (type === 'error') {
+                console.log('[SENTINEL] Error captured:', data.msg);
+            }
+        }
+        
+        function toggleSentinel() {
+            sentinelEnabled = !sentinelEnabled;
+            localStorage.setItem('sentinel_enabled', sentinelEnabled);
+            
+            const toggle = document.getElementById('sentinelToggle');
+            const badge = document.getElementById('sentinelBadge');
+            
+            if (sentinelEnabled) {
+                toggle.classList.add('active');
+                badge.style.display = 'inline-flex';
+                initSentinel();
+                showToast('SENTINEL monitoring enabled', 'success');
+            } else {
+                toggle.classList.remove('active');
+                badge.style.display = 'none';
+                showToast('SENTINEL monitoring disabled');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // AI QUICK LOG (CLAUDE API)
+        // ═══════════════════════════════════════════════════════════════
+        async function parseWorkoutWithAI(text) {
+            const apiKey = localStorage.getItem('claude_api_key');
+            
+            if (!apiKey) {
+                // Fall back to simple parser
+                return parseQuickLog(text);
+            }
+            
+            const indicator = document.getElementById('aiParsingIndicator');
+            indicator.classList.add('active');
+            
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1000,
+                        messages: [{
+                            role: 'user',
+                            content: `Parse this workout into structured JSON. Return ONLY valid JSON, no explanation:
+{
+  "exercises": [
+    { "name": "Exercise Name", "sets": [{"weight": 135, "reps": 10}] }
+  ]
+}
+
+Workout: "${text}"`
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                const content = data.content?.[0]?.text || '';
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    indicator.classList.remove('active');
+                    return parsed.exercises || [];
+                }
+            } catch (error) {
+                console.error('[AI Parse] Error:', error);
+                logSentinelEvent('ai_parse_error', { error: error.message });
+            }
+            
+            indicator.classList.remove('active');
+            return parseQuickLog(text); // Fallback
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SETTINGS
+        // ═══════════════════════════════════════════════════════════════
+        function openSettingsModal() {
+            // Load current settings
+            document.getElementById('claudeApiKey').value = localStorage.getItem('claude_api_key') || '';
+            
+            const sentinelToggle = document.getElementById('sentinelToggle');
+            if (sentinelEnabled) {
+                sentinelToggle.classList.add('active');
+            } else {
+                sentinelToggle.classList.remove('active');
+            }
+            
+            openModal('settingsModal');
+        }
+        
+        function saveSettings() {
+            const apiKey = document.getElementById('claudeApiKey').value.trim();
+            
+            if (apiKey) {
+                localStorage.setItem('claude_api_key', apiKey);
+            } else {
+                localStorage.removeItem('claude_api_key');
+            }
+            
+            closeModal('settingsModal');
+            showToast('Settings saved!', 'success');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // iAXIS SYNC
+        // ═══════════════════════════════════════════════════════════════
+        async function exportToiAXIS() {
+            if (!currentProfile) {
+                showToast('Please sign in first', 'error');
+                return;
+            }
+            
+            try {
+                // Get user's workouts
+                const { data: workouts } = await db
+                    .from('workouts')
+                    .select('*')
+                    .eq('profile_id', currentProfile.id)
+                    .order('created_at', { ascending: false })
+                    .limit(30);
+                
+                const iaxisData = {
+                    source: 'AXIS Fit v2.6',
+                    exportDate: new Date().toISOString(),
+                    profile: {
+                        name: currentProfile.display_name,
+                        code: currentProfile.athlete_code,
+                        totalVolume: currentProfile.total_volume,
+                        totalWorkouts: currentProfile.total_workouts
+                    },
+                    entries: (workouts || []).map(w => ({
+                        date: w.workout_date,
+                        fitness: {
+                            type: w.workout_type,
+                            title: w.title,
+                            exercises: w.exercises,
+                            totalVolume: w.total_volume
+                        }
+                    }))
+                };
+                
+                downloadJSON(iaxisData, `axis-fit-iaxis-export-${new Date().toISOString().split('T')[0]}.json`);
+                showToast('Exported for iAXIS Hub! 📤', 'success');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Export failed', 'error');
+            }
+        }
+        
+        async function exportAllData() {
+            if (!currentProfile) {
+                showToast('Please sign in first', 'error');
+                return;
+            }
+            
+            try {
+                const { data: workouts } = await db
+                    .from('workouts')
+                    .select('*')
+                    .eq('profile_id', currentProfile.id);
+                
+                const exportData = {
+                    version: '2.6',
+                    exportDate: new Date().toISOString(),
+                    profile: currentProfile,
+                    workouts: workouts || [],
+                    settings: {
+                        sentinelEnabled,
+                        hasApiKey: !!localStorage.getItem('claude_api_key')
+                    }
+                };
+                
+                downloadJSON(exportData, `axis-fit-backup-${new Date().toISOString().split('T')[0]}.json`);
+                showToast('Full backup exported! 📦', 'success');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Export failed', 'error');
+            }
+        }
+        
+        function importFromiAXIS(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Handle iAXIS format
+                    if (data.entries && Array.isArray(data.entries)) {
+                        let imported = 0;
+                        
+                        for (const entry of data.entries) {
+                            if (entry.fitness) {
+                                await db.from('workouts').insert({
+                                    profile_id: currentProfile.id,
+                                    workout_date: entry.date || new Date().toISOString().split('T')[0],
+                                    workout_type: entry.fitness.type || 'strength',
+                                    title: entry.fitness.title || 'Imported Workout',
+                                    exercises: entry.fitness.exercises || [],
+                                    total_volume: entry.fitness.totalVolume || 0
+                                });
+                                imported++;
+                            }
+                        }
+                        
+                        await loadProfile();
+                        loadRecentWorkouts();
+                        loadFeed();
+                        showToast(`Imported ${imported} workouts from iAXIS! 📥`, 'success');
+                    } else {
+                        showToast('Invalid iAXIS format', 'error');
+                    }
+                } catch (err) {
+                    console.error('Import error:', err);
+                    showToast('Import failed: Invalid JSON', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // ═══════════════════════════════════════════════════════════════
