@@ -3891,22 +3891,50 @@
             const userEmailEl = document.getElementById('userEmail');
             if (userEmailEl) userEmailEl.textContent = currentUser.email;
             
-            const { data, error } = await db
-                .from('profiles')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .single();
-            
-            if (!error && data) {
-                currentProfile = data;
+            try {
+                const { data, error } = await db
+                    .from('profiles')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();  // Use maybeSingle instead of single to avoid 406
                 
-                // Update UI with profile data
-                const userName = document.querySelector('.user-name');
-                if (userName) userName.textContent = currentProfile.display_name || 'ATHLETE';
-                
-                // Update settings name field
-                const settingsName = document.getElementById('settingsName');
-                if (settingsName) settingsName.value = currentProfile.display_name || '';
+                if (data) {
+                    currentProfile = data;
+                    
+                    // Update UI with profile data
+                    const userName = document.querySelector('.user-name');
+                    if (userName) userName.textContent = currentProfile.display_name || 'ATHLETE';
+                    
+                    // Update settings name field
+                    const settingsName = document.getElementById('settingsName');
+                    if (settingsName) settingsName.value = currentProfile.display_name || '';
+                } else {
+                    // Profile doesn't exist - create it
+                    console.log('Profile not found, creating one...');
+                    const displayName = currentUser.user_metadata?.display_name || 'Athlete';
+                    const athleteCode = 'AXIS-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                    
+                    const { data: newProfile, error: createError } = await db
+                        .from('profiles')
+                        .insert({
+                            user_id: currentUser.id,
+                            display_name: displayName,
+                            athlete_code: athleteCode,
+                            avatar_emoji: '💪'
+                        })
+                        .select()
+                        .single();
+                    
+                    if (!createError && newProfile) {
+                        currentProfile = newProfile;
+                        const userName = document.querySelector('.user-name');
+                        if (userName) userName.textContent = newProfile.display_name;
+                    } else {
+                        console.error('Failed to create profile:', createError);
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading profile:', err);
             }
         }
 
