@@ -1443,10 +1443,10 @@
         // ═══════════════════════════════════════════════════════════════
         // SUPABASE CONFIGURATION
         // ═══════════════════════════════════════════════════════════════
-        const SUPABASE_URL = 'https://yexigxcpxugllolboxez.db.co';
+        const SUPABASE_URL = 'https://yexigxcpxugllolboxez.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlleGlneGNweHVnbGxvbGJveGV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MDI5OTIsImV4cCI6MjA4MzM3ODk5Mn0._d6COoCxO9Hju4Qj7x_9ShcPpASgvqsbrobiHlhLjZE';
         
-        const db = window.db.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // ═══════════════════════════════════════════════════════════════
         // APP STATE
