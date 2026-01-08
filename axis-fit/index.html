@@ -1392,6 +1392,196 @@
         }
 
         /* ════════════════════════════════════════════════════════════════
+           NUTRITION MODULE
+        ════════════════════════════════════════════════════════════════ */
+        .nutrition-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .nutrition-header { grid-template-columns: 1fr; }
+        }
+
+        .calorie-ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .calorie-ring svg {
+            transform: rotate(-90deg);
+            width: 200px;
+            height: 200px;
+        }
+
+        .calorie-ring-bg {
+            fill: none;
+            stroke: var(--white-10);
+            stroke-width: 12;
+        }
+
+        .calorie-ring-progress {
+            fill: none;
+            stroke: url(#calorieGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .calorie-ring-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .calorie-current {
+            font-family: var(--font-display);
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+        }
+
+        .calorie-goal {
+            font-size: 13px;
+            color: var(--white-50);
+            margin-top: 4px;
+        }
+
+        .calorie-remaining {
+            font-size: 11px;
+            color: var(--prism-emerald);
+            margin-top: 8px;
+        }
+
+        .macro-bars { width: 100%; }
+        .macro-bar-item { margin-bottom: 20px; }
+
+        .macro-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .macro-bar-label { font-size: 13px; font-weight: 600; }
+        .macro-bar-label.protein { color: var(--prism-rose); }
+        .macro-bar-label.carbs { color: var(--prism-cyan); }
+        .macro-bar-label.fat { color: var(--prism-amber); }
+
+        .macro-bar-values { font-size: 12px; color: var(--white-50); }
+
+        .macro-bar-track {
+            height: 10px;
+            background: var(--white-10);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .macro-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .macro-bar-fill.protein { background: linear-gradient(90deg, var(--prism-rose), var(--prism-pink)); }
+        .macro-bar-fill.carbs { background: linear-gradient(90deg, var(--prism-cyan), var(--prism-blue)); }
+        .macro-bar-fill.fat { background: linear-gradient(90deg, var(--prism-amber), var(--prism-orange)); }
+
+        .quick-food-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .quick-food-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .quick-food-btn {
+            background: var(--onyx);
+            border: 1px solid var(--white-10);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-food-btn:hover {
+            border-color: var(--prism-emerald);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .quick-food-icon { font-size: 28px; margin-bottom: 8px; }
+        .quick-food-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+        .quick-food-cal { font-size: 11px; color: var(--white-30); }
+
+        .meals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1000px) {
+            .meals-grid { grid-template-columns: 1fr; }
+        }
+
+        .meal-card {
+            background: var(--onyx);
+            border: 1px solid var(--white-10);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--carbon);
+            cursor: pointer;
+        }
+
+        .meal-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meal-cals {
+            font-size: 12px;
+            color: var(--prism-emerald);
+        }
+
+        .meal-content {
+            padding: 16px;
+            display: none;
+        }
+
+        .meal-content.open { display: block; }
+
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--white-05);
+            font-size: 13px;
+        }
+
+        .meal-item:last-child { border-bottom: none; }
+
+        /* ════════════════════════════════════════════════════════════════
            MODAL
         ════════════════════════════════════════════════════════════════ */
         .modal-overlay {
@@ -1768,7 +1958,7 @@
             <div class="logo">
                 <div>
                     <span class="logo-text">AXIS</span>
-                    <div class="logo-version">v2.0 FITNESS</div>
+                    <div class="logo-version">v3.0 FITNESS</div>
                 </div>
             </div>
 
@@ -1778,6 +1968,7 @@
                 <li><a href="#" data-view="workouts"><span class="icon">🏋️</span> Workouts</a></li>
                 <li><a href="#" data-view="prs"><span class="icon">🏆</span> Personal Records</a></li>
                 <li><a href="#" data-view="body"><span class="icon">📐</span> Body Scan</a></li>
+                <li><a href="#" data-view="nutrition"><span class="icon">🥗</span> Nutrition</a></li>
             </ul>
 
             <div class="sidebar-section">
@@ -2713,6 +2904,133 @@
             </div>
 
             <!-- ═══════════════════════════════════════════════════════════
+                 NUTRITION VIEW
+            ═══════════════════════════════════════════════════════════ -->
+            <div class="view" id="view-nutrition">
+                <header class="header">
+                    <div class="header-left">
+                        <h1>Nutrition</h1>
+                        <p>Today's intake</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openFoodModal()">+ Add Food</button>
+                    </div>
+                </header>
+
+                <div class="card">
+                    <div class="nutrition-header">
+                        <div class="calorie-ring">
+                            <svg viewBox="0 0 200 200">
+                                <defs>
+                                    <linearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color: #06B6D4"/>
+                                        <stop offset="50%" style="stop-color: #8B5CF6"/>
+                                        <stop offset="100%" style="stop-color: #F43F5E"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle class="calorie-ring-bg" cx="100" cy="100" r="85"/>
+                                <circle class="calorie-ring-progress" id="calorieRing" cx="100" cy="100" r="85" 
+                                    stroke-dasharray="534" stroke-dashoffset="534"/>
+                            </svg>
+                            <div class="calorie-ring-center">
+                                <div class="calorie-current" id="calorieCurrent">0</div>
+                                <div class="calorie-goal">of 2000 cal</div>
+                                <div class="calorie-remaining" id="calorieRemaining">2000 remaining</div>
+                            </div>
+                        </div>
+                        <div class="macro-bars">
+                            <div class="macro-bar-item">
+                                <div class="macro-bar-header">
+                                    <span class="macro-bar-label protein">Protein</span>
+                                    <span class="macro-bar-values"><span id="proteinCurrent">0</span>g / 150g</span>
+                                </div>
+                                <div class="macro-bar-track">
+                                    <div class="macro-bar-fill protein" id="proteinBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="macro-bar-item">
+                                <div class="macro-bar-header">
+                                    <span class="macro-bar-label carbs">Carbs</span>
+                                    <span class="macro-bar-values"><span id="carbsCurrent">0</span>g / 200g</span>
+                                </div>
+                                <div class="macro-bar-track">
+                                    <div class="macro-bar-fill carbs" id="carbsBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="macro-bar-item">
+                                <div class="macro-bar-header">
+                                    <span class="macro-bar-label fat">Fat</span>
+                                    <span class="macro-bar-values"><span id="fatCurrent">0</span>g / 65g</span>
+                                </div>
+                                <div class="macro-bar-track">
+                                    <div class="macro-bar-fill fat" id="fatBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">⚡ Quick Add</div>
+                    </div>
+                    <div class="quick-food-grid">
+                        <div class="quick-food-btn" onclick="quickAddFood('eggs')">
+                            <div class="quick-food-icon">🥚</div>
+                            <div class="quick-food-name">Eggs (2)</div>
+                            <div class="quick-food-cal">140 cal • 12g P</div>
+                        </div>
+                        <div class="quick-food-btn" onclick="quickAddFood('chicken')">
+                            <div class="quick-food-icon">🍗</div>
+                            <div class="quick-food-name">Chicken (4oz)</div>
+                            <div class="quick-food-cal">165 cal • 31g P</div>
+                        </div>
+                        <div class="quick-food-btn" onclick="quickAddFood('rice')">
+                            <div class="quick-food-icon">🍚</div>
+                            <div class="quick-food-name">Rice (1 cup)</div>
+                            <div class="quick-food-cal">205 cal • 45g C</div>
+                        </div>
+                        <div class="quick-food-btn" onclick="quickAddFood('shake')">
+                            <div class="quick-food-icon">🥤</div>
+                            <div class="quick-food-name">Protein Shake</div>
+                            <div class="quick-food-cal">120 cal • 25g P</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meals-grid">
+                    <div class="meal-card">
+                        <div class="meal-header" onclick="toggleMeal('breakfast')">
+                            <div class="meal-title">🌅 Breakfast</div>
+                            <div class="meal-cals" id="breakfastCals">0 cal</div>
+                        </div>
+                        <div class="meal-content" id="breakfastContent"></div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-header" onclick="toggleMeal('lunch')">
+                            <div class="meal-title">☀️ Lunch</div>
+                            <div class="meal-cals" id="lunchCals">0 cal</div>
+                        </div>
+                        <div class="meal-content" id="lunchContent"></div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-header" onclick="toggleMeal('dinner')">
+                            <div class="meal-title">🌙 Dinner</div>
+                            <div class="meal-cals" id="dinnerCals">0 cal</div>
+                        </div>
+                        <div class="meal-content" id="dinnerContent"></div>
+                    </div>
+                    <div class="meal-card">
+                        <div class="meal-header" onclick="toggleMeal('snacks')">
+                            <div class="meal-title">🍎 Snacks</div>
+                            <div class="meal-cals" id="snacksCals">0 cal</div>
+                        </div>
+                        <div class="meal-content" id="snacksContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
                  SETTINGS VIEW
             ═══════════════════════════════════════════════════════════ -->
             <div class="view" id="view-settings">
@@ -2893,6 +3211,55 @@
         </div>
     </div>
 
+    <!-- Add Food Modal -->
+    <div class="modal-overlay" id="foodModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">🍽️ Add Food</span>
+                <button class="modal-close" onclick="closeFoodModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Food Name</label>
+                    <input type="text" class="form-input" id="foodName" placeholder="e.g., Grilled Chicken Breast">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Meal</label>
+                    <select class="form-input" id="foodMeal">
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snacks">Snacks</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Calories</label>
+                        <input type="number" class="form-input" id="foodCalories" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Protein (g)</label>
+                        <input type="number" class="form-input" id="foodProtein" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Carbs (g)</label>
+                        <input type="number" class="form-input" id="foodCarbs" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fat (g)</label>
+                        <input type="number" class="form-input" id="foodFat" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeFoodModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addFood()">Add Food</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ════════════════════════════════════════════════════════════════
         // DATA STORAGE
@@ -2900,7 +3267,7 @@
         const STORAGE_KEY = 'axis-fitness-v2';
 
         const defaultData = {
-            version: '2.0',
+            version: '3.0',
             profile: {
                 name: 'Athlete',
                 height: '',
@@ -2909,11 +3276,25 @@
             workouts: [],
             prs: {},
             measurements: [],
+            nutrition: {},
             stats: {
                 streak: 0,
                 totalWorkouts: 0,
                 points: 0
-            }
+            },
+            dailyLogs: {}
+        };
+
+        // Quick foods database
+        const quickFoods = {
+            eggs: { name: 'Eggs (2)', calories: 140, protein: 12, carbs: 1, fat: 10 },
+            chicken: { name: 'Chicken (4oz)', calories: 165, protein: 31, carbs: 0, fat: 4 },
+            rice: { name: 'Rice (1 cup)', calories: 205, protein: 4, carbs: 45, fat: 0 },
+            shake: { name: 'Protein Shake', calories: 120, protein: 25, carbs: 3, fat: 1 },
+            oatmeal: { name: 'Oatmeal (1 cup)', calories: 150, protein: 5, carbs: 27, fat: 3 },
+            salmon: { name: 'Salmon (4oz)', calories: 180, protein: 25, carbs: 0, fat: 8 },
+            banana: { name: 'Banana', calories: 105, protein: 1, carbs: 27, fat: 0 },
+            avocado: { name: 'Avocado (half)', calories: 160, protein: 2, carbs: 9, fat: 15 }
         };
 
         let appData = loadData();
@@ -3033,6 +3414,9 @@
             }
             if (viewName === 'daily') {
                 initDailyLog();
+            }
+            if (viewName === 'nutrition') {
+                renderNutrition();
             }
         }
 
@@ -3764,6 +4148,139 @@
         }
 
         // ════════════════════════════════════════════════════════════════
+        // NUTRITION FUNCTIONS
+        // ════════════════════════════════════════════════════════════════
+
+        function getTodayKey() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function getTodayNutrition() {
+            const today = getTodayKey();
+            if (!appData.nutrition) appData.nutrition = {};
+            if (!appData.nutrition[today]) {
+                appData.nutrition[today] = {
+                    meals: { breakfast: [], lunch: [], dinner: [], snacks: [] },
+                    water: 0,
+                    totals: { calories: 0, protein: 0, carbs: 0, fat: 0 }
+                };
+            }
+            return appData.nutrition[today];
+        }
+
+        function renderNutrition() {
+            const data = getTodayNutrition();
+            const { totals } = data;
+
+            // Calorie ring
+            const percent = Math.min((totals.calories / 2000) * 100, 100);
+            const dashOffset = 534 - (534 * percent / 100);
+            const calorieRing = document.getElementById('calorieRing');
+            if (calorieRing) calorieRing.style.strokeDashoffset = dashOffset;
+            
+            const calorieCurrent = document.getElementById('calorieCurrent');
+            if (calorieCurrent) calorieCurrent.textContent = totals.calories;
+            
+            const calorieRemaining = document.getElementById('calorieRemaining');
+            if (calorieRemaining) calorieRemaining.textContent = Math.max(2000 - totals.calories, 0) + ' remaining';
+
+            // Macro bars
+            const proteinCurrent = document.getElementById('proteinCurrent');
+            if (proteinCurrent) proteinCurrent.textContent = Math.round(totals.protein);
+            
+            const carbsCurrent = document.getElementById('carbsCurrent');
+            if (carbsCurrent) carbsCurrent.textContent = Math.round(totals.carbs);
+            
+            const fatCurrent = document.getElementById('fatCurrent');
+            if (fatCurrent) fatCurrent.textContent = Math.round(totals.fat);
+            
+            const proteinBar = document.getElementById('proteinBar');
+            if (proteinBar) proteinBar.style.width = Math.min((totals.protein / 150) * 100, 100) + '%';
+            
+            const carbsBar = document.getElementById('carbsBar');
+            if (carbsBar) carbsBar.style.width = Math.min((totals.carbs / 200) * 100, 100) + '%';
+            
+            const fatBar = document.getElementById('fatBar');
+            if (fatBar) fatBar.style.width = Math.min((totals.fat / 65) * 100, 100) + '%';
+
+            // Meal cards
+            ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(meal => {
+                const items = data.meals[meal];
+                const mealCals = items.reduce((sum, i) => sum + i.calories, 0);
+                
+                const mealCalsEl = document.getElementById(meal + 'Cals');
+                if (mealCalsEl) mealCalsEl.textContent = mealCals + ' cal';
+                
+                const mealContent = document.getElementById(meal + 'Content');
+                if (mealContent) {
+                    mealContent.innerHTML = items.length 
+                        ? items.map(i => `<div class="meal-item"><span>${i.name}</span><span>${i.calories} cal</span></div>`).join('')
+                        : '<div style="color: var(--white-30); font-size: 12px; padding: 10px 0;">No items</div>';
+                }
+            });
+        }
+
+        function quickAddFood(key) {
+            const food = quickFoods[key];
+            if (!food) return;
+            
+            const data = getTodayNutrition();
+            data.meals.snacks.push({ ...food });
+            data.totals.calories += food.calories;
+            data.totals.protein += food.protein;
+            data.totals.carbs += food.carbs;
+            data.totals.fat += food.fat;
+            saveData();
+            renderNutrition();
+            showToast(`Added ${food.name}! 🍽️`);
+        }
+
+        function toggleMeal(meal) {
+            const content = document.getElementById(meal + 'Content');
+            if (content) content.classList.toggle('open');
+        }
+
+        function openFoodModal() {
+            document.getElementById('foodModal').classList.add('visible');
+        }
+
+        function closeFoodModal() {
+            document.getElementById('foodModal').classList.remove('visible');
+            // Clear form
+            document.getElementById('foodName').value = '';
+            document.getElementById('foodCalories').value = '';
+            document.getElementById('foodProtein').value = '';
+            document.getElementById('foodCarbs').value = '';
+            document.getElementById('foodFat').value = '';
+        }
+
+        function addFood() {
+            const name = document.getElementById('foodName').value.trim();
+            const meal = document.getElementById('foodMeal').value;
+            const calories = parseInt(document.getElementById('foodCalories').value) || 0;
+            const protein = parseInt(document.getElementById('foodProtein').value) || 0;
+            const carbs = parseInt(document.getElementById('foodCarbs').value) || 0;
+            const fat = parseInt(document.getElementById('foodFat').value) || 0;
+
+            if (!name || !calories) {
+                alert('Please enter food name and calories');
+                return;
+            }
+
+            const data = getTodayNutrition();
+            data.meals[meal].push({ name, calories, protein, carbs, fat });
+            data.totals.calories += calories;
+            data.totals.protein += protein;
+            data.totals.carbs += carbs;
+            data.totals.fat += fat;
+
+            saveData();
+            closeFoodModal();
+            renderNutrition();
+            showToast(`Added ${name}! 🍽️`);
+        }
+
+        // ════════════════════════════════════════════════════════════════
         // SUPABASE CONFIGURATION
         // ════════════════════════════════════════════════════════════════
         
@@ -4041,6 +4558,9 @@
             });
             document.getElementById('importModal')?.addEventListener('click', (e) => {
                 if (e.target === e.currentTarget) hideImportModal();
+            });
+            document.getElementById('foodModal')?.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeFoodModal();
             });
         }
 
