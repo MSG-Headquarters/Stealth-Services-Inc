@@ -1127,7 +1127,10 @@
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                    <div style="position:relative;">
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                        <span onclick="togglePassword('loginPassword', this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">👁️</span>
+                    </div>
                 </div>
                 <button type="submit" class="auth-btn" id="loginBtn">Sign In</button>
             </form>
@@ -1144,7 +1147,17 @@
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="signupPassword" required minlength="6" placeholder="Min 6 characters">
+                    <div style="position:relative;">
+                        <input type="password" id="signupPassword" required minlength="6" placeholder="Min 6 characters">
+                        <span onclick="togglePassword('signupPassword', this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">👁️</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div style="position:relative;">
+                        <input type="password" id="signupConfirmPassword" required minlength="6" placeholder="Confirm password">
+                        <span onclick="togglePassword('signupConfirmPassword', this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">👁️</span>
+                    </div>
                 </div>
                 <button type="submit" class="auth-btn" id="signupBtn">Create Account</button>
             </form>
@@ -1510,6 +1523,17 @@
             document.getElementById('authError').classList.remove('visible');
         }
 
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                icon.textContent = '👁️';
+            }
+        }
+
         async function handleSignup(e) {
             e.preventDefault();
             hideAuthError();
@@ -1517,13 +1541,20 @@
             const name = document.getElementById('signupName').value.trim();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showAuthError('Passwords do not match');
+                return;
+            }
             
             const btn = document.getElementById('signupBtn');
             btn.disabled = true;
             btn.textContent = 'Creating Account...';
             
             try {
-                // Create auth user
+                // Create auth user - profile is auto-created by database trigger
                 const { data, error } = await db.auth.signUp({
                     email,
                     password,
@@ -1535,19 +1566,6 @@
                 if (error) throw error;
                 
                 if (data.user) {
-                    // Create profile with athlete code
-                    const athleteCode = generateAthleteCode();
-                    const { error: profileError } = await db
-                        .from('profiles')
-                        .insert({
-                            user_id: data.user.id,
-                            display_name: name,
-                            athlete_code: athleteCode,
-                            avatar_emoji: getRandomEmoji()
-                        });
-                    
-                    if (profileError) throw profileError;
-                    
                     showToast('Account created! Welcome to AXIS Fit 🎉', 'success');
                 }
             } catch (error) {
