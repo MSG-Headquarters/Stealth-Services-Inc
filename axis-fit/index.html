@@ -1260,10 +1260,10 @@
         // ═══════════════════════════════════════════════════════════════
         // SUPABASE CONFIGURATION
         // ═══════════════════════════════════════════════════════════════
-        const SUPABASE_URL = 'https://yexigxcpxugllolboxez.supabase.co';
+        const SUPABASE_URL = 'https://yexigxcpxugllolboxez.db.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlleGlneGNweHVnbGxvbGJveGV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MDI5OTIsImV4cCI6MjA4MzM3ODk5Mn0._d6COoCxO9Hju4Qj7x_9ShcPpASgvqsbrobiHlhLjZE';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const db = window.db.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // ═══════════════════════════════════════════════════════════════
         // APP STATE
@@ -1277,7 +1277,7 @@
         // ═══════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', async () => {
             // Check for existing session
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await db.auth.getSession();
             
             if (session) {
                 currentUser = session.user;
@@ -1286,7 +1286,7 @@
             }
             
             // Listen for auth changes
-            supabase.auth.onAuthStateChange(async (event, session) => {
+            db.auth.onAuthStateChange(async (event, session) => {
                 if (event === 'SIGNED_IN' && session) {
                     currentUser = session.user;
                     await loadProfile();
@@ -1341,7 +1341,7 @@
             
             try {
                 // Create auth user
-                const { data, error } = await supabase.auth.signUp({
+                const { data, error } = await db.auth.signUp({
                     email,
                     password,
                     options: {
@@ -1354,7 +1354,7 @@
                 if (data.user) {
                     // Create profile with athlete code
                     const athleteCode = generateAthleteCode();
-                    const { error: profileError } = await supabase
+                    const { error: profileError } = await db
                         .from('profiles')
                         .insert({
                             user_id: data.user.id,
@@ -1388,7 +1388,7 @@
             btn.textContent = 'Signing In...';
             
             try {
-                const { error } = await supabase.auth.signInWithPassword({
+                const { error } = await db.auth.signInWithPassword({
                     email,
                     password
                 });
@@ -1404,7 +1404,7 @@
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            await db.auth.signOut();
             showAuth();
             showToast('Signed out successfully');
         }
@@ -1427,7 +1427,7 @@
         async function loadProfile() {
             if (!currentUser) return;
             
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from('profiles')
                 .select('*')
                 .eq('user_id', currentUser.id)
@@ -1482,7 +1482,7 @@
             
             try {
                 // Get connections
-                const { data: connections } = await supabase
+                const { data: connections } = await db
                     .from('connections')
                     .select('requester_id, target_id')
                     .or(`requester_id.eq.${currentProfile?.id},target_id.eq.${currentProfile?.id}`)
@@ -1501,14 +1501,14 @@
                 }
                 
                 // Get team members
-                const { data: teamMembers } = await supabase
+                const { data: teamMembers } = await db
                     .from('team_members')
                     .select('profile_id, team_id')
                     .eq('profile_id', currentProfile?.id);
                 
                 if (teamMembers && teamMembers.length > 0) {
                     const teamIds = teamMembers.map(tm => tm.team_id);
-                    const { data: allTeamMembers } = await supabase
+                    const { data: allTeamMembers } = await db
                         .from('team_members')
                         .select('profile_id')
                         .in('team_id', teamIds);
@@ -1523,7 +1523,7 @@
                 }
                 
                 // Get activity feed
-                const { data: activities, error } = await supabase
+                const { data: activities, error } = await db
                     .from('activity_feed')
                     .select('*')
                     .in('profile_id', connectedIds)
@@ -1597,7 +1597,7 @@
             list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('weekly_leaderboard')
                     .select('*')
                     .order('weekly_volume', { ascending: false })
@@ -1645,7 +1645,7 @@
             const list = document.getElementById('connectionsList');
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('connections')
                     .select(`
                         *,
@@ -1707,7 +1707,7 @@
             
             try {
                 // Find the target profile
-                const { data: target, error: findError } = await supabase
+                const { data: target, error: findError } = await db
                     .from('profiles')
                     .select('id, display_name')
                     .eq('athlete_code', code)
@@ -1719,7 +1719,7 @@
                 }
                 
                 // Check if connection exists
-                const { data: existing } = await supabase
+                const { data: existing } = await db
                     .from('connections')
                     .select('id')
                     .or(`and(requester_id.eq.${currentProfile.id},target_id.eq.${target.id}),and(requester_id.eq.${target.id},target_id.eq.${currentProfile.id})`);
@@ -1730,7 +1730,7 @@
                 }
                 
                 // Create connection request
-                const { error } = await supabase
+                const { error } = await db
                     .from('connections')
                     .insert({
                         requester_id: currentProfile.id,
@@ -1752,7 +1752,7 @@
 
         async function acceptConnection(connectionId) {
             try {
-                const { error } = await supabase
+                const { error } = await db
                     .from('connections')
                     .update({ status: 'accepted', accepted_at: new Date().toISOString() })
                     .eq('id', connectionId);
@@ -1774,7 +1774,7 @@
             const section = document.getElementById('teamSection');
             
             try {
-                const { data: memberships, error } = await supabase
+                const { data: memberships, error } = await db
                     .from('team_members')
                     .select(`
                         *,
@@ -1831,7 +1831,7 @@
             
             try {
                 // Find team
-                const { data: team, error: findError } = await supabase
+                const { data: team, error: findError } = await db
                     .from('teams')
                     .select('*')
                     .eq('team_code', code)
@@ -1843,7 +1843,7 @@
                 }
                 
                 // Join team
-                const { error } = await supabase
+                const { error } = await db
                     .from('team_members')
                     .insert({
                         team_id: team.id,
@@ -1889,7 +1889,7 @@
             const totalVolume = calculateVolume(exercises);
             
             try {
-                const { error } = await supabase
+                const { error } = await db
                     .from('workouts')
                     .insert({
                         profile_id: currentProfile.id,
@@ -1960,7 +1960,7 @@
             const list = document.getElementById('recentWorkoutsList');
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('workouts')
                     .select('*')
                     .eq('profile_id', currentProfile?.id)
