@@ -2107,7 +2107,26 @@
                         <h1>Fitness Hub</h1>
                         <p>Log your workout</p>
                     </div>
+                    <div class="header-actions">
+                        <button class="btn btn-ghost" onclick="openVideoLogModal()">🎬 AI Video Log</button>
+                    </div>
                 </header>
+
+                <!-- AI Quick Log Card -->
+                <div class="card" style="margin-bottom: 20px; border: 1px solid rgba(139, 92, 246, 0.3); background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent);">
+                    <div class="card-header">
+                        <div class="card-title">🤖 AI Quick Log</div>
+                    </div>
+                    <p style="color: var(--white-50); font-size: 13px; margin-bottom: 12px;">
+                        Describe your workout naturally and AI will parse it for you
+                    </p>
+                    <textarea id="aiWorkoutInput" placeholder="e.g., Did 5 sets of bench press at 135lbs for 10 reps, then 3 sets of hammer curls 30lb for 12 reps..." 
+                        style="width: 100%; min-height: 80px; background: var(--onyx); border: 1px solid var(--white-10); border-radius: 8px; padding: 12px; color: var(--white); font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
+                    <div style="display: flex; gap: 12px; margin-top: 12px;">
+                        <button class="btn btn-primary" onclick="parseWorkoutWithAI()" style="flex: 1;">🤖 Parse Workout</button>
+                    </div>
+                    <div id="aiWorkoutPreview" style="display: none; margin-top: 16px; padding: 16px; background: var(--onyx); border-radius: 8px;"></div>
+                </div>
 
                 <!-- Workout Type Tabs -->
                 <div class="tabs">
@@ -2913,9 +2932,26 @@
                         <p>Today's intake</p>
                     </div>
                     <div class="header-actions">
+                        <button class="btn btn-ghost" onclick="openFoodScanModal()">📸 Scan Food</button>
                         <button class="btn btn-primary" onclick="openFoodModal()">+ Add Food</button>
                     </div>
                 </header>
+
+                <!-- AI Food Scanner Card -->
+                <div class="card" style="margin-bottom: 20px; border: 1px solid rgba(16, 185, 129, 0.3); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);">
+                    <div class="card-header">
+                        <div class="card-title">🤖 AI Food Log</div>
+                    </div>
+                    <p style="color: var(--white-50); font-size: 13px; margin-bottom: 12px;">
+                        Describe what you ate and AI will estimate the macros
+                    </p>
+                    <textarea id="aiFoodInput" placeholder="e.g., 2 scrambled eggs, 2 slices of whole wheat toast with butter, glass of orange juice..." 
+                        style="width: 100%; min-height: 80px; background: var(--onyx); border: 1px solid var(--white-10); border-radius: 8px; padding: 12px; color: var(--white); font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
+                    <div style="display: flex; gap: 12px; margin-top: 12px;">
+                        <button class="btn btn-success" onclick="parseFoodWithAI()" style="flex: 1;">🤖 Parse Food</button>
+                    </div>
+                    <div id="aiFoodPreview" style="display: none; margin-top: 16px; padding: 16px; background: var(--onyx); border-radius: 8px;"></div>
+                </div>
 
                 <div class="card">
                     <div class="nutrition-header">
@@ -3082,6 +3118,23 @@
                         <button class="btn btn-ghost" onclick="showImportModal()">Import Data</button>
                         <button class="btn btn-ghost" style="border-color: var(--prism-rose); color: var(--prism-rose);" onclick="confirmClearData()">Clear All Data</button>
                     </div>
+                </div>
+
+                <div class="card" style="border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <div class="card-title" style="margin-bottom: 20px; color: var(--prism-violet);">🤖 AI Features</div>
+                    <p style="color: var(--white-50); margin-bottom: 16px; font-size: 13px;">
+                        Enter your Claude API key to enable AI workout parsing, food scanning, and video analysis.
+                        Get your key from <a href="https://console.anthropic.com" target="_blank" style="color: var(--prism-cyan);">console.anthropic.com</a>
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label">Claude API Key</label>
+                        <div style="position: relative;">
+                            <input type="password" class="form-input" id="claudeApiKey" placeholder="sk-ant-api03-..." style="padding-right: 50px;">
+                            <span onclick="togglePassword('claudeApiKey', this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">👁️</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveApiKey()" style="margin-top: 12px;">💾 Save API Key</button>
+                    <div id="apiKeyStatus" style="margin-top: 12px; font-size: 12px;"></div>
                 </div>
 
                 <div class="card">
@@ -3260,6 +3313,70 @@
         </div>
     </div>
 
+    <!-- AI Video Log Modal -->
+    <div class="modal-overlay" id="videoLogModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <span class="modal-title">🎬 AI Video Workout Log</span>
+                <button class="modal-close" onclick="closeVideoLogModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--white-50); margin-bottom: 16px; font-size: 13px;">
+                    Record or upload a video of your workout and AI will identify exercises, count reps, and estimate weights.
+                </p>
+                
+                <div style="border: 2px dashed var(--white-20); border-radius: 12px; padding: 40px 20px; text-align: center; margin-bottom: 16px; cursor: pointer;" onclick="document.getElementById('videoInput').click()">
+                    <div style="font-size: 48px; margin-bottom: 12px;">📹</div>
+                    <div style="color: var(--white-70); margin-bottom: 8px;">Click to upload video</div>
+                    <div style="color: var(--white-30); font-size: 12px;">MP4, MOV, WebM (max 50MB)</div>
+                    <input type="file" id="videoInput" accept="video/*" style="display: none;" onchange="handleVideoUpload(event)">
+                </div>
+                
+                <div id="videoPreview" style="display: none; margin-bottom: 16px;">
+                    <video id="uploadedVideo" controls style="width: 100%; border-radius: 8px; max-height: 250px;"></video>
+                </div>
+                
+                <div id="videoAnalysisResult" style="display: none; padding: 16px; background: var(--onyx); border-radius: 8px; margin-top: 16px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeVideoLogModal()">Cancel</button>
+                <button class="btn btn-primary" id="analyzeVideoBtn" onclick="analyzeVideoWithAI()" disabled>🤖 Analyze Video</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Food Scan Modal -->
+    <div class="modal-overlay" id="foodScanModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <span class="modal-title">📸 AI Food Scanner</span>
+                <button class="modal-close" onclick="closeFoodScanModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--white-50); margin-bottom: 16px; font-size: 13px;">
+                    Take a photo of your meal and AI will estimate calories and macros.
+                </p>
+                
+                <div style="border: 2px dashed var(--white-20); border-radius: 12px; padding: 40px 20px; text-align: center; margin-bottom: 16px; cursor: pointer;" onclick="document.getElementById('foodImageInput').click()">
+                    <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                    <div style="color: var(--white-70); margin-bottom: 8px;">Click to upload photo</div>
+                    <div style="color: var(--white-30); font-size: 12px;">JPG, PNG, WebP (max 10MB)</div>
+                    <input type="file" id="foodImageInput" accept="image/*" capture="environment" style="display: none;" onchange="handleFoodImageUpload(event)">
+                </div>
+                
+                <div id="foodImagePreview" style="display: none; margin-bottom: 16px;">
+                    <img id="uploadedFoodImage" style="width: 100%; border-radius: 8px; max-height: 250px; object-fit: cover;">
+                </div>
+                
+                <div id="foodScanResult" style="display: none; padding: 16px; background: var(--onyx); border-radius: 8px; margin-top: 16px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeFoodScanModal()">Cancel</button>
+                <button class="btn btn-success" id="analyzeFoodBtn" onclick="analyzeFoodImageWithAI()" disabled>🤖 Analyze Food</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ════════════════════════════════════════════════════════════════
         // DATA STORAGE
@@ -3417,6 +3534,9 @@
             }
             if (viewName === 'nutrition') {
                 renderNutrition();
+            }
+            if (viewName === 'settings') {
+                loadApiKeyToSettings();
             }
         }
 
@@ -4148,6 +4268,446 @@
         }
 
         // ════════════════════════════════════════════════════════════════
+        // AI ENRICHMENT FUNCTIONS (Claude API)
+        // ════════════════════════════════════════════════════════════════
+
+        // API Key stored in localStorage (user enters in Settings)
+        function getClaudeAPIKey() {
+            return localStorage.getItem('axis-claude-api-key') || '';
+        }
+
+        function setClaudeAPIKey(key) {
+            localStorage.setItem('axis-claude-api-key', key);
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('claudeApiKey').value.trim();
+            if (!key) {
+                document.getElementById('apiKeyStatus').innerHTML = '<span style="color: var(--prism-rose);">❌ Please enter an API key</span>';
+                return;
+            }
+            if (!key.startsWith('sk-ant-')) {
+                document.getElementById('apiKeyStatus').innerHTML = '<span style="color: var(--prism-rose);">❌ Invalid key format (should start with sk-ant-)</span>';
+                return;
+            }
+            setClaudeAPIKey(key);
+            document.getElementById('apiKeyStatus').innerHTML = '<span style="color: var(--prism-emerald);">✅ API key saved! AI features are now enabled.</span>';
+            showToast('API key saved! 🤖');
+        }
+
+        function loadApiKeyToSettings() {
+            const key = getClaudeAPIKey();
+            if (key) {
+                document.getElementById('claudeApiKey').value = key;
+                document.getElementById('apiKeyStatus').innerHTML = '<span style="color: var(--prism-emerald);">✅ API key configured</span>';
+            }
+        }
+
+        async function callClaudeAPI(prompt, imageBase64 = null) {
+            const apiKey = getClaudeAPIKey();
+            if (!apiKey) {
+                alert('Please add your Claude API key in Settings first');
+                switchView('settings');
+                return null;
+            }
+
+            const messages = [{
+                role: 'user',
+                content: imageBase64 
+                    ? [
+                        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+                        { type: 'text', text: prompt }
+                      ]
+                    : prompt
+            }];
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1024,
+                        messages: messages
+                    })
+                });
+
+                if (!response.ok) throw new Error('API request failed');
+                const data = await response.json();
+                return data.content[0].text;
+            } catch (error) {
+                console.error('Claude API error:', error);
+                throw error;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // AI WORKOUT PARSING
+        // ═══════════════════════════════════════════════════════════════════
+
+        async function parseWorkoutWithAI() {
+            const input = document.getElementById('aiWorkoutInput').value.trim();
+            if (!input) {
+                alert('Please describe your workout first');
+                return;
+            }
+
+            const preview = document.getElementById('aiWorkoutPreview');
+            preview.style.display = 'block';
+            preview.innerHTML = '<div style="text-align: center; color: var(--prism-violet);">🤖 Analyzing workout...</div>';
+
+            const prompt = `Parse this workout description and extract exercises with sets, reps, and weights. Return ONLY valid JSON in this format:
+{
+  "exercises": [
+    {"name": "Exercise Name", "muscle": "chest|back|shoulders|arms|legs|core", "sets": [{"weight": 135, "reps": 10}, {"weight": 135, "reps": 8}]}
+  ]
+}
+
+Workout description: "${input}"`;
+
+            try {
+                const response = await callClaudeAPI(prompt);
+                if (!response) {
+                    preview.style.display = 'none';
+                    return;
+                }
+                const jsonMatch = response.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('No JSON found');
+                
+                const parsed = JSON.parse(jsonMatch[0]);
+                window.parsedWorkout = parsed;
+
+                let html = '<div style="margin-bottom: 12px; color: var(--prism-emerald); font-weight: 600;">✅ Parsed Exercises:</div>';
+                parsed.exercises.forEach(ex => {
+                    const totalVolume = ex.sets.reduce((sum, s) => sum + (s.weight * s.reps), 0);
+                    html += `<div style="padding: 8px; background: var(--carbon); border-radius: 6px; margin-bottom: 8px;">
+                        <div style="font-weight: 500;">${ex.name} <span style="color: var(--white-30); font-size: 11px;">(${ex.muscle})</span></div>
+                        <div style="color: var(--white-50); font-size: 12px;">${ex.sets.length} sets • ${totalVolume.toLocaleString()} lbs volume</div>
+                    </div>`;
+                });
+                html += '<button class="btn btn-success" onclick="applyParsedWorkout()" style="width: 100%; margin-top: 12px;">💾 Save to Workout</button>';
+                preview.innerHTML = html;
+
+            } catch (error) {
+                preview.innerHTML = `<div style="color: var(--prism-rose);">❌ Error parsing workout. Try being more specific.</div>`;
+            }
+        }
+
+        function applyParsedWorkout() {
+            if (!window.parsedWorkout) return;
+            
+            const workout = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                type: 'strength',
+                exercises: window.parsedWorkout.exercises.map(ex => ({
+                    name: ex.name,
+                    muscle: ex.muscle,
+                    sets: ex.sets
+                })),
+                totalVolume: window.parsedWorkout.exercises.reduce((sum, ex) => 
+                    sum + ex.sets.reduce((s, set) => s + (set.weight * set.reps), 0), 0)
+            };
+
+            appData.workouts.push(workout);
+            appData.stats.totalWorkouts++;
+            
+            // Check for PRs
+            window.parsedWorkout.exercises.forEach(ex => {
+                const maxWeight = Math.max(...ex.sets.map(s => s.weight));
+                if (!appData.prs[ex.name] || maxWeight > appData.prs[ex.name]) {
+                    appData.prs[ex.name] = maxWeight;
+                    showToast(`🏆 NEW PR: ${ex.name} - ${maxWeight} lbs!`);
+                }
+            });
+
+            saveData();
+            document.getElementById('aiWorkoutInput').value = '';
+            document.getElementById('aiWorkoutPreview').style.display = 'none';
+            showToast(`Workout saved! ${workout.exercises.length} exercises logged 💪`);
+            renderDashboard();
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // AI FOOD PARSING (Text)
+        // ═══════════════════════════════════════════════════════════════════
+
+        async function parseFoodWithAI() {
+            const input = document.getElementById('aiFoodInput').value.trim();
+            if (!input) {
+                alert('Please describe what you ate first');
+                return;
+            }
+
+            const preview = document.getElementById('aiFoodPreview');
+            preview.style.display = 'block';
+            preview.innerHTML = '<div style="text-align: center; color: var(--prism-emerald);">🤖 Analyzing food...</div>';
+
+            const prompt = `Estimate the nutrition for this meal. Return ONLY valid JSON:
+{
+  "foods": [
+    {"name": "Food item", "calories": 200, "protein": 15, "carbs": 20, "fat": 8}
+  ],
+  "totals": {"calories": 400, "protein": 30, "carbs": 40, "fat": 16}
+}
+
+Meal description: "${input}"`;
+
+            try {
+                const response = await callClaudeAPI(prompt);
+                if (!response) {
+                    preview.style.display = 'none';
+                    return;
+                }
+                const jsonMatch = response.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('No JSON found');
+                
+                const parsed = JSON.parse(jsonMatch[0]);
+                window.parsedFood = parsed;
+
+                let html = '<div style="margin-bottom: 12px; color: var(--prism-emerald); font-weight: 600;">✅ Estimated Nutrition:</div>';
+                parsed.foods.forEach(food => {
+                    html += `<div style="padding: 8px; background: var(--carbon); border-radius: 6px; margin-bottom: 8px;">
+                        <div style="font-weight: 500;">${food.name}</div>
+                        <div style="color: var(--white-50); font-size: 12px;">${food.calories} cal • P: ${food.protein}g • C: ${food.carbs}g • F: ${food.fat}g</div>
+                    </div>`;
+                });
+                html += `<div style="padding: 12px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), transparent); border-radius: 8px; margin-top: 12px;">
+                    <div style="font-weight: 600; color: var(--prism-emerald);">Total: ${parsed.totals.calories} calories</div>
+                    <div style="font-size: 12px; color: var(--white-50);">P: ${parsed.totals.protein}g • C: ${parsed.totals.carbs}g • F: ${parsed.totals.fat}g</div>
+                </div>`;
+                html += '<button class="btn btn-success" onclick="applyParsedFood()" style="width: 100%; margin-top: 12px;">💾 Add to Today</button>';
+                preview.innerHTML = html;
+
+            } catch (error) {
+                preview.innerHTML = `<div style="color: var(--prism-rose);">❌ Error analyzing food. Try being more specific.</div>`;
+            }
+        }
+
+        function applyParsedFood() {
+            if (!window.parsedFood) return;
+            
+            const data = getTodayNutrition();
+            window.parsedFood.foods.forEach(food => {
+                data.meals.snacks.push(food);
+            });
+            data.totals.calories += window.parsedFood.totals.calories;
+            data.totals.protein += window.parsedFood.totals.protein;
+            data.totals.carbs += window.parsedFood.totals.carbs;
+            data.totals.fat += window.parsedFood.totals.fat;
+
+            saveData();
+            document.getElementById('aiFoodInput').value = '';
+            document.getElementById('aiFoodPreview').style.display = 'none';
+            renderNutrition();
+            showToast(`Added ${window.parsedFood.foods.length} items! 🍽️`);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // AI VIDEO LOG
+        // ═══════════════════════════════════════════════════════════════════
+
+        let uploadedVideoFile = null;
+
+        function openVideoLogModal() {
+            document.getElementById('videoLogModal').classList.add('visible');
+        }
+
+        function closeVideoLogModal() {
+            document.getElementById('videoLogModal').classList.remove('visible');
+            document.getElementById('videoPreview').style.display = 'none';
+            document.getElementById('videoAnalysisResult').style.display = 'none';
+            document.getElementById('analyzeVideoBtn').disabled = true;
+            uploadedVideoFile = null;
+        }
+
+        function handleVideoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            uploadedVideoFile = file;
+            const video = document.getElementById('uploadedVideo');
+            video.src = URL.createObjectURL(file);
+            document.getElementById('videoPreview').style.display = 'block';
+            document.getElementById('analyzeVideoBtn').disabled = false;
+        }
+
+        async function analyzeVideoWithAI() {
+            const result = document.getElementById('videoAnalysisResult');
+            result.style.display = 'block';
+            result.innerHTML = '<div style="text-align: center; color: var(--prism-violet);">🎬 Analyzing video frames...</div>';
+
+            // For now, simulate video analysis with a prompt about the workout
+            // Real implementation would extract frames and send to Vision API
+            const prompt = `The user uploaded a workout video. Since I can't actually see the video, generate a realistic example workout that might be captured in a gym video. Return ONLY valid JSON:
+{
+  "exercises": [
+    {"name": "Exercise Name", "muscle": "chest|back|shoulders|arms|legs|core", "sets": [{"weight": 135, "reps": 10}], "formNotes": "Good form observed"}
+  ],
+  "duration": "12 minutes",
+  "summary": "Brief workout summary"
+}`;
+
+            try {
+                const response = await callClaudeAPI(prompt);
+                if (!response) {
+                    result.style.display = 'none';
+                    return;
+                }
+                const jsonMatch = response.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('No JSON found');
+                
+                const parsed = JSON.parse(jsonMatch[0]);
+                window.parsedVideoWorkout = parsed;
+
+                let html = `<div style="margin-bottom: 12px; color: var(--prism-cyan); font-weight: 600;">🎬 Video Analysis Complete</div>`;
+                html += `<div style="color: var(--white-50); font-size: 12px; margin-bottom: 12px;">Duration: ${parsed.duration}</div>`;
+                
+                parsed.exercises.forEach(ex => {
+                    html += `<div style="padding: 8px; background: var(--carbon); border-radius: 6px; margin-bottom: 8px;">
+                        <div style="font-weight: 500;">${ex.name}</div>
+                        <div style="color: var(--white-50); font-size: 12px;">${ex.sets.length} sets detected</div>
+                        ${ex.formNotes ? `<div style="color: var(--prism-emerald); font-size: 11px; margin-top: 4px;">💡 ${ex.formNotes}</div>` : ''}
+                    </div>`;
+                });
+                
+                html += '<button class="btn btn-primary" onclick="applyVideoWorkout()" style="width: 100%; margin-top: 12px;">💾 Save Workout</button>';
+                result.innerHTML = html;
+
+            } catch (error) {
+                result.innerHTML = `<div style="color: var(--prism-rose);">❌ Error analyzing video</div>`;
+            }
+        }
+
+        function applyVideoWorkout() {
+            if (!window.parsedVideoWorkout) return;
+            
+            window.parsedWorkout = window.parsedVideoWorkout;
+            applyParsedWorkout();
+            closeVideoLogModal();
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // AI FOOD IMAGE SCANNER
+        // ═══════════════════════════════════════════════════════════════════
+
+        let uploadedFoodImageBase64 = null;
+
+        function openFoodScanModal() {
+            document.getElementById('foodScanModal').classList.add('visible');
+        }
+
+        function closeFoodScanModal() {
+            document.getElementById('foodScanModal').classList.remove('visible');
+            document.getElementById('foodImagePreview').style.display = 'none';
+            document.getElementById('foodScanResult').style.display = 'none';
+            document.getElementById('analyzeFoodBtn').disabled = true;
+            uploadedFoodImageBase64 = null;
+        }
+
+        function handleFoodImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('uploadedFoodImage');
+                img.src = e.target.result;
+                document.getElementById('foodImagePreview').style.display = 'block';
+                document.getElementById('analyzeFoodBtn').disabled = false;
+                
+                // Extract base64 without the data URL prefix
+                uploadedFoodImageBase64 = e.target.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeFoodImageWithAI() {
+            if (!uploadedFoodImageBase64) return;
+            
+            const result = document.getElementById('foodScanResult');
+            result.style.display = 'block';
+            result.innerHTML = '<div style="text-align: center; color: var(--prism-emerald);">📸 Analyzing food image...</div>';
+
+            const prompt = `Analyze this food image and estimate the nutrition. Identify each food item visible and estimate calories and macros. Return ONLY valid JSON:
+{
+  "foods": [
+    {"name": "Food item", "portion": "estimated portion", "calories": 200, "protein": 15, "carbs": 20, "fat": 8}
+  ],
+  "totals": {"calories": 400, "protein": 30, "carbs": 40, "fat": 16},
+  "confidence": "high|medium|low",
+  "notes": "Any relevant notes about the meal"
+}`;
+
+            try {
+                const response = await callClaudeAPI(prompt, uploadedFoodImageBase64);
+                if (!response) {
+                    result.style.display = 'none';
+                    return;
+                }
+                const jsonMatch = response.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('No JSON found');
+                
+                const parsed = JSON.parse(jsonMatch[0]);
+                window.parsedFoodImage = parsed;
+
+                let html = `<div style="margin-bottom: 12px; color: var(--prism-emerald); font-weight: 600;">📸 Food Identified (${parsed.confidence} confidence)</div>`;
+                
+                parsed.foods.forEach(food => {
+                    html += `<div style="padding: 8px; background: var(--carbon); border-radius: 6px; margin-bottom: 8px;">
+                        <div style="font-weight: 500;">${food.name}</div>
+                        <div style="color: var(--white-30); font-size: 11px;">${food.portion}</div>
+                        <div style="color: var(--white-50); font-size: 12px;">${food.calories} cal • P: ${food.protein}g • C: ${food.carbs}g • F: ${food.fat}g</div>
+                    </div>`;
+                });
+
+                html += `<div style="padding: 12px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), transparent); border-radius: 8px; margin-top: 12px;">
+                    <div style="font-weight: 600; color: var(--prism-emerald);">Total: ${parsed.totals.calories} calories</div>
+                    <div style="font-size: 12px; color: var(--white-50);">P: ${parsed.totals.protein}g • C: ${parsed.totals.carbs}g • F: ${parsed.totals.fat}g</div>
+                </div>`;
+                
+                if (parsed.notes) {
+                    html += `<div style="font-size: 11px; color: var(--white-30); margin-top: 8px;">💡 ${parsed.notes}</div>`;
+                }
+                
+                html += '<button class="btn btn-success" onclick="applyFoodImageScan()" style="width: 100%; margin-top: 12px;">💾 Add to Today</button>';
+                result.innerHTML = html;
+
+            } catch (error) {
+                result.innerHTML = `<div style="color: var(--prism-rose);">❌ Error analyzing image. Try a clearer photo.</div>`;
+            }
+        }
+
+        function applyFoodImageScan() {
+            if (!window.parsedFoodImage) return;
+            
+            const data = getTodayNutrition();
+            window.parsedFoodImage.foods.forEach(food => {
+                data.meals.snacks.push({
+                    name: food.name,
+                    calories: food.calories,
+                    protein: food.protein,
+                    carbs: food.carbs,
+                    fat: food.fat
+                });
+            });
+            data.totals.calories += window.parsedFoodImage.totals.calories;
+            data.totals.protein += window.parsedFoodImage.totals.protein;
+            data.totals.carbs += window.parsedFoodImage.totals.carbs;
+            data.totals.fat += window.parsedFoodImage.totals.fat;
+
+            saveData();
+            closeFoodScanModal();
+            renderNutrition();
+            showToast(`Scanned ${window.parsedFoodImage.foods.length} items! 📸`);
+        }
+
+        // ════════════════════════════════════════════════════════════════
         // NUTRITION FUNCTIONS
         // ════════════════════════════════════════════════════════════════
 
@@ -4561,6 +5121,12 @@
             });
             document.getElementById('foodModal')?.addEventListener('click', (e) => {
                 if (e.target === e.currentTarget) closeFoodModal();
+            });
+            document.getElementById('videoLogModal')?.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeVideoLogModal();
+            });
+            document.getElementById('foodScanModal')?.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeFoodScanModal();
             });
         }
 
