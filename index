@@ -957,6 +957,28 @@
                     </div>
                 </a>
 
+                <!-- COVRD Card -->
+                <a href="/covrd/" style="text-decoration: none; color: inherit;">
+                    <div style="background: linear-gradient(135deg, rgba(10, 38, 71, 0.3), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 20px; padding: 32px; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(6, 182, 212, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #0A2647, #06B6D4); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px;">🛡️</div>
+                            <div>
+                                <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; margin: 0;">COVRD</h3>
+                                <span style="font-size: 0.75rem; color: #06B6D4; font-weight: 600; letter-spacing: 0.1em;">ROOFING + SOLAR</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--muted-white); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">Instant roofing and solar quotes with hurricane-ready intro. Multi-step wizard, dynamic pricing, and CRM integration.</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--ghost-white);">🏠 Roofing</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--ghost-white);">☀️ Solar</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--ghost-white);">🌀 Hurricane</span>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #06B6D4; font-size: 0.85rem; font-weight: 600;">Get Quote →</span>
+                            <span style="background: rgba(6,182,212,0.1); color: #06B6D4; padding: 4px 10px; border-radius: 10px; font-size: 0.7rem; font-weight: 600;">PWA</span>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <div style="text-align: center; margin-top: 50px; padding: 24px; background: rgba(255,255,255,0.03); border-radius: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">
