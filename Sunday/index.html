@@ -21,11 +21,7 @@
             --border: #e2e8f0;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -37,10 +33,7 @@
             padding: 40px 20px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+        .header { text-align: center; margin-bottom: 40px; }
 
         .logo {
             display: flex;
@@ -68,9 +61,16 @@
             letter-spacing: -1px;
         }
 
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 16px;
+        .subtitle { color: var(--text-secondary); font-size: 16px; }
+        .live-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
         }
 
         .card {
@@ -83,30 +83,11 @@
             margin-bottom: 24px;
         }
 
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
+        .card-title { font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .card-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
 
-        .card-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
 
         .input-field {
             width: 100%;
@@ -140,35 +121,10 @@
             transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: rgba(43, 158, 179, 0.05);
-        }
-
-        .btn-icon {
-            font-size: 20px;
-        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 12px; }
 
         .status-badge {
             display: inline-flex;
@@ -181,20 +137,8 @@
             margin-bottom: 20px;
         }
 
-        .status-none {
-            background: #f1f5f9;
-            color: var(--text-secondary);
-        }
-
-        .status-registered {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .status-authenticated {
-            background: rgba(43, 158, 179, 0.1);
-            color: var(--primary);
-        }
+        .status-registered { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .status-authenticated { background: rgba(43, 158, 179, 0.1); color: var(--primary); }
 
         .divider {
             display: flex;
@@ -204,73 +148,15 @@
             font-size: 13px;
         }
 
-        .divider::before,
-        .divider::after {
+        .divider::before, .divider::after {
             content: '';
             flex: 1;
             height: 1px;
             background: var(--border);
         }
 
-        .divider::before {
-            margin-right: 16px;
-        }
-
-        .divider::after {
-            margin-left: 16px;
-        }
-
-        .log-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 16px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .log-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .log-entry {
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-        }
-
-        .log-entry:last-child {
-            border-bottom: none;
-        }
-
-        .log-time {
-            color: var(--text-secondary);
-            flex-shrink: 0;
-        }
-
-        .log-message {
-            color: var(--text-primary);
-            word-break: break-word;
-        }
-
-        .log-success {
-            color: var(--success);
-        }
-
-        .log-error {
-            color: var(--error);
-        }
-
-        .log-info {
-            color: var(--primary);
-        }
+        .divider::before { margin-right: 16px; }
+        .divider::after { margin-left: 16px; }
 
         .credential-display {
             background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
@@ -296,16 +182,7 @@
             margin-bottom: 16px;
         }
 
-        .credential-value:last-child {
-            margin-bottom: 0;
-        }
-
-        .cpid-display {
-            font-size: 18px;
-            font-weight: 600;
-            color: #10B981;
-            margin-bottom: 16px;
-        }
+        .cpid-display { font-size: 18px; font-weight: 600; color: #10B981; margin-bottom: 16px; }
 
         .info-box {
             background: rgba(43, 158, 179, 0.1);
@@ -315,44 +192,8 @@
             margin-top: 20px;
         }
 
-        .info-box-title {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .info-box-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .step {
-            width: 40px;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--border);
-        }
-
-        .step.active {
-            background: var(--primary);
-        }
-
-        .step.complete {
-            background: var(--success);
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .info-box-title { font-weight: 600; color: var(--primary); margin-bottom: 8px; font-size: 14px; }
+        .info-box-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 
         .device-info {
             display: flex;
@@ -364,47 +205,63 @@
             margin-bottom: 20px;
         }
 
-        .device-icon {
-            font-size: 32px;
-        }
+        .device-icon { font-size: 32px; }
+        .device-details { flex: 1; }
+        .device-name { font-weight: 600; color: var(--text-primary); }
+        .device-type { font-size: 13px; color: var(--text-secondary); }
 
-        .device-details {
-            flex: 1;
-        }
+        .hidden { display: none !important; }
 
-        .device-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .device-type {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .back-link {
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--error);
+            border-radius: 0 12px 12px 0;
+            padding: 16px;
             margin-top: 20px;
-            text-align: center;
-        }
-
-        .back-link a {
-            color: var(--text-secondary);
-            text-decoration: none;
+            color: var(--error);
             font-size: 14px;
         }
 
-        .back-link a:hover {
-            color: var(--primary);
+        .log-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 250px;
+            overflow-y: auto;
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
+        .log-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-            .card {
-                padding: 24px;
-            }
+        .log-entry {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: var(--text-secondary); flex-shrink: 0; }
+        .log-message { color: var(--text-primary); word-break: break-word; }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--error); }
+        .log-info { color: var(--primary); }
+
+        .back-link { margin-top: 20px; text-align: center; }
+        .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
+        .back-link a:hover { color: var(--primary); }
+
+        @media (max-width: 480px) {
+            body { padding: 20px 16px; }
+            .card { padding: 24px; }
         }
     </style>
 </head>
@@ -415,16 +272,11 @@
             <span class="logo-text">SUNDAY</span>
         </div>
         <p class="subtitle">Passwordless Identity for the Internet</p>
+        <span class="live-badge">🔴 LIVE - Connected to Production</span>
     </header>
 
-    <!-- Step 1: Registration -->
+    <!-- Registration Card -->
     <div class="card" id="registration-card">
-        <div class="step-indicator">
-            <div class="step active" id="step1"></div>
-            <div class="step" id="step2"></div>
-            <div class="step" id="step3"></div>
-        </div>
-
         <h2 class="card-title">Create Your Sunday Identity</h2>
         <p class="card-subtitle">Use your device's biometric — Face ID, Touch ID, or fingerprint</p>
 
@@ -438,108 +290,85 @@
 
         <div class="input-group">
             <label class="input-label">Display Name</label>
-            <input type="text" class="input-field" id="displayName" placeholder="Enter your name" value="">
+            <input type="text" class="input-field" id="displayName" placeholder="Enter your name">
         </div>
 
         <div class="input-group">
             <label class="input-label">Phone Number</label>
-            <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567" value="">
+            <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567">
         </div>
 
         <button class="btn btn-primary" id="registerBtn" onclick="startRegistration()">
-            <span class="btn-icon">🔐</span>
-            Register with Biometric
+            <span>🔐</span> Register with Biometric
         </button>
+
+        <button class="btn btn-outline" onclick="showLogin()">
+            Already registered? Sign in
+        </button>
+
+        <div id="register-error" class="error-box hidden"></div>
 
         <div class="info-box">
             <div class="info-box-title">🔒 Your biometric stays on your device</div>
             <div class="info-box-text">
-                Sunday <strong>never sees</strong> your face or fingerprint. Your device creates a unique passkey and only sends cryptographic proof that you authenticated.
+                Sunday <strong>never sees</strong> your face or fingerprint. Your device creates a unique passkey and only sends cryptographic proof.
             </div>
         </div>
     </div>
 
-    <!-- Step 2: Registration Success -->
-    <div class="card hidden" id="registered-card">
-        <div class="step-indicator">
-            <div class="step complete"></div>
-            <div class="step active"></div>
-            <div class="step"></div>
+    <!-- Login Card -->
+    <div class="card hidden" id="login-card">
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-subtitle">Sign in with your biometric</p>
+
+        <div class="input-group">
+            <label class="input-label">Phone Number</label>
+            <input type="tel" class="input-field" id="loginPhone" placeholder="+1 (555) 123-4567">
         </div>
 
-        <span class="status-badge status-registered">✓ Passkey Created</span>
-
-        <h2 class="card-title">You're Registered!</h2>
-        <p class="card-subtitle">Your Sunday passkey is stored in your device's keychain</p>
-
-        <div class="credential-display">
-            <div class="credential-label">Your CPiD (Demo)</div>
-            <div class="cpid-display" id="demo-cpid">SUN-FL-HIL-12345-P001</div>
-            
-            <div class="credential-label">Credential ID</div>
-            <div class="credential-value" id="credential-id">—</div>
-            
-            <div class="credential-label">Registered Device</div>
-            <div class="credential-value" id="registered-device">—</div>
-        </div>
-
-        <div class="divider">Now test signing in</div>
-
-        <button class="btn btn-primary" id="authBtn" onclick="startAuthentication()">
-            <span class="btn-icon">👆</span>
-            Sign in with Sunday
+        <button class="btn btn-primary" id="loginBtn" onclick="startLogin()">
+            <span>👆</span> Sign in with Sunday
         </button>
 
-        <div class="info-box">
-            <div class="info-box-title">📱 Check your keychain</div>
-            <div class="info-box-text">
-                <strong>iPhone:</strong> Settings → Passwords → look for "umbrassi.com"<br>
-                <strong>Mac:</strong> System Preferences → Passwords<br>
-                <strong>Android:</strong> Google Password Manager
-            </div>
-        </div>
+        <button class="btn btn-outline" onclick="showRegister()">
+            Need an account? Register
+        </button>
+
+        <div id="login-error" class="error-box hidden"></div>
     </div>
 
-    <!-- Step 3: Authenticated -->
-    <div class="card hidden" id="authenticated-card">
-        <div class="step-indicator">
-            <div class="step complete"></div>
-            <div class="step complete"></div>
-            <div class="step active"></div>
-        </div>
-
+    <!-- Success Card -->
+    <div class="card hidden" id="success-card">
         <span class="status-badge status-authenticated">🎉 Authenticated</span>
 
-        <h2 class="card-title">Welcome Back!</h2>
-        <p class="card-subtitle">Signed in with your face — no password needed</p>
+        <h2 class="card-title">Welcome to Sunday!</h2>
+        <p class="card-subtitle">You're signed in with your biometric — no password needed</p>
 
         <div class="credential-display">
-            <div class="credential-label">Authenticated As</div>
-            <div class="cpid-display" id="auth-cpid">—</div>
+            <div class="credential-label">Signed In As</div>
+            <div class="cpid-display" id="user-name">—</div>
             
-            <div class="credential-label">Authentication Time</div>
-            <div class="credential-value" id="auth-time">—</div>
+            <div class="credential-label">Phone</div>
+            <div class="credential-value" id="user-phone">—</div>
             
-            <div class="credential-label">Signature</div>
-            <div class="credential-value" id="auth-signature">✓ Verified</div>
+            <div class="credential-label">Session Token</div>
+            <div class="credential-value" id="user-token">—</div>
         </div>
 
-        <div class="divider">What just happened</div>
+        <button class="btn btn-outline" onclick="resetAll()">
+            Sign Out
+        </button>
 
         <div class="info-box">
-            <div class="info-box-title">⚡ The WebAuthn Flow</div>
+            <div class="info-box-title">⚡ What just happened</div>
             <div class="info-box-text">
-                1. Sunday sent a <strong>random challenge</strong><br>
-                2. Your device prompted <strong>Face ID</strong><br>
-                3. Your device <strong>signed the challenge</strong><br>
-                4. Sunday <strong>verified the signature</strong><br>
-                5. You're in! No password ever created or transmitted.
+                1. Your phone sent a cryptographic challenge<br>
+                2. Face ID verified it was you<br>
+                3. Your device signed the challenge<br>
+                4. Server verified the signature<br>
+                5. You're in! No password ever transmitted.
             </div>
         </div>
-
-        <button class="btn btn-outline" onclick="resetDemo()" style="margin-top: 20px;">
-            Reset Demo
-        </button>
     </div>
 
     <!-- Activity Log -->
@@ -556,16 +385,11 @@
 
     <script>
         // ═══════════════════════════════════════════════════════════════════
-        // CONFIGURATION
+        // CONFIGURATION - PRODUCTION API
         // ═══════════════════════════════════════════════════════════════════
         
-        let storedCredential = null;
+        const API_BASE = 'https://sunday-platform.onrender.com';
         
-        // Automatically use the current domain for WebAuthn
-        const RP_ID = window.location.hostname;
-        const RP_NAME = 'Sunday Platform';
-        const STORAGE_KEY = 'sunday_credential_' + RP_ID.replace(/\./g, '_');
-
         // ═══════════════════════════════════════════════════════════════════
         // LOGGING
         // ═══════════════════════════════════════════════════════════════════
@@ -580,6 +404,53 @@
                 <span class="log-message log-${type}">${message}</span>
             `;
             logEl.insertBefore(entry, logEl.firstChild);
+            console.log(`[${type}] ${message}`);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // UI HELPERS
+        // ═══════════════════════════════════════════════════════════════════
+
+        function showLogin() {
+            document.getElementById('registration-card').classList.add('hidden');
+            document.getElementById('login-card').classList.remove('hidden');
+            document.getElementById('success-card').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('registration-card').classList.remove('hidden');
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('success-card').classList.add('hidden');
+        }
+
+        function showSuccess(user, token) {
+            document.getElementById('registration-card').classList.add('hidden');
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('success-card').classList.remove('hidden');
+            
+            document.getElementById('user-name').textContent = user.name || 'Sunday User';
+            document.getElementById('user-phone').textContent = user.phone;
+            document.getElementById('user-token').textContent = token.substring(0, 50) + '...';
+            
+            localStorage.setItem('sunday_token', token);
+            localStorage.setItem('sunday_user', JSON.stringify(user));
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).classList.add('hidden');
+        }
+
+        function resetAll() {
+            localStorage.removeItem('sunday_token');
+            localStorage.removeItem('sunday_user');
+            showRegister();
+            log('Signed out', 'info');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -592,68 +463,50 @@
             const deviceType = document.getElementById('device-type');
             const registerBtn = document.getElementById('registerBtn');
 
-            // Check WebAuthn support
             if (!window.PublicKeyCredential) {
                 deviceIcon.textContent = '❌';
                 deviceName.textContent = 'WebAuthn Not Supported';
                 deviceType.textContent = 'Please use Safari, Chrome, or Firefox';
                 registerBtn.disabled = true;
-                log('WebAuthn not supported in this browser', 'error');
+                log('WebAuthn not supported', 'error');
                 return;
             }
 
-            // Check platform authenticator
             let available = false;
             try {
                 available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
             } catch (e) {
                 log('Could not detect platform authenticator', 'info');
             }
-            
-            // Detect device type
+
             const ua = navigator.userAgent;
-            let icon = '💻';
-            let name = 'Desktop Device';
-            let type = 'Windows Hello or Security Key';
+            let icon = '💻', name = 'Desktop', type = 'Windows Hello';
 
             if (/iPhone|iPad|iPod/.test(ua)) {
-                icon = '📱';
-                name = 'iPhone / iPad';
-                type = 'Face ID or Touch ID';
+                icon = '📱'; name = 'iPhone/iPad'; type = 'Face ID / Touch ID';
             } else if (/Android/.test(ua)) {
-                icon = '📱';
-                name = 'Android Device';
-                type = 'Fingerprint or Face Unlock';
+                icon = '📱'; name = 'Android'; type = 'Fingerprint / Face Unlock';
             } else if (/Mac/.test(ua)) {
-                icon = '💻';
-                name = 'Mac';
-                type = 'Touch ID or Security Key';
+                icon = '💻'; name = 'Mac'; type = 'Touch ID';
             }
 
             deviceIcon.textContent = icon;
             deviceName.textContent = name;
-            deviceType.textContent = available ? `✓ ${type} Ready` : '⚠️ Security key may be required';
+            deviceType.textContent = available ? `✓ ${type} Ready` : '⚠️ May need security key';
 
-            if (available) {
-                log(`Device: ${name} with ${type}`, 'success');
-            } else {
-                log(`Platform authenticator not detected`, 'info');
-            }
-
-            log(`Relying Party: ${RP_ID}`, 'info');
-            registerBtn.disabled = false;
+            log(`Device: ${name} - ${available ? 'Biometric ready' : 'Check settings'}`, available ? 'success' : 'info');
+            log(`API: ${API_BASE}`, 'info');
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // HELPER FUNCTIONS
+        // WEBAUTHN HELPERS
         // ═══════════════════════════════════════════════════════════════════
 
-        function bufferToBase64(buffer) {
-            return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-        }
-
-        function base64ToBuffer(base64) {
-            const binary = atob(base64);
+        function base64URLToBuffer(base64url) {
+            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+            const pad = base64.length % 4;
+            const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
+            const binary = atob(padded);
             const bytes = new Uint8Array(binary.length);
             for (let i = 0; i < binary.length; i++) {
                 bytes[i] = binary.charCodeAt(i);
@@ -661,216 +514,213 @@
             return bytes.buffer;
         }
 
-        function generateRandomBuffer(length) {
-            const buffer = new Uint8Array(length);
-            crypto.getRandomValues(buffer);
-            return buffer;
-        }
-
-        function generateUserId() {
-            return generateRandomBuffer(32);
-        }
-
-        function truncate(str, length = 40) {
-            if (str.length <= length) return str;
-            return str.substring(0, length) + '...';
-        }
-
-        function getDeviceName() {
-            const ua = navigator.userAgent;
-            if (/iPhone/.test(ua)) return 'iPhone';
-            if (/iPad/.test(ua)) return 'iPad';
-            if (/Android/.test(ua)) return 'Android';
-            if (/Mac/.test(ua)) return 'Mac';
-            if (/Windows/.test(ua)) return 'Windows';
-            return 'Unknown Device';
+        function bufferToBase64URL(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // WEBAUTHN REGISTRATION
+        // REGISTRATION
         // ═══════════════════════════════════════════════════════════════════
 
         async function startRegistration() {
-            const displayName = document.getElementById('displayName').value || 'Sunday User';
-            const phone = document.getElementById('phone').value || '+1 (555) 000-0000';
+            const displayName = document.getElementById('displayName').value.trim() || 'Sunday User';
+            const phone = document.getElementById('phone').value.trim();
 
-            log('Starting registration...', 'info');
-            log(`User: ${displayName}`, 'info');
-
-            try {
-                const userId = generateUserId();
-                const challenge = generateRandomBuffer(32);
-
-                log('Challenge generated', 'info');
-
-                const createOptions = {
-                    publicKey: {
-                        rp: {
-                            name: RP_NAME,
-                            id: RP_ID
-                        },
-                        user: {
-                            id: userId,
-                            name: phone,
-                            displayName: displayName
-                        },
-                        challenge: challenge,
-                        pubKeyCredParams: [
-                            { type: 'public-key', alg: -7 },
-                            { type: 'public-key', alg: -257 }
-                        ],
-                        timeout: 60000,
-                        authenticatorSelection: {
-                            authenticatorAttachment: 'platform',
-                            userVerification: 'required',
-                            residentKey: 'preferred'
-                        },
-                        attestation: 'direct'
-                    }
-                };
-
-                log('Prompting biometric...', 'info');
-
-                const credential = await navigator.credentials.create(createOptions);
-
-                log('✓ Biometric verified!', 'success');
-
-                const credentialId = bufferToBase64(credential.rawId);
-                const deviceName = getDeviceName();
-
-                storedCredential = {
-                    id: credential.id,
-                    rawId: credentialId,
-                    type: credential.type,
-                    displayName: displayName,
-                    phone: phone,
-                    deviceName: deviceName,
-                    createdAt: new Date().toISOString()
-                };
-
-                // Generate demo CPiD
-                const demoCPiD = 'SUN-FL-HIL-' + Math.floor(10000 + Math.random() * 90000) + '-P001';
-                storedCredential.cpid = demoCPiD;
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(storedCredential));
-
-                log('Credential stored in keychain', 'success');
-                log(`CPiD: ${demoCPiD}`, 'success');
-
-                // Update UI
-                document.getElementById('credential-id').textContent = truncate(credentialId, 50);
-                document.getElementById('registered-device').textContent = deviceName + ' • ' + new Date().toLocaleDateString();
-                document.getElementById('demo-cpid').textContent = demoCPiD;
-
-                document.getElementById('registration-card').classList.add('hidden');
-                document.getElementById('registered-card').classList.remove('hidden');
-
-            } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    log('Biometric cancelled or denied', 'error');
-                } else if (error.name === 'InvalidStateError') {
-                    log('Credential already exists — try signing in', 'error');
-                } else {
-                    log('Error: ' + error.message, 'error');
-                }
-                console.error('Registration error:', error);
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // WEBAUTHN AUTHENTICATION
-        // ═══════════════════════════════════════════════════════════════════
-
-        async function startAuthentication() {
-            log('Starting authentication...', 'info');
-
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (!stored) {
-                log('No credential found — register first', 'error');
+            if (!phone) {
+                showError('register-error', 'Please enter your phone number');
                 return;
             }
-            storedCredential = JSON.parse(stored);
+
+            hideError('register-error');
+            log('Starting registration...', 'info');
 
             try {
-                const challenge = generateRandomBuffer(32);
-                log('Challenge sent to device', 'info');
+                // 1. Get registration options from server
+                log('Fetching options from server...', 'info');
+                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, displayName })
+                });
 
-                const getOptions = {
-                    publicKey: {
-                        challenge: challenge,
-                        timeout: 60000,
-                        rpId: RP_ID,
-                        userVerification: 'required',
-                        allowCredentials: [{
-                            type: 'public-key',
-                            id: base64ToBuffer(storedCredential.rawId),
-                            transports: ['internal', 'hybrid']
-                        }]
+                if (!optionsRes.ok) {
+                    const err = await optionsRes.json();
+                    throw new Error(err.error || 'Failed to get options');
+                }
+
+                const { options, userId } = await optionsRes.json();
+                log('Got challenge from server', 'success');
+
+                // 2. Convert options for WebAuthn API
+                const publicKeyOptions = {
+                    challenge: base64URLToBuffer(options.challenge),
+                    rp: options.rp,
+                    user: {
+                        id: base64URLToBuffer(options.user.id),
+                        name: options.user.name,
+                        displayName: options.user.displayName
+                    },
+                    pubKeyCredParams: options.pubKeyCredParams,
+                    timeout: options.timeout,
+                    attestation: options.attestation || 'none',
+                    authenticatorSelection: options.authenticatorSelection,
+                    excludeCredentials: (options.excludeCredentials || []).map(c => ({
+                        id: base64URLToBuffer(c.id),
+                        type: c.type,
+                        transports: c.transports
+                    }))
+                };
+
+                // 3. Create credential (triggers Face ID / Touch ID)
+                log('Prompting biometric...', 'info');
+                const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+                log('✓ Biometric verified!', 'success');
+
+                // 4. Prepare credential for server
+                const credentialJSON = {
+                    id: credential.id,
+                    rawId: bufferToBase64URL(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+                        attestationObject: bufferToBase64URL(credential.response.attestationObject),
+                        transports: credential.response.getTransports ? credential.response.getTransports() : ['internal']
                     }
                 };
 
-                log('Prompting biometric...', 'info');
+                // 5. Verify with server
+                log('Verifying with server...', 'info');
+                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, credential: credentialJSON })
+                });
 
-                const assertion = await navigator.credentials.get(getOptions);
+                if (!verifyRes.ok) {
+                    const err = await verifyRes.json();
+                    throw new Error(err.error || 'Verification failed');
+                }
 
-                log('✓ Biometric verified!', 'success');
+                const { token } = await verifyRes.json();
+                log('✓ Registration complete!', 'success');
 
-                const signature = bufferToBase64(assertion.response.signature);
-                log('Signature: ' + truncate(signature, 30), 'info');
-                log('✓ Signature verified!', 'success');
-
-                // Update UI
-                document.getElementById('auth-cpid').textContent = storedCredential.cpid;
-                document.getElementById('auth-time').textContent = new Date().toLocaleString();
-
-                document.getElementById('registered-card').classList.add('hidden');
-                document.getElementById('authenticated-card').classList.remove('hidden');
+                showSuccess({ name: displayName, phone }, token);
 
             } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    log('Authentication cancelled', 'error');
-                } else {
-                    log('Error: ' + error.message, 'error');
-                }
-                console.error('Authentication error:', error);
+                log(`Error: ${error.message}`, 'error');
+                showError('register-error', error.message);
             }
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // RESET
+        // AUTHENTICATION
         // ═══════════════════════════════════════════════════════════════════
 
-        function resetDemo() {
-            localStorage.removeItem(STORAGE_KEY);
-            storedCredential = null;
-            
-            document.getElementById('registration-card').classList.remove('hidden');
-            document.getElementById('registered-card').classList.add('hidden');
-            document.getElementById('authenticated-card').classList.add('hidden');
-            
-            document.getElementById('displayName').value = '';
-            document.getElementById('phone').value = '';
-            
-            log('Demo reset', 'info');
-            log('Passkey may still exist in Settings → Passwords', 'info');
+        async function startLogin() {
+            const phone = document.getElementById('loginPhone').value.trim();
+
+            if (!phone) {
+                showError('login-error', 'Please enter your phone number');
+                return;
+            }
+
+            hideError('login-error');
+            log('Starting authentication...', 'info');
+
+            try {
+                // 1. Get login options from server
+                log('Fetching challenge...', 'info');
+                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+
+                if (!optionsRes.ok) {
+                    const err = await optionsRes.json();
+                    throw new Error(err.error || 'Failed to get options');
+                }
+
+                const { options, challengeKey } = await optionsRes.json();
+                log('Got challenge from server', 'success');
+
+                // 2. Convert options for WebAuthn API
+                const publicKeyOptions = {
+                    challenge: base64URLToBuffer(options.challenge),
+                    rpId: options.rpId,
+                    timeout: options.timeout,
+                    userVerification: options.userVerification,
+                    allowCredentials: (options.allowCredentials || []).map(c => ({
+                        id: base64URLToBuffer(c.id),
+                        type: 'public-key',
+                        transports: c.transports
+                    }))
+                };
+
+                // 3. Get credential (triggers Face ID / Touch ID)
+                log('Prompting biometric...', 'info');
+                const credential = await navigator.credentials.get({ publicKey: publicKeyOptions });
+                log('✓ Biometric verified!', 'success');
+
+                // 4. Prepare credential for server
+                const credentialJSON = {
+                    id: credential.id,
+                    rawId: bufferToBase64URL(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+                        authenticatorData: bufferToBase64URL(credential.response.authenticatorData),
+                        signature: bufferToBase64URL(credential.response.signature),
+                        userHandle: credential.response.userHandle ? bufferToBase64URL(credential.response.userHandle) : null
+                    }
+                };
+
+                // 5. Verify with server
+                log('Verifying signature...', 'info');
+                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ challengeKey, credential: credentialJSON })
+                });
+
+                if (!verifyRes.ok) {
+                    const err = await verifyRes.json();
+                    throw new Error(err.error || 'Authentication failed');
+                }
+
+                const { token, user } = await verifyRes.json();
+                log('✓ Authentication complete!', 'success');
+
+                showSuccess(user, token);
+
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                showError('login-error', error.message);
+            }
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // CHECK EXISTING
+        // CHECK EXISTING SESSION
         // ═══════════════════════════════════════════════════════════════════
 
-        function checkExistingCredential() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                storedCredential = JSON.parse(stored);
-                log('Found existing credential: ' + storedCredential.displayName, 'info');
-                
-                document.getElementById('credential-id').textContent = truncate(storedCredential.rawId, 50);
-                document.getElementById('registered-device').textContent = (storedCredential.deviceName || 'Unknown') + ' • ' + new Date(storedCredential.createdAt).toLocaleDateString();
-                document.getElementById('demo-cpid').textContent = storedCredential.cpid || 'SUN-FL-HIL-00000-P001';
-                
-                document.getElementById('registration-card').classList.add('hidden');
-                document.getElementById('registered-card').classList.remove('hidden');
+        function checkExistingSession() {
+            const token = localStorage.getItem('sunday_token');
+            const user = localStorage.getItem('sunday_user');
+            
+            if (token && user) {
+                try {
+                    const userData = JSON.parse(user);
+                    log('Found existing session', 'info');
+                    showSuccess(userData, token);
+                } catch {
+                    localStorage.removeItem('sunday_token');
+                    localStorage.removeItem('sunday_user');
+                }
             }
         }
 
@@ -879,11 +729,9 @@
         // ═══════════════════════════════════════════════════════════════════
 
         document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday WebAuthn POC v1.0', 'info');
-            log('Domain: ' + window.location.hostname, 'info');
-            
+            log('Sunday WebAuthn - PRODUCTION', 'info');
             detectDevice();
-            checkExistingCredential();
+            checkExistingSession();
         });
     </script>
 </body>
