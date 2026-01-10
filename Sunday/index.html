@@ -655,11 +655,11 @@
                     rpId: options.rpId,
                     timeout: options.timeout,
                     userVerification: options.userVerification,
-                    allowCredentials: (options.allowCredentials || []).map(c => ({
-                        id: base64URLToBuffer(c.id),
-                        type: 'public-key',
-                        transports: c.transports
-                    }))
+                    allowCredentials: options.allowCredentials?.length ? options.allowCredentials.map(c => ({
+    id: base64URLToBuffer(c.id),
+    type: 'public-key',
+    transports: c.transports
+})) : undefined
                 };
 
                 // 3. Get credential (triggers Face ID / Touch ID)
