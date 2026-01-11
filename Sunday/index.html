@@ -6,9 +6,7 @@
     <title>Sunday | Passwordless Identity</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Face-API.js for face detection and comparison -->
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <!-- Tesseract.js for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
@@ -47,6 +45,8 @@
         .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
         .input-field { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-family: inherit; transition: all 0.2s; }
         .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(43, 158, 179, 0.1); }
+        .input-row { display: flex; gap: 12px; }
+        .input-row .input-group { flex: 1; }
         .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
@@ -70,7 +70,7 @@
         .credential-display { background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%); border-radius: 14px; padding: 20px; color: white; margin-top: 16px; }
         .credential-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); margin-bottom: 4px; }
         .credential-value { font-family: 'SF Mono', monospace; font-size: 12px; color: white; word-break: break-all; margin-bottom: 14px; }
-        .cpid-display { font-size: 16px; font-weight: 600; color: #10B981; margin-bottom: 14px; }
+        .cpid-display { font-size: 18px; font-weight: 700; color: #10B981; margin-bottom: 14px; letter-spacing: 1px; }
         .log-container { background: #f8fafc; border-radius: 10px; padding: 14px; max-height: 200px; overflow-y: auto; }
         .log-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         .log-entry { font-family: 'SF Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; gap: 6px; }
@@ -97,6 +97,19 @@
         .verification-status .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
         .progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 16px 0; }
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
+        .verification-option { display: flex; align-items: center; gap: 12px; padding: 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .verification-option:hover { border-color: var(--primary); background: rgba(43, 158, 179, 0.05); }
+        .verification-option.selected { border-color: var(--primary); background: rgba(43, 158, 179, 0.1); }
+        .verification-option .option-icon { font-size: 28px; }
+        .verification-option .option-details { flex: 1; }
+        .verification-option .option-title { font-weight: 600; color: var(--text-primary); font-size: 14px; }
+        .verification-option .option-desc { font-size: 12px; color: var(--text-secondary); }
+        .address-preview { background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .address-preview-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; }
+        .address-preview-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+        .claim-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 14px; padding: 20px; color: white; margin-bottom: 16px; }
+        .claim-card-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; opacity: 0.9; }
+        .claim-card-cpid { font-family: 'SF Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 1px; }
         .back-link { margin-top: 16px; text-align: center; }
         .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
         @media (max-width: 480px) { body { padding: 20px 16px; } .card { padding: 20px; } }
@@ -131,7 +144,7 @@
             <label class="input-label">Phone Number</label>
             <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567">
         </div>
-        <button class="btn btn-primary" id="registerBtn" onclick="startRegistration()">
+        <button class="btn btn-primary" onclick="startRegistration()">
             <span>🔐</span> Register with Biometric
         </button>
         <button class="btn btn-outline" onclick="showLogin()">Already registered? Sign in</button>
@@ -171,6 +184,15 @@
             </div>
             <span id="identity-check" style="color: var(--warning);">⚠</span>
         </div>
+
+        <div class="verification-status hidden" id="address-status-box">
+            <span class="icon">🏠</span>
+            <div class="text">
+                <div class="label">Address</div>
+                <div class="value" id="address-status">Not claimed</div>
+            </div>
+            <span id="address-check" style="color: var(--warning);">⚠</span>
+        </div>
         
         <button class="btn btn-warning hidden" id="verify-identity-btn" onclick="startIdentityVerification()">
             <span>📷</span> Verify Identity
@@ -179,18 +201,161 @@
         <button class="btn btn-primary hidden" id="claim-address-btn" onclick="startAddressClaim()">
             <span>🏠</span> Claim Your Address
         </button>
+
+        <!-- Show claimed CPiD if exists -->
+        <div class="claim-card hidden" id="cpid-display-card">
+            <div class="claim-card-title">Your Crypto-Property-ID</div>
+            <div class="claim-card-cpid" id="user-cpid">—</div>
+        </div>
         
         <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
 
         <div class="info-box" id="identity-info" style="display: none;">
             <div class="info-box-title">🎉 Identity Verified</div>
             <div class="info-box-text">
-                Your Sunday identity is verified. Use it across all Sunday-enabled platforms.
+                Your Sunday identity is verified. Claim your address to receive secure digital mail.
             </div>
         </div>
     </div>
 
-    <!-- Identity Verification - Step 1: DL Scan -->
+    <!-- Address Claim - Step 1: Enter/Confirm Address -->
+    <div class="card hidden" id="claim-address-card">
+        <div class="step-indicator">
+            <div class="step active"></div>
+            <div class="step"></div>
+            <div class="step"></div>
+        </div>
+        <h2 class="card-title">Claim Your Address</h2>
+        <p class="card-subtitle">Enter the address you want to claim</p>
+
+        <div class="address-preview hidden" id="dl-address-preview">
+            <div class="address-preview-title">📋 Address from your DL</div>
+            <div class="address-preview-text" id="dl-address-text">—</div>
+            <button class="btn btn-outline" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button>
+        </div>
+        
+        <div class="input-group">
+            <label class="input-label">Street Address</label>
+            <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Unit/Apt (optional)</label>
+            <input type="text" class="input-field" id="claim-unit" placeholder="Apt 4B">
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">City</label>
+                <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+            </div>
+            <div class="input-group" style="max-width: 100px;">
+                <label class="input-label">State</label>
+                <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+            </div>
+        </div>
+        <div class="input-group">
+            <label class="input-label">ZIP Code</label>
+            <input type="text" class="input-field" id="claim-zip" placeholder="33602" maxlength="10">
+        </div>
+
+        <button class="btn btn-primary" onclick="lookupAddress()">
+            <span>🔍</span> Look Up Address
+        </button>
+        <button class="btn btn-outline" onclick="cancelAddressClaim()">Cancel</button>
+        <div id="claim-error" class="error-box hidden"></div>
+    </div>
+
+    <!-- Address Claim - Step 2: Verify Ownership -->
+    <div class="card hidden" id="claim-verify-card">
+        <div class="step-indicator">
+            <div class="step done"></div>
+            <div class="step active"></div>
+            <div class="step"></div>
+        </div>
+        <h2 class="card-title">Verify Address Ownership</h2>
+        <p class="card-subtitle">How would you like to verify this address?</p>
+
+        <div class="address-preview">
+            <div class="address-preview-title">📍 Address to Claim</div>
+            <div class="address-preview-text" id="confirm-address-text">—</div>
+        </div>
+
+        <div class="verification-option" id="verify-dl" onclick="selectVerifyMethod('dl')">
+            <span class="option-icon">🪪</span>
+            <div class="option-details">
+                <div class="option-title">Driver's License Match</div>
+                <div class="option-desc">Address matches your verified DL (instant)</div>
+            </div>
+            <span style="color: var(--success);">✓</span>
+        </div>
+
+        <div class="verification-option" id="verify-deed" onclick="selectVerifyMethod('deed')">
+            <span class="option-icon">📜</span>
+            <div class="option-details">
+                <div class="option-title">Property Deed</div>
+                <div class="option-desc">Upload deed showing ownership</div>
+            </div>
+        </div>
+
+        <div class="verification-option" id="verify-utility" onclick="selectVerifyMethod('utility')">
+            <span class="option-icon">💡</span>
+            <div class="option-details">
+                <div class="option-title">Utility Bill</div>
+                <div class="option-desc">Upload recent bill with your name</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary hidden" id="proceed-verify-btn" onclick="proceedWithVerification()">
+            <span>→</span> Continue
+        </button>
+        <button class="btn btn-outline" onclick="backToAddressEntry()">Back</button>
+    </div>
+
+    <!-- Address Claim - Step 3: Processing/Success -->
+    <div class="card hidden" id="claim-processing-card">
+        <div class="step-indicator">
+            <div class="step done"></div>
+            <div class="step done"></div>
+            <div class="step active"></div>
+        </div>
+        <h2 class="card-title">Claiming Address...</h2>
+        <p class="card-subtitle">Generating your Crypto-Property-ID</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="claim-progress-fill" style="width: 0%"></div>
+        </div>
+        <p id="claim-processing-status" style="text-align: center; color: var(--text-secondary); font-size: 14px;">Verifying ownership...</p>
+    </div>
+
+    <!-- Address Claim - Success -->
+    <div class="card hidden" id="claim-success-card">
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 64px; margin-bottom: 16px;">🏠</div>
+            <h2 class="card-title">Address Claimed!</h2>
+            <p class="card-subtitle">Your Crypto-Property-ID is ready</p>
+        </div>
+        
+        <div class="credential-display">
+            <div class="credential-label">Crypto-Property-ID (CPiD)</div>
+            <div class="cpid-display" id="new-cpid">—</div>
+            <div class="credential-label">Address</div>
+            <div class="credential-value" id="claimed-address">—</div>
+            <div class="credential-label">Claimed At</div>
+            <div class="credential-value" id="claimed-at">—</div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">🎉 What's Next?</div>
+            <div class="info-box-text">
+                Anyone can now send secure digital mail to your address. You'll receive notifications when messages arrive.
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToDashboard()">
+            <span>🏠</span> Go to Dashboard
+        </button>
+    </div>
+
+    <!-- Identity Verification Cards (keeping existing) -->
     <div class="card hidden" id="verify-dl-card">
         <div class="step-indicator">
             <div class="step active"></div>
@@ -220,7 +385,6 @@
         <div id="dl-error" class="error-box hidden"></div>
     </div>
 
-    <!-- Identity Verification - Step 2: Selfie -->
     <div class="card hidden" id="verify-selfie-card">
         <div class="step-indicator">
             <div class="step done"></div>
@@ -250,7 +414,6 @@
         <div id="selfie-error" class="error-box hidden"></div>
     </div>
 
-    <!-- Identity Verification - Step 3: Processing -->
     <div class="card hidden" id="verify-processing-card">
         <div class="step-indicator">
             <div class="step done"></div>
@@ -258,7 +421,7 @@
             <div class="step active"></div>
         </div>
         <h2 class="card-title">Verifying Identity...</h2>
-        <p class="card-subtitle" id="processing-subtitle">Processing on your device</p>
+        <p class="card-subtitle">Processing on your device</p>
         
         <div class="progress-bar">
             <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -266,7 +429,6 @@
         <p id="processing-status" style="text-align: center; color: var(--text-secondary); font-size: 14px;">Initializing...</p>
     </div>
 
-    <!-- Identity Verification - Success -->
     <div class="card hidden" id="verify-success-card">
         <div style="text-align: center; padding: 20px 0;">
             <div style="font-size: 64px; margin-bottom: 16px;">✅</div>
@@ -310,6 +472,8 @@
         let selfieStream = null;
         let verifiedDLInfo = null;
         let faceApiLoaded = false;
+        let pendingAddressId = null;
+        let selectedVerifyMethod = null;
 
         // ═══════════════════════════════════════════════════════════════════
         // LOGGING
@@ -327,6 +491,11 @@
         function updateProgress(percent, status) {
             document.getElementById('progress-fill').style.width = `${percent}%`;
             document.getElementById('processing-status').textContent = status;
+        }
+
+        function updateClaimProgress(percent, status) {
+            document.getElementById('claim-progress-fill').style.width = `${percent}%`;
+            document.getElementById('claim-processing-status').textContent = status;
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -372,17 +541,14 @@
         // ═══════════════════════════════════════════════════════════════════
         async function loadFaceApi() {
             if (faceApiLoaded) return true;
-            
             try {
                 log('Loading face detection models...', 'info');
                 const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-                
                 await Promise.all([
                     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
                     faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                     faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
                 ]);
-                
                 faceApiLoaded = true;
                 log('Face detection models loaded', 'success');
                 return true;
@@ -399,6 +565,12 @@
             showCard('dashboard-card');
             document.getElementById('user-name-display').textContent = currentUser?.name || 'User';
             
+            // Load DL info from storage
+            const storedDLInfo = localStorage.getItem('sunday_dl_info');
+            if (storedDLInfo) {
+                try { verifiedDLInfo = JSON.parse(storedDLInfo); } catch {}
+            }
+            
             try {
                 const res = await fetch(`${API_BASE}/api/identity/status`, {
                     headers: { 'Authorization': `Bearer ${currentToken}` }
@@ -412,6 +584,7 @@
                     document.getElementById('verify-identity-btn').classList.add('hidden');
                     document.getElementById('claim-address-btn').classList.remove('hidden');
                     document.getElementById('identity-info').style.display = 'block';
+                    document.getElementById('address-status-box').classList.remove('hidden');
                 } else {
                     document.getElementById('identity-status').textContent = 'Not verified';
                     document.getElementById('identity-check').textContent = '⚠';
@@ -419,17 +592,231 @@
                     document.getElementById('verify-identity-btn').classList.remove('hidden');
                     document.getElementById('claim-address-btn').classList.add('hidden');
                     document.getElementById('identity-info').style.display = 'none';
+                    document.getElementById('address-status-box').classList.add('hidden');
                 }
             } catch (e) {
                 log('Could not fetch status', 'error');
+            }
+
+            // Check for claimed addresses
+            try {
+                const claimsRes = await fetch(`${API_BASE}/api/claim/my-claims`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const claimsData = await claimsRes.json();
+                
+                if (claimsData.count > 0) {
+                    const claim = claimsData.claims[0];
+                    document.getElementById('address-status').textContent = 'Claimed';
+                    document.getElementById('address-check').textContent = '✓';
+                    document.getElementById('address-check').style.color = 'var(--success)';
+                    document.getElementById('claim-address-btn').classList.add('hidden');
+                    document.getElementById('cpid-display-card').classList.remove('hidden');
+                    document.getElementById('user-cpid').textContent = claim.cryptoPropertyId;
+                }
+            } catch (e) {
+                // Claims endpoint might not exist yet
             }
         }
 
         function goToDashboard() { showDashboard(); }
 
+        // ═══════════════════════════════════════════════════════════════════
+        // ADDRESS CLAIMING
+        // ═══════════════════════════════════════════════════════════════════
         function startAddressClaim() {
-            alert('Address Claiming coming soon!');
-            log('Address claim feature coming soon', 'info');
+            log('Starting address claim flow...', 'info');
+            showCard('claim-address-card');
+            
+            // Pre-fill from DL if available
+            if (verifiedDLInfo?.address) {
+                document.getElementById('dl-address-preview').classList.remove('hidden');
+                document.getElementById('dl-address-text').textContent = verifiedDLInfo.address;
+            }
+        }
+
+        function useDLAddress() {
+            if (!verifiedDLInfo?.address) return;
+            
+            // Parse the DL address and fill fields
+            const addr = verifiedDLInfo.address;
+            // Simple parsing - might need adjustment based on format
+            const parts = addr.split(',').map(p => p.trim());
+            
+            if (parts.length >= 1) {
+                document.getElementById('claim-street').value = parts[0];
+            }
+            if (parts.length >= 2) {
+                // City and state/zip
+                const cityStateZip = parts[1].trim();
+                const match = cityStateZip.match(/(.+?)\s+([A-Z]{2})\s*(\d{5})?/i);
+                if (match) {
+                    document.getElementById('claim-city').value = match[1].trim();
+                    document.getElementById('claim-state').value = match[2].toUpperCase();
+                    if (match[3]) document.getElementById('claim-zip').value = match[3];
+                } else {
+                    document.getElementById('claim-city').value = cityStateZip;
+                }
+            }
+            
+            log('Address fields populated from DL', 'success');
+        }
+
+        async function lookupAddress() {
+            const street = document.getElementById('claim-street').value.trim();
+            const unit = document.getElementById('claim-unit').value.trim();
+            const city = document.getElementById('claim-city').value.trim();
+            const state = document.getElementById('claim-state').value.trim().toUpperCase();
+            const postalCode = document.getElementById('claim-zip').value.trim();
+
+            if (!street || !city || !state || !postalCode) {
+                showError('claim-error', 'Please fill in all required fields');
+                return;
+            }
+
+            hideError('claim-error');
+            log('Looking up address...', 'info');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/addresses/lookup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ street, unit, city, state, postalCode })
+                });
+
+                const data = await res.json();
+                
+                if (data.address.isClaimed) {
+                    showError('claim-error', 'This address has already been claimed by another user.');
+                    return;
+                }
+
+                // Store address info for claiming
+                pendingAddressId = data.address.id;
+                
+                // Show verification options
+                const fullAddress = `${street}${unit ? ', ' + unit : ''}\n${city}, ${state} ${postalCode}`;
+                document.getElementById('confirm-address-text').textContent = fullAddress;
+                
+                // Check if DL address matches
+                const dlMatches = checkDLAddressMatch(street, city, state, postalCode);
+                if (dlMatches) {
+                    document.getElementById('verify-dl').classList.add('selected');
+                    document.getElementById('verify-dl').querySelector('.option-desc').textContent = '✓ Address matches your verified DL (instant)';
+                    selectedVerifyMethod = 'dl';
+                    document.getElementById('proceed-verify-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('verify-dl').style.opacity = '0.5';
+                    document.getElementById('verify-dl').style.pointerEvents = 'none';
+                    document.getElementById('verify-dl').querySelector('.option-desc').textContent = '✗ Address does not match your DL';
+                }
+
+                showCard('claim-verify-card');
+                log(`Address found: ${data.cpid}`, 'success');
+
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                showError('claim-error', 'Failed to lookup address. Please try again.');
+            }
+        }
+
+        function checkDLAddressMatch(street, city, state, zip) {
+            if (!verifiedDLInfo?.address) return false;
+            
+            const dlAddr = verifiedDLInfo.address.toLowerCase();
+            const inputAddr = `${street} ${city} ${state} ${zip}`.toLowerCase();
+            
+            // Simple fuzzy match - check if key parts are present
+            const streetNum = street.match(/^\d+/)?.[0];
+            const streetName = street.replace(/^\d+\s*/, '').split(' ')[0].toLowerCase();
+            
+            return dlAddr.includes(streetNum) && 
+                   dlAddr.includes(streetName) && 
+                   dlAddr.includes(city.toLowerCase());
+        }
+
+        function selectVerifyMethod(method) {
+            if (method === 'dl' && document.getElementById('verify-dl').style.opacity === '0.5') {
+                return; // DL option disabled
+            }
+
+            selectedVerifyMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.verification-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.getElementById(`verify-${method}`).classList.add('selected');
+            document.getElementById('proceed-verify-btn').classList.remove('hidden');
+            
+            log(`Selected verification method: ${method}`, 'info');
+        }
+
+        async function proceedWithVerification() {
+            if (!selectedVerifyMethod || !pendingAddressId) return;
+
+            if (selectedVerifyMethod === 'dl') {
+                // Instant verification - DL already verified
+                await claimAddress();
+            } else {
+                // TODO: Implement deed/utility upload
+                alert(`${selectedVerifyMethod === 'deed' ? 'Deed' : 'Utility bill'} verification coming soon!`);
+            }
+        }
+
+        async function claimAddress() {
+            showCard('claim-processing-card');
+            updateClaimProgress(20, 'Verifying ownership...');
+
+            try {
+                updateClaimProgress(50, 'Generating Crypto-Property-ID...');
+
+                const res = await fetch(`${API_BASE}/api/claim`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ addressId: pendingAddressId })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Failed to claim address');
+                }
+
+                updateClaimProgress(100, 'Complete!');
+
+                // Show success
+                document.getElementById('new-cpid').textContent = data.claim.cryptoPropertyId;
+                document.getElementById('claimed-address').textContent = 
+                    `${data.claim.street}, ${data.claim.city}, ${data.claim.state} ${data.claim.postalCode}`;
+                document.getElementById('claimed-at').textContent = new Date(data.claim.claimedAt).toLocaleString();
+
+                log(`✓ Address claimed! CPiD: ${data.claim.cryptoPropertyId}`, 'success');
+
+                setTimeout(() => showCard('claim-success-card'), 500);
+
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                alert(`Failed to claim address: ${error.message}`);
+                showDashboard();
+            }
+        }
+
+        function backToAddressEntry() {
+            showCard('claim-address-card');
+        }
+
+        function cancelAddressClaim() {
+            pendingAddressId = null;
+            selectedVerifyMethod = null;
+            showDashboard();
+            log('Address claim cancelled', 'info');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -644,7 +1031,6 @@
         async function startIdentityVerification() {
             log('Starting identity verification...', 'info');
             showCard('verify-dl-card');
-            
             try {
                 dlStream = await startCamera('dl-video', 'environment');
                 log('Camera ready for DL scan', 'success');
@@ -677,7 +1063,6 @@
         async function confirmDL() {
             log('DL confirmed, starting selfie...', 'info');
             showCard('verify-selfie-card');
-            
             try {
                 selfieStream = await startCamera('selfie-video', 'user');
                 log('Camera ready for selfie', 'success');
@@ -712,12 +1097,10 @@
             showCard('verify-processing-card');
             
             try {
-                // Step 1: Load face-api models
                 updateProgress(10, 'Loading face detection...');
                 const modelsLoaded = await loadFaceApi();
                 if (!modelsLoaded) throw new Error('Could not load face detection');
                 
-                // Step 2: Extract DL text with Tesseract
                 updateProgress(25, 'Reading driver\'s license...');
                 log('Running OCR on DL...', 'info');
                 
@@ -732,18 +1115,14 @@
                 const dlText = ocrResult.data.text;
                 log(`OCR complete: ${dlText.length} chars extracted`, 'success');
                 
-                // Parse DL info from text
                 const dlInfo = parseDLText(dlText);
                 log(`Parsed: ${dlInfo.name || 'Name not found'}`, 'info');
                 
-                // Step 3: Detect faces
                 updateProgress(55, 'Detecting faces...');
                 
-                // Create image elements for face-api
                 const dlImg = await createImageElement(dlImageData);
                 const selfieImg = await createImageElement(selfieImageData);
                 
-                // Detect face in DL
                 updateProgress(65, 'Analyzing DL photo...');
                 const dlDetection = await faceapi
                     .detectSingleFace(dlImg, new faceapi.TinyFaceDetectorOptions())
@@ -755,7 +1134,6 @@
                 }
                 log('Face detected in DL', 'success');
                 
-                // Detect face in selfie
                 updateProgress(80, 'Analyzing selfie...');
                 const selfieDetection = await faceapi
                     .detectSingleFace(selfieImg, new faceapi.TinyFaceDetectorOptions())
@@ -767,14 +1145,9 @@
                 }
                 log('Face detected in selfie', 'success');
                 
-                // Step 4: Compare faces
                 updateProgress(90, 'Comparing faces...');
-                const distance = faceapi.euclideanDistance(
-                    dlDetection.descriptor,
-                    selfieDetection.descriptor
-                );
+                const distance = faceapi.euclideanDistance(dlDetection.descriptor, selfieDetection.descriptor);
                 
-                // Distance < 0.6 is typically considered a match
                 const confidence = Math.round((1 - distance) * 100);
                 const isMatch = distance < 0.6;
                 
@@ -784,7 +1157,6 @@
                     throw new Error(`Face verification failed. Confidence: ${confidence}%. Please ensure good lighting and try again.`);
                 }
                 
-                // Step 5: Save verification to backend
                 updateProgress(95, 'Saving verification...');
                 
                 const saveRes = await fetch(`${API_BASE}/api/identity/save-verification`, {
@@ -803,11 +1175,9 @@
                 });
                 
                 if (!saveRes.ok) {
-                    // Even if save fails, local verification passed
                     log('Warning: Could not save to server, but verification passed locally', 'info');
                 }
                 
-                // Success!
                 updateProgress(100, 'Complete!');
                 
                 verifiedDLInfo = dlInfo;
@@ -831,10 +1201,6 @@
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        // HELPER FUNCTIONS
-        // ═══════════════════════════════════════════════════════════════════
-        
         function createImageElement(dataUrl) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -846,16 +1212,10 @@
         
         function parseDLText(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+            let name = '', address = '', dob = '';
             
-            let name = '';
-            let address = '';
-            let dob = '';
-            
-            // Look for common DL patterns
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].toUpperCase();
-                
-                // Name patterns
                 if (line.includes('LN ') || line.includes('LAST')) {
                     const nextLine = lines[i + 1];
                     if (nextLine) name = nextLine;
@@ -864,27 +1224,20 @@
                     const nextLine = lines[i + 1];
                     if (nextLine) name = nextLine + ' ' + name;
                 }
-                
-                // DOB patterns
                 if (line.includes('DOB') || line.includes('BIRTH')) {
                     const dobMatch = line.match(/\d{2}[\/\-]\d{2}[\/\-]\d{4}/);
                     if (dobMatch) dob = dobMatch[0];
                 }
-                
-                // Address patterns - look for street numbers
                 if (/^\d+\s+\w+/.test(lines[i]) && !lines[i].match(/^\d{2}[\/\-]/)) {
                     address = lines[i];
-                    // Check if next line is city/state
                     if (lines[i + 1] && /[A-Z]{2}\s+\d{5}/.test(lines[i + 1].toUpperCase())) {
                         address += ', ' + lines[i + 1];
                     }
                 }
             }
             
-            // If we didn't find structured name, look for any name-like text
             if (!name) {
                 for (const line of lines) {
-                    // Look for lines that look like names (2-3 words, all letters)
                     if (/^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(line)) {
                         name = line;
                         break;
@@ -927,7 +1280,7 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday v5 - On-Device Verification', 'info');
+            log('Sunday v6 - Address Claiming', 'info');
             detectDevice();
             checkExistingSession();
         });
