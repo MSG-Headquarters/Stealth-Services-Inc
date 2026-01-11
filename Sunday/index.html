@@ -3,462 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunday | Passwordless Identity</title>
+    <title>Sunday | Your Digital Mailbox</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
-            --bg-gradient-start: #e8f4f8;
-            --bg-gradient-end: #d4e8d4;
-            --card-bg: #ffffff;
+            --bg-light: #F8FAFC;
+            --bg-white: #FFFFFF;
             --primary: #2B9EB3;
             --primary-dark: #237a8a;
             --success: #10B981;
             --warning: #F59E0B;
             --error: #EF4444;
-            --text-primary: #1a1a2e;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; }
-        .logo-icon { width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .logo-text { font-size: 32px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; }
-        .subtitle { color: var(--text-secondary); font-size: 16px; }
-        .live-badge { display: inline-block; background: var(--success); color: white; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-        .card { background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); padding: 28px; width: 100%; max-width: 440px; margin-bottom: 20px; }
-        .card-title { font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-        .card-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-light); color: var(--text-primary); min-height: 100vh; }
+        
+        /* Auth Screens */
+        .auth-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #e8f4f8 0%, #d4e8d4 100%); }
+        .auth-card { background: var(--bg-white); border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 32px; width: 100%; max-width: 400px; }
+        .auth-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+        .auth-logo-icon { width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .auth-logo-text { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+        .auth-title { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 8px; }
+        .auth-subtitle { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 24px; }
+        
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
-        .input-field { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-family: inherit; transition: all 0.2s; }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(43, 158, 179, 0.1); }
+        .input-field { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-family: inherit; }
+        .input-field:focus { outline: none; border-color: var(--primary); }
         .input-row { display: flex; gap: 12px; }
         .input-row .input-group { flex: 1; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); }
-        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
         .btn-success { background: var(--success); color: white; }
         .btn-warning { background: var(--warning); color: white; }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
-        .status-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+        
+        .error-box { background: rgba(239,68,68,0.1); border-left: 4px solid var(--error); padding: 12px; margin-top: 16px; color: var(--error); font-size: 14px; border-radius: 0 8px 8px 0; }
         .hidden { display: none !important; }
-        .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; color: var(--error); font-size: 14px; }
-        .info-box { background: rgba(43, 158, 179, 0.1); border-left: 4px solid var(--primary); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; }
-        .info-box-title { font-weight: 600; color: var(--primary); margin-bottom: 6px; font-size: 14px; }
-        .info-box-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
-        .device-info { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f8fafc; border-radius: 10px; margin-bottom: 16px; }
-        .device-icon { font-size: 28px; }
-        .device-details { flex: 1; }
-        .device-name { font-weight: 600; color: var(--text-primary); font-size: 14px; }
-        .device-type { font-size: 12px; color: var(--text-secondary); }
-        .credential-display { background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%); border-radius: 14px; padding: 20px; color: white; margin-top: 16px; }
-        .credential-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); margin-bottom: 4px; }
-        .credential-value { font-family: 'SF Mono', monospace; font-size: 12px; color: white; word-break: break-all; margin-bottom: 14px; }
-        .cpid-display { font-size: 18px; font-weight: 700; color: #10B981; margin-bottom: 14px; letter-spacing: 1px; }
-        .log-container { background: #f8fafc; border-radius: 10px; padding: 14px; max-height: 200px; overflow-y: auto; }
-        .log-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .log-entry { font-family: 'SF Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; gap: 6px; }
-        .log-entry:last-child { border-bottom: none; }
-        .log-time { color: var(--text-secondary); flex-shrink: 0; }
-        .log-message { color: var(--text-primary); word-break: break-word; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--error); }
-        .log-info { color: var(--primary); }
+        
+        /* Dashboard Layout */
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--bg-white); border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .sidebar-logo { width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .sidebar-title h1 { font-size: 18px; font-weight: 700; }
+        .sidebar-title p { font-size: 11px; color: var(--text-muted); }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-section-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; color: var(--text-secondary); text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.15s; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-light); color: var(--text-primary); }
+        .nav-item.active { background: rgba(43,158,179,0.1); color: var(--primary); font-weight: 600; }
+        .nav-icon { font-size: 18px; }
+        .nav-badge { background: var(--error); color: white; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-left: auto; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+        .user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-light); border-radius: 10px; }
+        .user-avatar { width: 36px; height: 36px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .user-details { flex: 1; }
+        .user-name { font-size: 14px; font-weight: 600; }
+        .user-status { font-size: 11px; color: var(--success); }
+        
+        .main-content { flex: 1; margin-left: 260px; }
+        .topbar { height: 64px; background: var(--bg-white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+        .topbar-title { font-size: 20px; font-weight: 700; }
+        .topbar-actions { display: flex; gap: 12px; }
+        
+        .content-area { padding: 32px; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-label { font-size: 13px; color: var(--text-muted); }
+        
+        /* Message List */
+        .message-list { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .message-list-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .message-list-title { font-size: 16px; font-weight: 600; }
+        .message-item { display: flex; align-items: start; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .message-item:hover { background: var(--bg-light); }
+        .message-item.unread { background: rgba(43,158,179,0.05); }
+        .message-item.unread .message-subject { font-weight: 600; }
+        .message-unread-dot { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+        .message-unread-dot.read { background: transparent; }
+        .message-content { flex: 1; min-width: 0; }
+        .message-subject { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+        .message-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message-from { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+        .message-meta { text-align: right; flex-shrink: 0; }
+        .message-date { font-size: 12px; color: var(--text-muted); }
+        .message-address { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state-icon { font-size: 64px; margin-bottom: 16px; }
+        .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        
+        /* Message View */
+        .message-view { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 32px; }
+        .message-view-header { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .message-view-subject { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+        .message-view-meta { display: flex; gap: 24px; font-size: 14px; color: var(--text-secondary); }
+        .message-view-body { font-size: 16px; line-height: 1.7; color: var(--text-primary); }
+        
+        /* Compose */
+        .compose-form { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+        .compose-form textarea { width: 100%; min-height: 200px; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit; resize: vertical; }
+        .compose-form textarea:focus { outline: none; border-color: var(--primary); }
+        
+        /* Address Cards */
+        .address-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .address-card { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .address-card-header { display: flex; align-items: start; justify-content: space-between; margin-bottom: 12px; }
+        .address-card-icon { font-size: 24px; }
+        .address-card-badge { font-size: 11px; padding: 4px 10px; border-radius: 100px; background: rgba(16,185,129,0.1); color: var(--success); }
+        .address-card-street { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .address-card-city { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+        .address-card-cpid { font-family: monospace; font-size: 12px; color: var(--primary); background: rgba(43,158,179,0.1); padding: 8px 12px; border-radius: 8px; }
+        
+        /* Camera */
         .camera-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
         .camera-video { width: 100%; height: 100%; object-fit: cover; }
-        .camera-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .camera-frame { border: 3px dashed rgba(255,255,255,0.5); border-radius: 10px; width: 85%; height: 60%; }
         .camera-frame.selfie { width: 60%; height: 75%; border-radius: 50%; }
         .capture-preview { width: 100%; border-radius: 12px; margin-bottom: 16px; }
-        .step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .step { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
-        .step.active { background: var(--primary); }
-        .step.done { background: var(--success); }
-        .verification-status { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border-radius: 10px; margin-bottom: 12px; }
-        .verification-status .icon { font-size: 20px; }
-        .verification-status .text { flex: 1; }
-        .verification-status .label { font-size: 13px; color: var(--text-secondary); }
-        .verification-status .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
         .progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 16px 0; }
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
-        .verification-option { display: flex; align-items: center; gap: 12px; padding: 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 12px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .verification-option:hover { border-color: var(--primary); background: rgba(43, 158, 179, 0.05); }
-        .verification-option.selected { border-color: var(--primary); background: rgba(43, 158, 179, 0.1); }
-        .verification-option .option-icon { font-size: 28px; }
-        .verification-option .option-details { flex: 1; }
-        .verification-option .option-title { font-weight: 600; color: var(--text-primary); font-size: 14px; }
-        .verification-option .option-desc { font-size: 12px; color: var(--text-secondary); }
-        .address-preview { background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-        .address-preview-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; }
-        .address-preview-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
-        .claim-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 14px; padding: 20px; color: white; margin-bottom: 16px; }
-        .claim-card-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; opacity: 0.9; }
-        .claim-card-cpid { font-family: 'SF Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 1px; }
-        .back-link { margin-top: 16px; text-align: center; }
-        .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
-        @media (max-width: 480px) { body { padding: 20px 16px; } .card { padding: 20px; } }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .address-grid { grid-template-columns: 1fr; }
+            .topbar { padding: 0 16px; }
+            .content-area { padding: 16px; }
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon">📬</div>
-            <span class="logo-text">SUNDAY</span>
-        </div>
-        <p class="subtitle">Passwordless Identity for the Internet</p>
-        <span class="live-badge">🔴 LIVE</span>
-    </header>
-
-    <!-- Registration Card -->
-    <div class="card" id="registration-card">
-        <h2 class="card-title">Create Your Sunday Identity</h2>
-        <p class="card-subtitle">Use your device's biometric — Face ID, Touch ID, or fingerprint</p>
-        <div id="device-detected" class="device-info">
-            <span class="device-icon" id="device-icon">🔍</span>
-            <div class="device-details">
-                <div class="device-name" id="device-name">Detecting device...</div>
-                <div class="device-type" id="device-type">Checking WebAuthn support</div>
+    <!-- AUTH: Registration -->
+    <div class="auth-container" id="screen-register">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
             </div>
-        </div>
-        <div class="input-group">
-            <label class="input-label">Display Name</label>
-            <input type="text" class="input-field" id="displayName" placeholder="Enter your name">
-        </div>
-        <div class="input-group">
-            <label class="input-label">Phone Number</label>
-            <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567">
-        </div>
-        <button class="btn btn-primary" onclick="startRegistration()">
-            <span>🔐</span> Register with Biometric
-        </button>
-        <button class="btn btn-outline" onclick="showLogin()">Already registered? Sign in</button>
-        <div id="register-error" class="error-box hidden"></div>
-    </div>
-
-    <!-- Login Card -->
-    <div class="card hidden" id="login-card">
-        <h2 class="card-title">Welcome Back</h2>
-        <p class="card-subtitle">Sign in with your biometric</p>
-        <button class="btn btn-primary" onclick="startLogin()">
-            <span>👆</span> Sign in with Face ID
-        </button>
-        <button class="btn btn-outline" onclick="showRegister()">Need an account? Register</button>
-        <div id="login-error" class="error-box hidden"></div>
-    </div>
-
-    <!-- Dashboard Card -->
-    <div class="card hidden" id="dashboard-card">
-        <span class="status-badge status-success">✓ Authenticated</span>
-        <h2 class="card-title">Welcome, <span id="user-name-display">User</span>!</h2>
-        
-        <div class="verification-status">
-            <span class="icon">🔐</span>
-            <div class="text">
-                <div class="label">Passkey</div>
-                <div class="value">Verified</div>
-            </div>
-            <span style="color: var(--success);">✓</span>
-        </div>
-        
-        <div class="verification-status" id="identity-status-box">
-            <span class="icon">🪪</span>
-            <div class="text">
-                <div class="label">Identity</div>
-                <div class="value" id="identity-status">Not verified</div>
-            </div>
-            <span id="identity-check" style="color: var(--warning);">⚠</span>
-        </div>
-
-        <div class="verification-status hidden" id="address-status-box">
-            <span class="icon">🏠</span>
-            <div class="text">
-                <div class="label">Address</div>
-                <div class="value" id="address-status">Not claimed</div>
-            </div>
-            <span id="address-check" style="color: var(--warning);">⚠</span>
-        </div>
-        
-        <button class="btn btn-warning hidden" id="verify-identity-btn" onclick="startIdentityVerification()">
-            <span>📷</span> Verify Identity
-        </button>
-
-        <button class="btn btn-primary hidden" id="claim-address-btn" onclick="startAddressClaim()">
-            <span>🏠</span> Claim Your Address
-        </button>
-
-        <!-- Show claimed CPiD if exists -->
-        <div class="claim-card hidden" id="cpid-display-card">
-            <div class="claim-card-title">Your Crypto-Property-ID</div>
-            <div class="claim-card-cpid" id="user-cpid">—</div>
-        </div>
-        
-        <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
-
-        <div class="info-box" id="identity-info" style="display: none;">
-            <div class="info-box-title">🎉 Identity Verified</div>
-            <div class="info-box-text">
-                Your Sunday identity is verified. Claim your address to receive secure digital mail.
-            </div>
-        </div>
-    </div>
-
-    <!-- Address Claim - Step 1: Enter/Confirm Address -->
-    <div class="card hidden" id="claim-address-card">
-        <div class="step-indicator">
-            <div class="step active"></div>
-            <div class="step"></div>
-            <div class="step"></div>
-        </div>
-        <h2 class="card-title">Claim Your Address</h2>
-        <p class="card-subtitle">Enter the address you want to claim</p>
-
-        <div class="address-preview hidden" id="dl-address-preview">
-            <div class="address-preview-title">📋 Address from your DL</div>
-            <div class="address-preview-text" id="dl-address-text">—</div>
-            <button class="btn btn-outline" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button>
-        </div>
-        
-        <div class="input-group">
-            <label class="input-label">Street Address</label>
-            <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
-        </div>
-        <div class="input-group">
-            <label class="input-label">Unit/Apt (optional)</label>
-            <input type="text" class="input-field" id="claim-unit" placeholder="Apt 4B">
-        </div>
-        <div class="input-row">
+            <h2 class="auth-title">Create Your Account</h2>
+            <p class="auth-subtitle">Secure, passwordless identity</p>
             <div class="input-group">
-                <label class="input-label">City</label>
-                <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+                <label class="input-label">Display Name</label>
+                <input type="text" class="input-field" id="reg-name" placeholder="Your name">
             </div>
-            <div class="input-group" style="max-width: 100px;">
-                <label class="input-label">State</label>
-                <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+            <div class="input-group">
+                <label class="input-label">Phone Number</label>
+                <input type="tel" class="input-field" id="reg-phone" placeholder="+1 (555) 123-4567">
             </div>
+            <button class="btn btn-primary" onclick="startRegistration()">
+                <span>🔐</span> Register with Face ID
+            </button>
+            <button class="btn btn-outline" onclick="showScreen('login')">Already have an account? Sign in</button>
+            <div id="reg-error" class="error-box hidden"></div>
         </div>
-        <div class="input-group">
-            <label class="input-label">ZIP Code</label>
-            <input type="text" class="input-field" id="claim-zip" placeholder="33602" maxlength="10">
-        </div>
-
-        <button class="btn btn-primary" onclick="lookupAddress()">
-            <span>🔍</span> Look Up Address
-        </button>
-        <button class="btn btn-outline" onclick="cancelAddressClaim()">Cancel</button>
-        <div id="claim-error" class="error-box hidden"></div>
     </div>
 
-    <!-- Address Claim - Step 2: Verify Ownership -->
-    <div class="card hidden" id="claim-verify-card">
-        <div class="step-indicator">
-            <div class="step done"></div>
-            <div class="step active"></div>
-            <div class="step"></div>
-        </div>
-        <h2 class="card-title">Verify Address Ownership</h2>
-        <p class="card-subtitle">How would you like to verify this address?</p>
-
-        <div class="address-preview">
-            <div class="address-preview-title">📍 Address to Claim</div>
-            <div class="address-preview-text" id="confirm-address-text">—</div>
-        </div>
-
-        <div class="verification-option" id="verify-dl" onclick="selectVerifyMethod('dl')">
-            <span class="option-icon">🪪</span>
-            <div class="option-details">
-                <div class="option-title">Driver's License Match</div>
-                <div class="option-desc">Address matches your verified DL (instant)</div>
+    <!-- AUTH: Login -->
+    <div class="auth-container hidden" id="screen-login">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
             </div>
-            <span style="color: var(--success);">✓</span>
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in with your biometric</p>
+            <button class="btn btn-primary" onclick="startLogin()">
+                <span>👆</span> Sign in with Face ID
+            </button>
+            <button class="btn btn-outline" onclick="showScreen('register')">Need an account? Register</button>
+            <div id="login-error" class="error-box hidden"></div>
         </div>
+    </div>
 
-        <div class="verification-option" id="verify-deed" onclick="selectVerifyMethod('deed')">
-            <span class="option-icon">📜</span>
-            <div class="option-details">
-                <div class="option-title">Property Deed</div>
-                <div class="option-desc">Upload deed showing ownership</div>
+    <!-- AUTH: Identity Verification -->
+    <div class="auth-container hidden" id="screen-verify-identity">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
             </div>
-        </div>
-
-        <div class="verification-option" id="verify-utility" onclick="selectVerifyMethod('utility')">
-            <span class="option-icon">💡</span>
-            <div class="option-details">
-                <div class="option-title">Utility Bill</div>
-                <div class="option-desc">Upload recent bill with your name</div>
+            <h2 class="auth-title">Verify Your Identity</h2>
+            <p class="auth-subtitle" id="verify-subtitle">Scan your driver's license</p>
+            
+            <div id="verify-dl-section">
+                <div class="camera-container">
+                    <video id="dl-video" class="camera-video" autoplay playsinline></video>
+                    <div class="camera-overlay"><div class="camera-frame"></div></div>
+                </div>
+                <img id="dl-preview" class="capture-preview hidden">
+                <button class="btn btn-primary" id="btn-capture-dl" onclick="captureDL()">📸 Capture DL</button>
+                <button class="btn btn-outline hidden" id="btn-retake-dl" onclick="retakeDL()">Retake</button>
+                <button class="btn btn-success hidden" id="btn-confirm-dl" onclick="confirmDL()">✓ Continue to Selfie</button>
             </div>
-        </div>
-
-        <button class="btn btn-primary hidden" id="proceed-verify-btn" onclick="proceedWithVerification()">
-            <span>→</span> Continue
-        </button>
-        <button class="btn btn-outline" onclick="backToAddressEntry()">Back</button>
-    </div>
-
-    <!-- Address Claim - Step 3: Processing/Success -->
-    <div class="card hidden" id="claim-processing-card">
-        <div class="step-indicator">
-            <div class="step done"></div>
-            <div class="step done"></div>
-            <div class="step active"></div>
-        </div>
-        <h2 class="card-title">Claiming Address...</h2>
-        <p class="card-subtitle">Generating your Crypto-Property-ID</p>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="claim-progress-fill" style="width: 0%"></div>
-        </div>
-        <p id="claim-processing-status" style="text-align: center; color: var(--text-secondary); font-size: 14px;">Verifying ownership...</p>
-    </div>
-
-    <!-- Address Claim - Success -->
-    <div class="card hidden" id="claim-success-card">
-        <div style="text-align: center; padding: 20px 0;">
-            <div style="font-size: 64px; margin-bottom: 16px;">🏠</div>
-            <h2 class="card-title">Address Claimed!</h2>
-            <p class="card-subtitle">Your Crypto-Property-ID is ready</p>
-        </div>
-        
-        <div class="credential-display">
-            <div class="credential-label">Crypto-Property-ID (CPiD)</div>
-            <div class="cpid-display" id="new-cpid">—</div>
-            <div class="credential-label">Address</div>
-            <div class="credential-value" id="claimed-address">—</div>
-            <div class="credential-label">Claimed At</div>
-            <div class="credential-value" id="claimed-at">—</div>
-        </div>
-
-        <div class="info-box">
-            <div class="info-box-title">🎉 What's Next?</div>
-            <div class="info-box-text">
-                Anyone can now send secure digital mail to your address. You'll receive notifications when messages arrive.
+            
+            <div id="verify-selfie-section" class="hidden">
+                <div class="camera-container">
+                    <video id="selfie-video" class="camera-video" autoplay playsinline></video>
+                    <div class="camera-overlay"><div class="camera-frame selfie"></div></div>
+                </div>
+                <img id="selfie-preview" class="capture-preview hidden">
+                <button class="btn btn-primary" id="btn-capture-selfie" onclick="captureSelfie()">🤳 Take Selfie</button>
+                <button class="btn btn-outline hidden" id="btn-retake-selfie" onclick="retakeSelfie()">Retake</button>
+                <button class="btn btn-success hidden" id="btn-confirm-selfie" onclick="confirmSelfie()">✓ Verify Identity</button>
             </div>
-        </div>
-        
-        <button class="btn btn-primary" onclick="goToDashboard()">
-            <span>🏠</span> Go to Dashboard
-        </button>
-    </div>
-
-    <!-- Identity Verification Cards (keeping existing) -->
-    <div class="card hidden" id="verify-dl-card">
-        <div class="step-indicator">
-            <div class="step active"></div>
-            <div class="step"></div>
-            <div class="step"></div>
-        </div>
-        <h2 class="card-title">Scan Driver's License</h2>
-        <p class="card-subtitle">Position your DL within the frame</p>
-        
-        <div class="camera-container" id="dl-camera-container">
-            <video id="dl-video" class="camera-video" autoplay playsinline></video>
-            <div class="camera-overlay">
-                <div class="camera-frame"></div>
+            
+            <div id="verify-processing-section" class="hidden" style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                <div class="progress-bar"><div class="progress-fill" id="verify-progress" style="width: 0%"></div></div>
+                <p id="verify-status" style="color: var(--text-muted);">Processing...</p>
             </div>
+            
+            <button class="btn btn-outline" onclick="skipVerification()" style="margin-top: 16px;">Skip for now</button>
         </div>
-        
-        <img id="dl-preview" class="capture-preview hidden" alt="DL Preview">
-        
-        <button class="btn btn-primary" id="capture-dl-btn" onclick="captureDL()">
-            <span>📸</span> Capture DL
-        </button>
-        <button class="btn btn-outline hidden" id="retake-dl-btn" onclick="retakeDL()">Retake Photo</button>
-        <button class="btn btn-success hidden" id="confirm-dl-btn" onclick="confirmDL()">
-            <span>✓</span> Looks Good, Continue
-        </button>
-        <button class="btn btn-outline" onclick="cancelVerification()">Cancel</button>
-        <div id="dl-error" class="error-box hidden"></div>
     </div>
 
-    <div class="card hidden" id="verify-selfie-card">
-        <div class="step-indicator">
-            <div class="step done"></div>
-            <div class="step active"></div>
-            <div class="step"></div>
-        </div>
-        <h2 class="card-title">Take a Selfie</h2>
-        <p class="card-subtitle">Position your face in the circle</p>
-        
-        <div class="camera-container" id="selfie-camera-container">
-            <video id="selfie-video" class="camera-video" autoplay playsinline></video>
-            <div class="camera-overlay">
-                <div class="camera-frame selfie"></div>
+    <!-- DASHBOARD -->
+    <div class="dashboard hidden" id="screen-dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">📬</div>
+                <div class="sidebar-title"><h1>SUNDAY</h1><p>Digital Mailbox</p></div>
             </div>
-        </div>
-        
-        <img id="selfie-preview" class="capture-preview hidden" alt="Selfie Preview">
-        
-        <button class="btn btn-primary" id="capture-selfie-btn" onclick="captureSelfie()">
-            <span>🤳</span> Take Selfie
-        </button>
-        <button class="btn btn-outline hidden" id="retake-selfie-btn" onclick="retakeSelfie()">Retake Photo</button>
-        <button class="btn btn-success hidden" id="confirm-selfie-btn" onclick="confirmSelfie()">
-            <span>✓</span> Looks Good, Verify
-        </button>
-        <button class="btn btn-outline" onclick="cancelVerification()">Cancel</button>
-        <div id="selfie-error" class="error-box hidden"></div>
-    </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-label">Mail</div>
+                    <div class="nav-item active" onclick="setTab('inbox')"><span class="nav-icon">📥</span> Inbox <span class="nav-badge" id="unread-badge">0</span></div>
+                    <div class="nav-item" onclick="setTab('sent')"><span class="nav-icon">📤</span> Sent</div>
+                    <div class="nav-item" onclick="setTab('compose')"><span class="nav-icon">✉️</span> Compose</div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Addresses</div>
+                    <div class="nav-item" onclick="setTab('addresses')"><span class="nav-icon">🏠</span> My Addresses</div>
+                    <div class="nav-item" onclick="setTab('claim')"><span class="nav-icon">➕</span> Claim Address</div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-label">Account</div>
+                    <div class="nav-item" onclick="setTab('settings')"><span class="nav-icon">⚙️</span> Settings</div>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">?</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">User</div>
+                        <div class="user-status" id="user-status">● Verified</div>
+                    </div>
+                </div>
+                <button class="btn btn-ghost" style="width: 100%; margin-top: 12px;" onclick="signOut()">Sign Out</button>
+            </div>
+        </aside>
 
-    <div class="card hidden" id="verify-processing-card">
-        <div class="step-indicator">
-            <div class="step done"></div>
-            <div class="step done"></div>
-            <div class="step active"></div>
-        </div>
-        <h2 class="card-title">Verifying Identity...</h2>
-        <p class="card-subtitle">Processing on your device</p>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-        </div>
-        <p id="processing-status" style="text-align: center; color: var(--text-secondary); font-size: 14px;">Initializing...</p>
-    </div>
+        <main class="main-content">
+            <header class="topbar">
+                <h1 class="topbar-title" id="topbar-title">Inbox</h1>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary" onclick="setTab('compose')">✉️ Compose</button>
+                </div>
+            </header>
 
-    <div class="card hidden" id="verify-success-card">
-        <div style="text-align: center; padding: 20px 0;">
-            <div style="font-size: 64px; margin-bottom: 16px;">✅</div>
-            <h2 class="card-title">Identity Verified!</h2>
-            <p class="card-subtitle">Your Sunday account is now fully verified</p>
-        </div>
-        
-        <div class="credential-display">
-            <div class="credential-label">Verified Name</div>
-            <div class="cpid-display" id="verified-name">—</div>
-            <div class="credential-label">Address on DL</div>
-            <div class="credential-value" id="verified-address">—</div>
-            <div class="credential-label">Face Match Confidence</div>
-            <div class="credential-value" id="verified-confidence">—</div>
-        </div>
-        
-        <button class="btn btn-primary" onclick="goToDashboard()">
-            <span>🏠</span> Go to Dashboard
-        </button>
-    </div>
+            <div class="content-area">
+                <!-- Stats -->
+                <div class="stats-grid" id="stats-section">
+                    <div class="stat-card"><div class="stat-icon">📥</div><div class="stat-value" id="stat-received">0</div><div class="stat-label">Received</div></div>
+                    <div class="stat-card"><div class="stat-icon">📤</div><div class="stat-value" id="stat-sent">0</div><div class="stat-label">Sent</div></div>
+                    <div class="stat-card"><div class="stat-icon">🏠</div><div class="stat-value" id="stat-addresses">0</div><div class="stat-label">Addresses</div></div>
+                    <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="stat-escrow">0</div><div class="stat-label">In Escrow</div></div>
+                </div>
 
-    <!-- Activity Log -->
-    <div class="card">
-        <div class="log-container">
-            <div class="log-title">Activity Log</div>
-            <div id="log"></div>
-        </div>
+                <!-- Tab Content -->
+                <div id="tab-inbox"></div>
+                <div id="tab-sent" class="hidden"></div>
+                <div id="tab-compose" class="hidden"></div>
+                <div id="tab-addresses" class="hidden"></div>
+                <div id="tab-claim" class="hidden"></div>
+                <div id="tab-settings" class="hidden"></div>
+                <div id="tab-message-view" class="hidden"></div>
+            </div>
+        </main>
     </div>
-
-    <div class="back-link"><a href="/">← Back to Stealth Services</a></div>
 
     <script>
         const API_BASE = 'https://sunday-platform.onrender.com';
@@ -466,394 +308,39 @@
         
         let currentToken = null;
         let currentUser = null;
-        let dlImageData = null;
-        let selfieImageData = null;
-        let dlStream = null;
-        let selfieStream = null;
         let verifiedDLInfo = null;
-        let faceApiLoaded = false;
-        let pendingAddressId = null;
-        let selectedVerifyMethod = null;
-
-        // ═══════════════════════════════════════════════════════════════════
-        // LOGGING
-        // ═══════════════════════════════════════════════════════════════════
-        function log(message, type = 'info') {
-            const logEl = document.getElementById('log');
-            const time = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="log-time">${time}</span><span class="log-message log-${type}">${message}</span>`;
-            logEl.insertBefore(entry, logEl.firstChild);
-            console.log(`[${type}] ${message}`);
-        }
-
-        function updateProgress(percent, status) {
-            document.getElementById('progress-fill').style.width = `${percent}%`;
-            document.getElementById('processing-status').textContent = status;
-        }
-
-        function updateClaimProgress(percent, status) {
-            document.getElementById('claim-progress-fill').style.width = `${percent}%`;
-            document.getElementById('claim-processing-status').textContent = status;
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // UI HELPERS
-        // ═══════════════════════════════════════════════════════════════════
-        function hideAllCards() {
-            document.querySelectorAll('.card').forEach(c => {
-                if (!c.querySelector('.log-container')) c.classList.add('hidden');
-            });
-        }
-
-        function showCard(id) {
-            hideAllCards();
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function showLogin() { showCard('login-card'); }
-        function showRegister() { showCard('registration-card'); }
+        let messages = [];
+        let claims = [];
+        let currentTab = 'inbox';
         
-        function showError(elementId, message) {
-            const el = document.getElementById(elementId);
-            el.textContent = message;
+        // Camera
+        let dlStream = null, selfieStream = null;
+        let dlImageData = null, selfieImageData = null;
+        let faceApiLoaded = false;
+
+        // ═══════════════════════════════════════════════════════════════════
+        // SCREENS
+        // ═══════════════════════════════════════════════════════════════════
+        function showScreen(screen) {
+            document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`screen-${screen}`).classList.remove('hidden');
+        }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
             el.classList.remove('hidden');
         }
 
-        function hideError(elementId) {
-            document.getElementById(elementId).classList.add('hidden');
-        }
-
-        function signOut() {
-            currentToken = null;
-            currentUser = null;
-            verifiedDLInfo = null;
-            localStorage.removeItem('sunday_token');
-            localStorage.removeItem('sunday_user');
-            localStorage.removeItem('sunday_dl_info');
-            showRegister();
-            log('Signed out', 'info');
+        function hideError(id) {
+            document.getElementById(id).classList.add('hidden');
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // FACE-API INITIALIZATION
+        // WEBAUTHN
         // ═══════════════════════════════════════════════════════════════════
-        async function loadFaceApi() {
-            if (faceApiLoaded) return true;
-            try {
-                log('Loading face detection models...', 'info');
-                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-                await Promise.all([
-                    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
-                ]);
-                faceApiLoaded = true;
-                log('Face detection models loaded', 'success');
-                return true;
-            } catch (e) {
-                log(`Failed to load face models: ${e.message}`, 'error');
-                return false;
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // DASHBOARD
-        // ═══════════════════════════════════════════════════════════════════
-        async function showDashboard() {
-            showCard('dashboard-card');
-            document.getElementById('user-name-display').textContent = currentUser?.name || 'User';
-            
-            // Load DL info from storage
-            const storedDLInfo = localStorage.getItem('sunday_dl_info');
-            if (storedDLInfo) {
-                try { verifiedDLInfo = JSON.parse(storedDLInfo); } catch {}
-            }
-            
-            try {
-                const res = await fetch(`${API_BASE}/api/identity/status`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
-                const status = await res.json();
-                
-                if (status.identity) {
-                    document.getElementById('identity-status').textContent = 'Verified';
-                    document.getElementById('identity-check').textContent = '✓';
-                    document.getElementById('identity-check').style.color = 'var(--success)';
-                    document.getElementById('verify-identity-btn').classList.add('hidden');
-                    document.getElementById('claim-address-btn').classList.remove('hidden');
-                    document.getElementById('identity-info').style.display = 'block';
-                    document.getElementById('address-status-box').classList.remove('hidden');
-                } else {
-                    document.getElementById('identity-status').textContent = 'Not verified';
-                    document.getElementById('identity-check').textContent = '⚠';
-                    document.getElementById('identity-check').style.color = 'var(--warning)';
-                    document.getElementById('verify-identity-btn').classList.remove('hidden');
-                    document.getElementById('claim-address-btn').classList.add('hidden');
-                    document.getElementById('identity-info').style.display = 'none';
-                    document.getElementById('address-status-box').classList.add('hidden');
-                }
-            } catch (e) {
-                log('Could not fetch status', 'error');
-            }
-
-            // Check for claimed addresses
-            try {
-                const claimsRes = await fetch(`${API_BASE}/api/claim/my-claims`, {
-                    headers: { 'Authorization': `Bearer ${currentToken}` }
-                });
-                const claimsData = await claimsRes.json();
-                
-                if (claimsData.count > 0) {
-                    const claim = claimsData.claims[0];
-                    document.getElementById('address-status').textContent = 'Claimed';
-                    document.getElementById('address-check').textContent = '✓';
-                    document.getElementById('address-check').style.color = 'var(--success)';
-                    document.getElementById('claim-address-btn').classList.add('hidden');
-                    document.getElementById('cpid-display-card').classList.remove('hidden');
-                    document.getElementById('user-cpid').textContent = claim.cryptoPropertyId;
-                }
-            } catch (e) {
-                // Claims endpoint might not exist yet
-            }
-        }
-
-        function goToDashboard() { showDashboard(); }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // ADDRESS CLAIMING
-        // ═══════════════════════════════════════════════════════════════════
-        function startAddressClaim() {
-            log('Starting address claim flow...', 'info');
-            showCard('claim-address-card');
-            
-            // Pre-fill from DL if available
-            if (verifiedDLInfo?.address) {
-                document.getElementById('dl-address-preview').classList.remove('hidden');
-                document.getElementById('dl-address-text').textContent = verifiedDLInfo.address;
-            }
-        }
-
-        function useDLAddress() {
-            if (!verifiedDLInfo?.address) return;
-            
-            // Parse the DL address and fill fields
-            const addr = verifiedDLInfo.address;
-            // Simple parsing - might need adjustment based on format
-            const parts = addr.split(',').map(p => p.trim());
-            
-            if (parts.length >= 1) {
-                document.getElementById('claim-street').value = parts[0];
-            }
-            if (parts.length >= 2) {
-                // City and state/zip
-                const cityStateZip = parts[1].trim();
-                const match = cityStateZip.match(/(.+?)\s+([A-Z]{2})\s*(\d{5})?/i);
-                if (match) {
-                    document.getElementById('claim-city').value = match[1].trim();
-                    document.getElementById('claim-state').value = match[2].toUpperCase();
-                    if (match[3]) document.getElementById('claim-zip').value = match[3];
-                } else {
-                    document.getElementById('claim-city').value = cityStateZip;
-                }
-            }
-            
-            log('Address fields populated from DL', 'success');
-        }
-
-        async function lookupAddress() {
-            const street = document.getElementById('claim-street').value.trim();
-            const unit = document.getElementById('claim-unit').value.trim();
-            const city = document.getElementById('claim-city').value.trim();
-            const state = document.getElementById('claim-state').value.trim().toUpperCase();
-            const postalCode = document.getElementById('claim-zip').value.trim();
-
-            if (!street || !city || !state || !postalCode) {
-                showError('claim-error', 'Please fill in all required fields');
-                return;
-            }
-
-            hideError('claim-error');
-            log('Looking up address...', 'info');
-
-            try {
-                const res = await fetch(`${API_BASE}/api/addresses/lookup`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentToken}`
-                    },
-                    body: JSON.stringify({ street, unit, city, state, postalCode })
-                });
-
-                const data = await res.json();
-                
-                if (data.address.isClaimed) {
-                    showError('claim-error', 'This address has already been claimed by another user.');
-                    return;
-                }
-
-                // Store address info for claiming
-                pendingAddressId = data.address.id;
-                
-                // Show verification options
-                const fullAddress = `${street}${unit ? ', ' + unit : ''}\n${city}, ${state} ${postalCode}`;
-                document.getElementById('confirm-address-text').textContent = fullAddress;
-                
-                // Check if DL address matches
-                const dlMatches = checkDLAddressMatch(street, city, state, postalCode);
-                if (dlMatches) {
-                    document.getElementById('verify-dl').classList.add('selected');
-                    document.getElementById('verify-dl').querySelector('.option-desc').textContent = '✓ Address matches your verified DL (instant)';
-                    selectedVerifyMethod = 'dl';
-                    document.getElementById('proceed-verify-btn').classList.remove('hidden');
-                } else {
-                    document.getElementById('verify-dl').style.opacity = '0.5';
-                    document.getElementById('verify-dl').style.pointerEvents = 'none';
-                    document.getElementById('verify-dl').querySelector('.option-desc').textContent = '✗ Address does not match your DL';
-                }
-
-                showCard('claim-verify-card');
-                log(`Address found: ${data.cpid}`, 'success');
-
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                showError('claim-error', 'Failed to lookup address. Please try again.');
-            }
-        }
-
-        function checkDLAddressMatch(street, city, state, zip) {
-            if (!verifiedDLInfo?.address) return false;
-            
-            const dlAddr = verifiedDLInfo.address.toLowerCase();
-            const inputAddr = `${street} ${city} ${state} ${zip}`.toLowerCase();
-            
-            // Simple fuzzy match - check if key parts are present
-            const streetNum = street.match(/^\d+/)?.[0];
-            const streetName = street.replace(/^\d+\s*/, '').split(' ')[0].toLowerCase();
-            
-            return dlAddr.includes(streetNum) && 
-                   dlAddr.includes(streetName) && 
-                   dlAddr.includes(city.toLowerCase());
-        }
-
-        function selectVerifyMethod(method) {
-            if (method === 'dl' && document.getElementById('verify-dl').style.opacity === '0.5') {
-                return; // DL option disabled
-            }
-
-            selectedVerifyMethod = method;
-            
-            // Update UI
-            document.querySelectorAll('.verification-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.getElementById(`verify-${method}`).classList.add('selected');
-            document.getElementById('proceed-verify-btn').classList.remove('hidden');
-            
-            log(`Selected verification method: ${method}`, 'info');
-        }
-
-        async function proceedWithVerification() {
-            if (!selectedVerifyMethod || !pendingAddressId) return;
-
-            if (selectedVerifyMethod === 'dl') {
-                // Instant verification - DL already verified
-                await claimAddress();
-            } else {
-                // TODO: Implement deed/utility upload
-                alert(`${selectedVerifyMethod === 'deed' ? 'Deed' : 'Utility bill'} verification coming soon!`);
-            }
-        }
-
-        async function claimAddress() {
-            showCard('claim-processing-card');
-            updateClaimProgress(20, 'Verifying ownership...');
-
-            try {
-                updateClaimProgress(50, 'Generating Crypto-Property-ID...');
-
-                const res = await fetch(`${API_BASE}/api/claim`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentToken}`
-                    },
-                    body: JSON.stringify({ addressId: pendingAddressId })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(data.message || 'Failed to claim address');
-                }
-
-                updateClaimProgress(100, 'Complete!');
-
-                // Show success
-                document.getElementById('new-cpid').textContent = data.claim.cryptoPropertyId;
-                document.getElementById('claimed-address').textContent = 
-                    `${data.claim.street}, ${data.claim.city}, ${data.claim.state} ${data.claim.postalCode}`;
-                document.getElementById('claimed-at').textContent = new Date(data.claim.claimedAt).toLocaleString();
-
-                log(`✓ Address claimed! CPiD: ${data.claim.cryptoPropertyId}`, 'success');
-
-                setTimeout(() => showCard('claim-success-card'), 500);
-
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                alert(`Failed to claim address: ${error.message}`);
-                showDashboard();
-            }
-        }
-
-        function backToAddressEntry() {
-            showCard('claim-address-card');
-        }
-
-        function cancelAddressClaim() {
-            pendingAddressId = null;
-            selectedVerifyMethod = null;
-            showDashboard();
-            log('Address claim cancelled', 'info');
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // DEVICE DETECTION
-        // ═══════════════════════════════════════════════════════════════════
-        async function detectDevice() {
-            const deviceIcon = document.getElementById('device-icon');
-            const deviceName = document.getElementById('device-name');
-            const deviceType = document.getElementById('device-type');
-
-            if (!window.PublicKeyCredential) {
-                deviceIcon.textContent = '❌';
-                deviceName.textContent = 'WebAuthn Not Supported';
-                deviceType.textContent = 'Use Safari, Chrome, or Firefox';
-                return;
-            }
-
-            let available = false;
-            try { available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); } catch {}
-
-            const ua = navigator.userAgent;
-            let icon = '💻', name = 'Desktop', type = 'Windows Hello';
-            if (/iPhone|iPad|iPod/.test(ua)) { icon = '📱'; name = 'iPhone/iPad'; type = 'Face ID / Touch ID'; }
-            else if (/Android/.test(ua)) { icon = '📱'; name = 'Android'; type = 'Fingerprint'; }
-            else if (/Mac/.test(ua)) { icon = '💻'; name = 'Mac'; type = 'Touch ID'; }
-
-            deviceIcon.textContent = icon;
-            deviceName.textContent = name;
-            deviceType.textContent = available ? `✓ ${type} Ready` : '⚠️ May need security key';
-            log(`Device: ${name}`, 'success');
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // WEBAUTHN HELPERS
-        // ═══════════════════════════════════════════════════════════════════
-        function base64URLToBuffer(base64url) {
-            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        function base64URLToBuffer(b64) {
+            const base64 = b64.replace(/-/g, '+').replace(/_/g, '/');
             const pad = base64.length % 4;
             const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
             const binary = atob(padded);
@@ -869,420 +356,581 @@
             return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        // REGISTRATION
-        // ═══════════════════════════════════════════════════════════════════
         async function startRegistration() {
-            const displayName = document.getElementById('displayName').value.trim() || 'Sunday User';
-            const phone = document.getElementById('phone').value.trim();
-            if (!phone) { showError('register-error', 'Please enter your phone number'); return; }
-            hideError('register-error');
-            log('Starting registration...', 'info');
+            const name = document.getElementById('reg-name').value.trim() || 'User';
+            const phone = document.getElementById('reg-phone').value.trim();
+            if (!phone) { showError('reg-error', 'Please enter phone number'); return; }
+            hideError('reg-error');
 
             try {
-                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, displayName })
+                const optRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, displayName: name })
                 });
-                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed');
-                const { options, userId } = await optionsRes.json();
-                log('Got challenge', 'success');
+                if (!optRes.ok) throw new Error((await optRes.json()).error);
+                const { options, userId } = await optRes.json();
 
-                const publicKeyOptions = {
-                    challenge: base64URLToBuffer(options.challenge),
-                    rp: { id: RP_ID, name: options.rp.name },
-                    user: { id: base64URLToBuffer(options.user.id), name: options.user.name, displayName: options.user.displayName },
-                    pubKeyCredParams: options.pubKeyCredParams,
-                    timeout: 60000,
-                    attestation: 'none',
-                    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required', requireResidentKey: true }
-                };
-
-                log('Prompting biometric...', 'info');
-                const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
-                log('✓ Biometric verified!', 'success');
-
-                const credentialJSON = {
-                    id: credential.id,
-                    rawId: bufferToBase64URL(credential.rawId),
-                    type: credential.type,
-                    response: {
-                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
-                        attestationObject: bufferToBase64URL(credential.response.attestationObject),
-                        transports: credential.response.getTransports ? credential.response.getTransports() : ['internal']
+                const cred = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: base64URLToBuffer(options.challenge),
+                        rp: { id: RP_ID, name: options.rp.name },
+                        user: { id: base64URLToBuffer(options.user.id), name: options.user.name, displayName: options.user.displayName },
+                        pubKeyCredParams: options.pubKeyCredParams,
+                        timeout: 60000, attestation: 'none',
+                        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required', requireResidentKey: true }
                     }
-                };
-
-                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, credential: credentialJSON })
                 });
-                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Verification failed');
-                const { token } = await verifyRes.json();
-                
+
+                const verRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        credential: {
+                            id: cred.id, rawId: bufferToBase64URL(cred.rawId), type: cred.type,
+                            response: {
+                                clientDataJSON: bufferToBase64URL(cred.response.clientDataJSON),
+                                attestationObject: bufferToBase64URL(cred.response.attestationObject),
+                                transports: cred.response.getTransports?.() || ['internal']
+                            }
+                        }
+                    })
+                });
+                if (!verRes.ok) throw new Error((await verRes.json()).error);
+                const { token } = await verRes.json();
+
                 currentToken = token;
-                currentUser = { name: displayName, phone };
+                currentUser = { name, phone };
                 localStorage.setItem('sunday_token', token);
                 localStorage.setItem('sunday_user', JSON.stringify(currentUser));
-                
-                log('✓ Registration complete!', 'success');
-                showDashboard();
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                showError('register-error', error.message);
+
+                // Check if identity verified
+                const status = await checkIdentityStatus();
+                if (!status.identity) {
+                    showScreen('verify-identity');
+                    startDLCamera();
+                } else {
+                    loadDashboard();
+                }
+            } catch (e) {
+                showError('reg-error', e.message);
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        // LOGIN
-        // ═══════════════════════════════════════════════════════════════════
         async function startLogin() {
             hideError('login-error');
-            log('Starting authentication...', 'info');
-
             try {
-                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
+                const optRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
                 });
-                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed');
-                const { options, challengeKey } = await optionsRes.json();
-                log('Got challenge', 'success');
+                if (!optRes.ok) throw new Error((await optRes.json()).error);
+                const { options, challengeKey } = await optRes.json();
 
-                const publicKeyOptions = {
-                    challenge: base64URLToBuffer(options.challenge),
-                    rpId: RP_ID,
-                    timeout: 60000,
-                    userVerification: 'required'
-                };
-
-                log('Prompting Face ID...', 'info');
-                const credential = await navigator.credentials.get({ publicKey: publicKeyOptions });
-                log('✓ Biometric verified!', 'success');
-
-                const credentialJSON = {
-                    id: credential.id,
-                    rawId: bufferToBase64URL(credential.rawId),
-                    type: credential.type,
-                    response: {
-                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
-                        authenticatorData: bufferToBase64URL(credential.response.authenticatorData),
-                        signature: bufferToBase64URL(credential.response.signature),
-                        userHandle: credential.response.userHandle ? bufferToBase64URL(credential.response.userHandle) : null
-                    }
-                };
-
-                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ challengeKey, credential: credentialJSON })
+                const cred = await navigator.credentials.get({
+                    publicKey: { challenge: base64URLToBuffer(options.challenge), rpId: RP_ID, timeout: 60000, userVerification: 'required' }
                 });
-                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Auth failed');
-                const { token, user } = await verifyRes.json();
-                
+
+                const verRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        challengeKey,
+                        credential: {
+                            id: cred.id, rawId: bufferToBase64URL(cred.rawId), type: cred.type,
+                            response: {
+                                clientDataJSON: bufferToBase64URL(cred.response.clientDataJSON),
+                                authenticatorData: bufferToBase64URL(cred.response.authenticatorData),
+                                signature: bufferToBase64URL(cred.response.signature),
+                                userHandle: cred.response.userHandle ? bufferToBase64URL(cred.response.userHandle) : null
+                            }
+                        }
+                    })
+                });
+                if (!verRes.ok) throw new Error((await verRes.json()).error);
+                const { token, user } = await verRes.json();
+
                 currentToken = token;
                 currentUser = user;
                 localStorage.setItem('sunday_token', token);
                 localStorage.setItem('sunday_user', JSON.stringify(user));
-                
-                log('✓ Authentication complete!', 'success');
-                showDashboard();
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                showError('login-error', error.message);
+
+                const status = await checkIdentityStatus();
+                if (!status.identity) {
+                    showScreen('verify-identity');
+                    startDLCamera();
+                } else {
+                    loadDashboard();
+                }
+            } catch (e) {
+                showError('login-error', e.message);
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        // CAMERA FUNCTIONS
-        // ═══════════════════════════════════════════════════════════════════
-        async function startCamera(videoId, facingMode = 'environment') {
+        async function checkIdentityStatus() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+                const res = await fetch(`${API_BASE}/api/identity/status`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
                 });
-                document.getElementById(videoId).srcObject = stream;
-                return stream;
-            } catch (e) {
-                log(`Camera error: ${e.message}`, 'error');
-                throw e;
-            }
+                return await res.json();
+            } catch { return { identity: false }; }
         }
 
-        function stopCamera(stream) {
-            if (stream) stream.getTracks().forEach(t => t.stop());
+        function signOut() {
+            currentToken = null; currentUser = null;
+            localStorage.clear();
+            showScreen('register');
         }
 
-        function captureFrame(videoId) {
-            const video = document.getElementById(videoId);
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            return canvas.toDataURL('image/jpeg', 0.9);
+        function skipVerification() {
+            stopCameras();
+            loadDashboard();
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // IDENTITY VERIFICATION FLOW
+        // IDENTITY VERIFICATION
         // ═══════════════════════════════════════════════════════════════════
-        async function startIdentityVerification() {
-            log('Starting identity verification...', 'info');
-            showCard('verify-dl-card');
+        async function startDLCamera() {
             try {
-                dlStream = await startCamera('dl-video', 'environment');
-                log('Camera ready for DL scan', 'success');
-            } catch (e) {
-                showError('dl-error', 'Could not access camera.');
-            }
+                dlStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                document.getElementById('dl-video').srcObject = dlStream;
+            } catch (e) { console.error(e); }
+        }
+
+        function stopCameras() {
+            dlStream?.getTracks().forEach(t => t.stop());
+            selfieStream?.getTracks().forEach(t => t.stop());
         }
 
         function captureDL() {
-            dlImageData = captureFrame('dl-video');
+            const video = document.getElementById('dl-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            dlImageData = canvas.toDataURL('image/jpeg', 0.9);
             document.getElementById('dl-preview').src = dlImageData;
             document.getElementById('dl-preview').classList.remove('hidden');
-            document.getElementById('dl-camera-container').classList.add('hidden');
-            document.getElementById('capture-dl-btn').classList.add('hidden');
-            document.getElementById('retake-dl-btn').classList.remove('hidden');
-            document.getElementById('confirm-dl-btn').classList.remove('hidden');
-            stopCamera(dlStream);
-            log('DL captured', 'info');
+            document.getElementById('dl-video').parentElement.classList.add('hidden');
+            document.getElementById('btn-capture-dl').classList.add('hidden');
+            document.getElementById('btn-retake-dl').classList.remove('hidden');
+            document.getElementById('btn-confirm-dl').classList.remove('hidden');
+            dlStream?.getTracks().forEach(t => t.stop());
         }
 
         async function retakeDL() {
             document.getElementById('dl-preview').classList.add('hidden');
-            document.getElementById('dl-camera-container').classList.remove('hidden');
-            document.getElementById('capture-dl-btn').classList.remove('hidden');
-            document.getElementById('retake-dl-btn').classList.add('hidden');
-            document.getElementById('confirm-dl-btn').classList.add('hidden');
-            dlStream = await startCamera('dl-video', 'environment');
+            document.getElementById('dl-video').parentElement.classList.remove('hidden');
+            document.getElementById('btn-capture-dl').classList.remove('hidden');
+            document.getElementById('btn-retake-dl').classList.add('hidden');
+            document.getElementById('btn-confirm-dl').classList.add('hidden');
+            await startDLCamera();
         }
 
         async function confirmDL() {
-            log('DL confirmed, starting selfie...', 'info');
-            showCard('verify-selfie-card');
-            try {
-                selfieStream = await startCamera('selfie-video', 'user');
-                log('Camera ready for selfie', 'success');
-            } catch (e) {
-                showError('selfie-error', 'Could not access front camera.');
-            }
+            document.getElementById('verify-dl-section').classList.add('hidden');
+            document.getElementById('verify-selfie-section').classList.remove('hidden');
+            document.getElementById('verify-subtitle').textContent = 'Take a selfie';
+            selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            document.getElementById('selfie-video').srcObject = selfieStream;
         }
 
         function captureSelfie() {
-            selfieImageData = captureFrame('selfie-video');
+            const video = document.getElementById('selfie-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            selfieImageData = canvas.toDataURL('image/jpeg', 0.9);
             document.getElementById('selfie-preview').src = selfieImageData;
             document.getElementById('selfie-preview').classList.remove('hidden');
-            document.getElementById('selfie-camera-container').classList.add('hidden');
-            document.getElementById('capture-selfie-btn').classList.add('hidden');
-            document.getElementById('retake-selfie-btn').classList.remove('hidden');
-            document.getElementById('confirm-selfie-btn').classList.remove('hidden');
-            stopCamera(selfieStream);
-            log('Selfie captured', 'info');
+            document.getElementById('selfie-video').parentElement.classList.add('hidden');
+            document.getElementById('btn-capture-selfie').classList.add('hidden');
+            document.getElementById('btn-retake-selfie').classList.remove('hidden');
+            document.getElementById('btn-confirm-selfie').classList.remove('hidden');
+            selfieStream?.getTracks().forEach(t => t.stop());
         }
 
         async function retakeSelfie() {
             document.getElementById('selfie-preview').classList.add('hidden');
-            document.getElementById('selfie-camera-container').classList.remove('hidden');
-            document.getElementById('capture-selfie-btn').classList.remove('hidden');
-            document.getElementById('retake-selfie-btn').classList.add('hidden');
-            document.getElementById('confirm-selfie-btn').classList.add('hidden');
-            selfieStream = await startCamera('selfie-video', 'user');
+            document.getElementById('selfie-video').parentElement.classList.remove('hidden');
+            document.getElementById('btn-capture-selfie').classList.remove('hidden');
+            document.getElementById('btn-retake-selfie').classList.add('hidden');
+            document.getElementById('btn-confirm-selfie').classList.add('hidden');
+            selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            document.getElementById('selfie-video').srcObject = selfieStream;
         }
 
         async function confirmSelfie() {
-            log('Processing verification on-device...', 'info');
-            showCard('verify-processing-card');
-            
+            document.getElementById('verify-selfie-section').classList.add('hidden');
+            document.getElementById('verify-processing-section').classList.remove('hidden');
+            document.getElementById('verify-subtitle').textContent = 'Verifying...';
+
             try {
-                updateProgress(10, 'Loading face detection...');
-                const modelsLoaded = await loadFaceApi();
-                if (!modelsLoaded) throw new Error('Could not load face detection');
-                
-                updateProgress(25, 'Reading driver\'s license...');
-                log('Running OCR on DL...', 'info');
-                
-                const ocrResult = await Tesseract.recognize(dlImageData, 'eng', {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            updateProgress(25 + (m.progress * 25), 'Reading driver\'s license...');
-                        }
-                    }
-                });
-                
-                const dlText = ocrResult.data.text;
-                log(`OCR complete: ${dlText.length} chars extracted`, 'success');
-                
-                const dlInfo = parseDLText(dlText);
-                log(`Parsed: ${dlInfo.name || 'Name not found'}`, 'info');
-                
-                updateProgress(55, 'Detecting faces...');
-                
-                const dlImg = await createImageElement(dlImageData);
-                const selfieImg = await createImageElement(selfieImageData);
-                
-                updateProgress(65, 'Analyzing DL photo...');
-                const dlDetection = await faceapi
-                    .detectSingleFace(dlImg, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                
-                if (!dlDetection) {
-                    throw new Error('Could not detect face in driver\'s license. Please retake with better lighting.');
+                updateVerifyProgress(10, 'Loading face detection...');
+                if (!faceApiLoaded) {
+                    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                    await Promise.all([
+                        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                    ]);
+                    faceApiLoaded = true;
                 }
-                log('Face detected in DL', 'success');
-                
-                updateProgress(80, 'Analyzing selfie...');
-                const selfieDetection = await faceapi
-                    .detectSingleFace(selfieImg, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                
-                if (!selfieDetection) {
-                    throw new Error('Could not detect face in selfie. Please retake with better lighting.');
-                }
-                log('Face detected in selfie', 'success');
-                
-                updateProgress(90, 'Comparing faces...');
-                const distance = faceapi.euclideanDistance(dlDetection.descriptor, selfieDetection.descriptor);
-                
+
+                updateVerifyProgress(25, 'Reading driver\'s license...');
+                const ocr = await Tesseract.recognize(dlImageData, 'eng');
+                const dlInfo = parseDLText(ocr.data.text);
+
+                updateVerifyProgress(50, 'Detecting faces...');
+                const dlImg = await loadImage(dlImageData);
+                const selfieImg = await loadImage(selfieImageData);
+
+                const dlFace = await faceapi.detectSingleFace(dlImg, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+                if (!dlFace) throw new Error('No face found in DL');
+
+                updateVerifyProgress(75, 'Comparing faces...');
+                const selfieFace = await faceapi.detectSingleFace(selfieImg, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+                if (!selfieFace) throw new Error('No face found in selfie');
+
+                const distance = faceapi.euclideanDistance(dlFace.descriptor, selfieFace.descriptor);
                 const confidence = Math.round((1 - distance) * 100);
-                const isMatch = distance < 0.6;
-                
-                log(`Face comparison: distance=${distance.toFixed(3)}, confidence=${confidence}%`, isMatch ? 'success' : 'error');
-                
-                if (!isMatch) {
-                    throw new Error(`Face verification failed. Confidence: ${confidence}%. Please ensure good lighting and try again.`);
-                }
-                
-                updateProgress(95, 'Saving verification...');
-                
-                const saveRes = await fetch(`${API_BASE}/api/identity/save-verification`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentToken}`
-                    },
-                    body: JSON.stringify({
-                        name: dlInfo.name,
-                        address: dlInfo.address,
-                        dateOfBirth: dlInfo.dob,
-                        faceMatchConfidence: confidence,
-                        verifiedAt: new Date().toISOString()
-                    })
+                if (distance > 0.6) throw new Error(`Face match failed (${confidence}%)`);
+
+                updateVerifyProgress(90, 'Saving verification...');
+                await fetch(`${API_BASE}/api/identity/save-verification`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ name: dlInfo.name, address: dlInfo.address, faceMatchConfidence: confidence })
                 });
-                
-                if (!saveRes.ok) {
-                    log('Warning: Could not save to server, but verification passed locally', 'info');
-                }
-                
-                updateProgress(100, 'Complete!');
-                
+
                 verifiedDLInfo = dlInfo;
                 localStorage.setItem('sunday_dl_info', JSON.stringify(dlInfo));
-                
-                currentUser.name = dlInfo.name || currentUser.name;
-                localStorage.setItem('sunday_user', JSON.stringify(currentUser));
-                
-                document.getElementById('verified-name').textContent = dlInfo.name || 'Name extracted';
-                document.getElementById('verified-address').textContent = dlInfo.address || 'Address extracted';
-                document.getElementById('verified-confidence').textContent = `${confidence}% match`;
-                
-                log('✓ Identity verified!', 'success');
-                
-                setTimeout(() => showCard('verify-success-card'), 500);
-                
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                alert(`Verification failed: ${error.message}`);
-                showDashboard();
+                if (dlInfo.name) { currentUser.name = dlInfo.name; localStorage.setItem('sunday_user', JSON.stringify(currentUser)); }
+
+                updateVerifyProgress(100, 'Complete!');
+                setTimeout(() => loadDashboard(), 500);
+            } catch (e) {
+                alert('Verification failed: ' + e.message);
+                loadDashboard();
             }
         }
 
-        function createImageElement(dataUrl) {
+        function updateVerifyProgress(pct, status) {
+            document.getElementById('verify-progress').style.width = pct + '%';
+            document.getElementById('verify-status').textContent = status;
+        }
+
+        function loadImage(src) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = () => resolve(img);
                 img.onerror = reject;
-                img.src = dataUrl;
+                img.src = src;
             });
         }
-        
+
         function parseDLText(text) {
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l);
-            let name = '', address = '', dob = '';
-            
+            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+            let name = '', address = '';
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].toUpperCase();
-                if (line.includes('LN ') || line.includes('LAST')) {
-                    const nextLine = lines[i + 1];
-                    if (nextLine) name = nextLine;
-                }
-                if (line.includes('FN ') || line.includes('FIRST')) {
-                    const nextLine = lines[i + 1];
-                    if (nextLine) name = nextLine + ' ' + name;
-                }
-                if (line.includes('DOB') || line.includes('BIRTH')) {
-                    const dobMatch = line.match(/\d{2}[\/\-]\d{2}[\/\-]\d{4}/);
-                    if (dobMatch) dob = dobMatch[0];
-                }
+                if ((line.includes('LN ') || line.includes('LAST')) && lines[i+1]) name = lines[i+1];
+                if ((line.includes('FN ') || line.includes('FIRST')) && lines[i+1]) name = lines[i+1] + ' ' + name;
                 if (/^\d+\s+\w+/.test(lines[i]) && !lines[i].match(/^\d{2}[\/\-]/)) {
                     address = lines[i];
-                    if (lines[i + 1] && /[A-Z]{2}\s+\d{5}/.test(lines[i + 1].toUpperCase())) {
-                        address += ', ' + lines[i + 1];
-                    }
+                    if (lines[i+1] && /[A-Z]{2}\s+\d{5}/.test(lines[i+1].toUpperCase())) address += ', ' + lines[i+1];
                 }
             }
-            
-            if (!name) {
-                for (const line of lines) {
-                    if (/^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(line)) {
-                        name = line;
-                        break;
-                    }
-                }
-            }
-            
-            return { name: name.trim(), address: address.trim(), dob };
-        }
-
-        function cancelVerification() {
-            stopCamera(dlStream);
-            stopCamera(selfieStream);
-            dlImageData = null;
-            selfieImageData = null;
-            showDashboard();
-            log('Verification cancelled', 'info');
+            if (!name) { for (const l of lines) if (/^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(l)) { name = l; break; } }
+            return { name: name.trim(), address: address.trim() };
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // SESSION RESTORE
+        // DASHBOARD
         // ═══════════════════════════════════════════════════════════════════
-        function checkExistingSession() {
-            const token = localStorage.getItem('sunday_token');
-            const user = localStorage.getItem('sunday_user');
-            const dlInfo = localStorage.getItem('sunday_dl_info');
-            
-            if (token && user) {
-                try {
-                    currentToken = token;
-                    currentUser = JSON.parse(user);
-                    if (dlInfo) verifiedDLInfo = JSON.parse(dlInfo);
-                    showDashboard();
-                    log('Session restored', 'info');
-                } catch { localStorage.clear(); }
+        async function loadDashboard() {
+            showScreen('dashboard');
+            document.getElementById('user-name').textContent = currentUser?.name || 'User';
+            document.getElementById('user-avatar').textContent = (currentUser?.name || 'U')[0].toUpperCase();
+
+            const status = await checkIdentityStatus();
+            document.getElementById('user-status').textContent = status.identity ? '● Verified' : '○ Not Verified';
+
+            await loadInbox();
+            await loadClaims();
+            setTab('inbox');
+        }
+
+        async function loadInbox() {
+            try {
+                const res = await fetch(`${API_BASE}/api/messages/inbox`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const data = await res.json();
+                messages = data.messages || [];
+                document.getElementById('stat-received').textContent = messages.length;
+                document.getElementById('unread-badge').textContent = data.unreadCount || 0;
+                if (data.unreadCount == 0) document.getElementById('unread-badge').style.display = 'none';
+                else document.getElementById('unread-badge').style.display = 'inline';
+            } catch { messages = []; }
+        }
+
+        async function loadClaims() {
+            try {
+                const res = await fetch(`${API_BASE}/api/claim/my-claims`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const data = await res.json();
+                claims = data.claims || [];
+                document.getElementById('stat-addresses').textContent = claims.length;
+            } catch { claims = []; }
+        }
+
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.nav-item[onclick="setTab('${tab}')"]`)?.classList.add('active');
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById('stats-section').style.display = tab === 'inbox' ? 'grid' : 'none';
+
+            const titles = { inbox: 'Inbox', sent: 'Sent', compose: 'Compose Message', addresses: 'My Addresses', claim: 'Claim Address', settings: 'Settings' };
+            document.getElementById('topbar-title').textContent = titles[tab] || 'Sunday';
+
+            if (tab === 'inbox') renderInbox();
+            else if (tab === 'addresses') renderAddresses();
+            else if (tab === 'compose') renderCompose();
+            else if (tab === 'claim') renderClaim();
+            else if (tab === 'settings') renderSettings();
+        }
+
+        function renderInbox() {
+            const container = document.getElementById('tab-inbox');
+            if (messages.length === 0) {
+                container.innerHTML = `<div class="message-list"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">Your inbox is empty</div><p>Messages sent to your claimed addresses will appear here</p></div></div>`;
+                return;
             }
+            container.innerHTML = `<div class="message-list"><div class="message-list-header"><span class="message-list-title">${messages.length} Messages</span></div>${messages.map(m => `
+                <div class="message-item ${m.isRead ? '' : 'unread'}" onclick="viewMessage('${m.id}')">
+                    <div class="message-unread-dot ${m.isRead ? 'read' : ''}"></div>
+                    <div class="message-content">
+                        <div class="message-from">From: ${m.fromPhone}</div>
+                        <div class="message-subject">${m.subject}</div>
+                        <div class="message-preview">${m.content}</div>
+                    </div>
+                    <div class="message-meta">
+                        <div class="message-date">${formatDate(m.createdAt)}</div>
+                        <div class="message-address">${m.toAddress || ''}</div>
+                    </div>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        function viewMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (!msg) return;
+            
+            // Mark as read
+            fetch(`${API_BASE}/api/messages/${id}/read`, { method: 'PUT', headers: { 'Authorization': `Bearer ${currentToken}` } });
+            msg.isRead = true;
+
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            const container = document.getElementById('tab-message-view');
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <button class="btn btn-ghost" onclick="setTab('inbox')" style="margin-bottom: 16px;">← Back to Inbox</button>
+                <div class="message-view">
+                    <div class="message-view-header">
+                        <div class="message-view-subject">${msg.subject}</div>
+                        <div class="message-view-meta">
+                            <span>From: ${msg.fromPhone}</span>
+                            <span>To: ${msg.toAddress}</span>
+                            <span>${formatDate(msg.createdAt)}</span>
+                        </div>
+                    </div>
+                    <div class="message-view-body">${msg.content.replace(/\n/g, '<br>')}</div>
+                </div>
+            `;
+        }
+
+        function renderAddresses() {
+            const container = document.getElementById('tab-addresses');
+            if (claims.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏠</div><div class="empty-state-title">No addresses claimed</div><p>Claim an address to start receiving secure digital mail</p><button class="btn btn-primary" style="width: auto; margin-top: 16px;" onclick="setTab('claim')">➕ Claim Address</button></div>`;
+                return;
+            }
+            container.innerHTML = `<div class="address-grid">${claims.map(c => `
+                <div class="address-card">
+                    <div class="address-card-header"><span class="address-card-icon">🏠</span><span class="address-card-badge">Claimed</span></div>
+                    <div class="address-card-street">${c.street}</div>
+                    <div class="address-card-city">${c.city}, ${c.state} ${c.postalCode}</div>
+                    <div class="address-card-cpid">${c.cryptoPropertyId}</div>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        function renderCompose() {
+            const container = document.getElementById('tab-compose');
+            container.innerHTML = `
+                <div class="compose-form">
+                    <div class="input-group">
+                        <label class="input-label">To (Address)</label>
+                        <input type="text" class="input-field" id="compose-to" placeholder="123 Main St, City, State 12345">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Subject</label>
+                        <input type="text" class="input-field" id="compose-subject" placeholder="Message subject">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Message</label>
+                        <textarea id="compose-content" placeholder="Write your message..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendMessage()">📤 Send Message</button>
+                    <div id="compose-error" class="error-box hidden"></div>
+                    <div id="compose-success" class="hidden" style="background: rgba(16,185,129,0.1); border-left: 4px solid var(--success); padding: 12px; margin-top: 16px; color: var(--success); border-radius: 0 8px 8px 0;"></div>
+                </div>
+            `;
+        }
+
+        async function sendMessage() {
+            const to = document.getElementById('compose-to').value.trim();
+            const subject = document.getElementById('compose-subject').value.trim();
+            const content = document.getElementById('compose-content').value.trim();
+            if (!to || !subject || !content) { showError('compose-error', 'All fields required'); return; }
+            hideError('compose-error');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/messages/send`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ toAddress: to, subject, content, fromPhone: currentUser?.phone || 'Unknown' })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
+                document.getElementById('compose-success').classList.remove('hidden');
+                document.getElementById('compose-success').innerHTML = `✓ Message sent! ${data.isInEscrow ? '(Held in escrow until address is claimed)' : ''}`;
+                document.getElementById('compose-to').value = '';
+                document.getElementById('compose-subject').value = '';
+                document.getElementById('compose-content').value = '';
+            } catch (e) { showError('compose-error', e.message); }
+        }
+
+        function renderClaim() {
+            const dlAddr = verifiedDLInfo?.address || localStorage.getItem('sunday_dl_info') ? JSON.parse(localStorage.getItem('sunday_dl_info') || '{}').address : null;
+            const container = document.getElementById('tab-claim');
+            container.innerHTML = `
+                <div class="compose-form">
+                    ${dlAddr ? `<div style="background: rgba(43,158,179,0.1); padding: 16px; border-radius: 10px; margin-bottom: 16px;"><strong>📋 From your DL:</strong> ${dlAddr}<button class="btn btn-outline" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button></div>` : ''}
+                    <div class="input-group">
+                        <label class="input-label">Street Address</label>
+                        <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">City</label>
+                            <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+                        </div>
+                        <div class="input-group" style="max-width: 80px;">
+                            <label class="input-label">State</label>
+                            <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+                        </div>
+                        <div class="input-group" style="max-width: 100px;">
+                            <label class="input-label">ZIP</label>
+                            <input type="text" class="input-field" id="claim-zip" placeholder="33602">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="claimAddress()">🏠 Claim Address</button>
+                    <div id="claim-error" class="error-box hidden"></div>
+                    <div id="claim-success" class="hidden" style="background: rgba(16,185,129,0.1); border-left: 4px solid var(--success); padding: 16px; margin-top: 16px; border-radius: 0 8px 8px 0;"></div>
+                </div>
+            `;
+        }
+
+        function useDLAddress() {
+            const dlInfo = verifiedDLInfo || JSON.parse(localStorage.getItem('sunday_dl_info') || '{}');
+            if (!dlInfo.address) return;
+            const parts = dlInfo.address.split(',').map(p => p.trim());
+            if (parts[0]) document.getElementById('claim-street').value = parts[0];
+            if (parts[1]) {
+                const cityStateZip = parts[1].match(/(.+?)\s+([A-Z]{2})\s*(\d{5})?/i);
+                if (cityStateZip) {
+                    document.getElementById('claim-city').value = cityStateZip[1].trim();
+                    document.getElementById('claim-state').value = cityStateZip[2];
+                    if (cityStateZip[3]) document.getElementById('claim-zip').value = cityStateZip[3];
+                }
+            }
+        }
+
+        async function claimAddress() {
+            const street = document.getElementById('claim-street').value.trim();
+            const city = document.getElementById('claim-city').value.trim();
+            const state = document.getElementById('claim-state').value.trim().toUpperCase();
+            const postalCode = document.getElementById('claim-zip').value.trim();
+            if (!street || !city || !state || !postalCode) { showError('claim-error', 'All fields required'); return; }
+            hideError('claim-error');
+
+            try {
+                // First lookup the address
+                const lookupRes = await fetch(`${API_BASE}/api/addresses/lookup`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ street, city, state, postalCode })
+                });
+                const lookupData = await lookupRes.json();
+                if (lookupData.address?.isClaimed) { showError('claim-error', 'This address is already claimed'); return; }
+
+                // Then claim it
+                const claimRes = await fetch(`${API_BASE}/api/claim`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ addressId: lookupData.address.id })
+                });
+                const claimData = await claimRes.json();
+                if (!claimRes.ok) throw new Error(claimData.message);
+
+                document.getElementById('claim-success').classList.remove('hidden');
+                document.getElementById('claim-success').innerHTML = `
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">🎉 Address Claimed!</div>
+                    <div style="font-family: monospace; font-size: 14px; color: var(--primary);">${claimData.claim.cryptoPropertyId}</div>
+                    <div style="margin-top: 8px; color: var(--text-secondary);">${claimData.claim.street}, ${claimData.claim.city}, ${claimData.claim.state}</div>
+                `;
+                
+                await loadClaims();
+            } catch (e) { showError('claim-error', e.message); }
+        }
+
+        function renderSettings() {
+            const container = document.getElementById('tab-settings');
+            container.innerHTML = `
+                <div class="compose-form">
+                    <h3 style="margin-bottom: 16px;">Account Settings</h3>
+                    <div class="input-group">
+                        <label class="input-label">Name</label>
+                        <input type="text" class="input-field" value="${currentUser?.name || ''}" disabled>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Phone</label>
+                        <input type="text" class="input-field" value="${currentUser?.phone || ''}" disabled>
+                    </div>
+                    <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
+                </div>
+            `;
+        }
+
+        function formatDate(d) {
+            const date = new Date(d);
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 86400000) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (diff < 604800000) return date.toLocaleDateString([], { weekday: 'short' });
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
         }
 
         // ═══════════════════════════════════════════════════════════════════
         // INIT
         // ═══════════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday v6 - Address Claiming', 'info');
-            detectDevice();
-            checkExistingSession();
+            const token = localStorage.getItem('sunday_token');
+            const user = localStorage.getItem('sunday_user');
+            const dlInfo = localStorage.getItem('sunday_dl_info');
+            if (token && user) {
+                currentToken = token;
+                currentUser = JSON.parse(user);
+                if (dlInfo) verifiedDLInfo = JSON.parse(dlInfo);
+                loadDashboard();
+            }
         });
     </script>
 </body>
