@@ -790,7 +790,19 @@
 
             await Promise.all([loadInbox(), loadClaims()]);
             updateWelcomeMessage();
-            setTab('inbox');
+            
+            // Check for pending send from deep link
+            const pendingSend = localStorage.getItem('sunday_pending_send');
+            if (pendingSend) {
+                localStorage.removeItem('sunday_pending_send');
+                setTab('compose');
+                setTimeout(() => {
+                    const toField = document.getElementById('compose-to');
+                    if (toField) toField.value = pendingSend;
+                }, 100);
+            } else {
+                setTab('inbox');
+            }
         }
 
         function updateWelcomeMessage() {
@@ -849,14 +861,25 @@
         function renderInbox() {
             const container = document.getElementById('inbox-content');
             if (messages.length === 0) {
-                container.innerHTML = `
-                    <div class="address-empty">
-                        <div class="address-empty-icon">📭</div>
-                        <div class="address-empty-title">Your inbox is empty</div>
-                        <div class="address-empty-text">Messages sent to your claimed addresses will appear here</div>
-                        <span class="address-empty-link" onclick="setTab('claim')">Claim your first address →</span>
-                    </div>
-                `;
+                if (claims.length === 0) {
+                    container.innerHTML = `
+                        <div class="address-empty">
+                            <div class="address-empty-icon">📭</div>
+                            <div class="address-empty-title">Your inbox is empty</div>
+                            <div class="address-empty-text">Claim an address to start receiving encrypted messages</div>
+                            <span class="address-empty-link" onclick="setTab('claim')">Claim your first address →</span>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="address-empty">
+                            <div class="address-empty-icon">📬</div>
+                            <div class="address-empty-title">No messages yet</div>
+                            <div class="address-empty-text">You have ${claims.length} claimed address${claims.length > 1 ? 'es' : ''}. Share your CPiD to receive messages!</div>
+                            <span class="address-empty-link" onclick="shareCPiD()">Share my CPiD →</span>
+                        </div>
+                    `;
+                }
                 return;
             }
             container.innerHTML = messages.map(m => `
@@ -994,35 +1017,238 @@
             const dlAddr = verifiedDLInfo?.address;
             const container = document.getElementById('claim-content');
             container.innerHTML = `
-                ${dlAddr ? `
-                    <div class="claim-preview">
-                        <div class="claim-preview-label">📋 Address from your DL</div>
-                        <div class="claim-preview-text">${dlAddr}</div>
-                        <button class="btn btn-outline btn-sm" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button>
-                    </div>
-                ` : ''}
-                <div class="input-group">
-                    <label class="input-label">Street Address</label>
-                    <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
-                </div>
-                <div class="input-row">
+                <div id="claim-step-1">
+                    ${dlAddr ? `
+                        <div class="claim-preview">
+                            <div class="claim-preview-label">📋 Address from your DL</div>
+                            <div class="claim-preview-text">${dlAddr}</div>
+                            <button class="btn btn-outline btn-sm" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button>
+                        </div>
+                    ` : ''}
                     <div class="input-group">
-                        <label class="input-label">City</label>
-                        <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+                        <label class="input-label">Street Address</label>
+                        <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
                     </div>
-                    <div class="input-group" style="max-width: 80px;">
-                        <label class="input-label">State</label>
-                        <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">City</label>
+                            <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+                        </div>
+                        <div class="input-group" style="max-width: 80px;">
+                            <label class="input-label">State</label>
+                            <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+                        </div>
+                        <div class="input-group" style="max-width: 110px;">
+                            <label class="input-label">ZIP Code</label>
+                            <input type="text" class="input-field" id="claim-zip" placeholder="33602">
+                        </div>
                     </div>
-                    <div class="input-group" style="max-width: 110px;">
-                        <label class="input-label">ZIP Code</label>
-                        <input type="text" class="input-field" id="claim-zip" placeholder="33602">
-                    </div>
+                    <button class="btn btn-primary" onclick="proceedToVerification()">Continue →</button>
+                    <div id="claim-error" class="error-box hidden"></div>
                 </div>
-                <button class="btn btn-primary" onclick="claimAddress()">🏠 Claim This Address</button>
-                <div id="claim-error" class="error-box hidden"></div>
+                
+                <div id="claim-step-2" class="hidden">
+                    <div class="claim-preview" style="margin-bottom: 24px;">
+                        <div class="claim-preview-label">📍 Address to Claim</div>
+                        <div class="claim-preview-text" id="claim-address-preview">—</div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 16px; font-size: 16px;">How would you like to verify this address?</h3>
+                    
+                    <div id="verify-option-dl" class="action-btn primary" style="margin-bottom: 12px; ${dlAddr ? '' : 'opacity: 0.5; pointer-events: none;'}" onclick="selectVerifyMethod('dl')">
+                        <span class="action-icon">🪪</span>
+                        <div style="flex: 1;">
+                            <div class="action-text">Driver's License Match</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">${dlAddr ? '✓ Address matches your verified DL' : '✗ DL address does not match'}</div>
+                        </div>
+                        ${dlAddr ? '<span style="color: var(--accent-emerald);">✓</span>' : ''}
+                    </div>
+                    
+                    <div class="action-btn" style="margin-bottom: 12px;" onclick="selectVerifyMethod('utility')">
+                        <span class="action-icon">💡</span>
+                        <div style="flex: 1;">
+                            <div class="action-text">Utility Bill</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Upload recent bill with your name</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-btn" style="margin-bottom: 12px;" onclick="selectVerifyMethod('bank')">
+                        <span class="action-icon">🏦</span>
+                        <div style="flex: 1;">
+                            <div class="action-text">Bank Statement</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Upload statement showing this address</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-btn" style="margin-bottom: 24px;" onclick="selectVerifyMethod('deed')">
+                        <span class="action-icon">📜</span>
+                        <div style="flex: 1;">
+                            <div class="action-text">Property Deed</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">For property owners</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-ghost" onclick="backToAddressEntry()">← Back</button>
+                    <div id="claim-error-2" class="error-box hidden"></div>
+                </div>
+                
+                <div id="claim-step-upload" class="hidden">
+                    <div class="claim-preview" style="margin-bottom: 24px;">
+                        <div class="claim-preview-label">📄 Upload Document</div>
+                        <div class="claim-preview-text" id="upload-type-label">Upload your document</div>
+                    </div>
+                    
+                    <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px;">
+                        <input type="file" id="claim-document" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload(event)">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📄</div>
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('claim-document').click()">Choose File</button>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">JPG, PNG, or PDF</p>
+                    </div>
+                    
+                    <img id="document-preview" class="hidden" style="width: 100%; border-radius: 12px; margin-bottom: 20px;">
+                    
+                    <button class="btn btn-primary hidden" id="btn-verify-document" onclick="verifyDocument()">🔍 Verify Document</button>
+                    <button class="btn btn-ghost" onclick="backToVerifyOptions()">← Back</button>
+                    <div id="claim-error-3" class="error-box hidden"></div>
+                </div>
+                
                 <div id="claim-success" class="success-box hidden"></div>
             `;
+        }
+        
+        let pendingClaimAddress = null;
+        let selectedVerifyMethod = null;
+        
+        function proceedToVerification() {
+            const street = document.getElementById('claim-street').value.trim();
+            const city = document.getElementById('claim-city').value.trim();
+            const state = document.getElementById('claim-state').value.trim().toUpperCase();
+            const postalCode = document.getElementById('claim-zip').value.trim();
+            
+            if (!street || !city || !state || !postalCode) {
+                showError('claim-error', 'All fields are required');
+                return;
+            }
+            hideError('claim-error');
+            
+            pendingClaimAddress = { street, city, state, postalCode };
+            document.getElementById('claim-address-preview').textContent = `${street}, ${city}, ${state} ${postalCode}`;
+            
+            // Check if DL address matches
+            const dlAddr = verifiedDLInfo?.address?.toLowerCase() || '';
+            const enteredAddr = `${street} ${city} ${state}`.toLowerCase();
+            const dlMatches = dlAddr.includes(street.split(' ')[0].toLowerCase()) && dlAddr.includes(city.toLowerCase());
+            
+            const dlOption = document.getElementById('verify-option-dl');
+            if (dlMatches) {
+                dlOption.style.opacity = '1';
+                dlOption.style.pointerEvents = 'auto';
+                dlOption.querySelector('div > div:last-child').textContent = '✓ Address matches your verified DL';
+            }
+            
+            document.getElementById('claim-step-1').classList.add('hidden');
+            document.getElementById('claim-step-2').classList.remove('hidden');
+        }
+        
+        function backToAddressEntry() {
+            document.getElementById('claim-step-2').classList.add('hidden');
+            document.getElementById('claim-step-1').classList.remove('hidden');
+        }
+        
+        function backToVerifyOptions() {
+            document.getElementById('claim-step-upload').classList.add('hidden');
+            document.getElementById('claim-step-2').classList.remove('hidden');
+        }
+        
+        async function selectVerifyMethod(method) {
+            selectedVerifyMethod = method;
+            
+            if (method === 'dl') {
+                // Instant verification with DL
+                await claimAddressWithVerification('dl_match');
+            } else {
+                // Show upload screen
+                const labels = {
+                    utility: 'Upload a recent utility bill showing your name and this address',
+                    bank: 'Upload a bank statement showing your name and this address',
+                    deed: 'Upload your property deed showing ownership'
+                };
+                document.getElementById('upload-type-label').textContent = labels[method];
+                document.getElementById('claim-step-2').classList.add('hidden');
+                document.getElementById('claim-step-upload').classList.remove('hidden');
+            }
+        }
+        
+        function handleDocumentUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('document-preview');
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                document.getElementById('btn-verify-document').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        async function verifyDocument() {
+            // For now, show coming soon
+            // In production, this would OCR the document and verify name/address match
+            alert(`${selectedVerifyMethod.charAt(0).toUpperCase() + selectedVerifyMethod.slice(1)} verification coming soon!\n\nThis will use OCR to extract your name and address from the document and verify it matches your identity.`);
+        }
+        
+        async function claimAddressWithVerification(verificationMethod) {
+            if (!pendingClaimAddress) return;
+            
+            try {
+                const { street, city, state, postalCode } = pendingClaimAddress;
+                
+                // Lookup address
+                const lookupRes = await fetch(`${API_BASE}/api/addresses/lookup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ street, city, state, postalCode })
+                });
+                const lookupData = await lookupRes.json();
+                
+                if (lookupData.address?.isClaimed) {
+                    showError('claim-error-2', 'This address is already claimed');
+                    return;
+                }
+                
+                // Claim with verification method
+                const claimRes = await fetch(`${API_BASE}/api/claim`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ 
+                        addressId: lookupData.address.id,
+                        verificationMethod: verificationMethod
+                    })
+                });
+                const claimData = await claimRes.json();
+                
+                if (!claimRes.ok) throw new Error(claimData.message || 'Failed to claim');
+                
+                // Show success
+                document.getElementById('claim-step-2').classList.add('hidden');
+                const successEl = document.getElementById('claim-success');
+                successEl.innerHTML = `
+                    <div style="font-weight: 700; margin-bottom: 8px; font-size: 18px;">🎉 Address Claimed!</div>
+                    <div style="font-family: monospace; color: var(--primary); font-size: 14px;">${claimData.claim.cryptoPropertyId}</div>
+                    <div style="margin-top: 8px;">${claimData.claim.street}, ${claimData.claim.city}, ${claimData.claim.state}</div>
+                    <div style="margin-top: 4px; font-size: 12px; color: var(--text-muted);">Verified via: ${verificationMethod.replace('_', ' ')}</div>
+                `;
+                successEl.classList.remove('hidden');
+                
+                await loadClaims();
+                updateWelcomeMessage();
+                pendingClaimAddress = null;
+                
+            } catch (e) {
+                showError('claim-error-2', e.message);
+            }
         }
 
         function useDLAddress() {
@@ -1037,42 +1263,6 @@
                     if (match[3]) document.getElementById('claim-zip').value = match[3];
                 }
             }
-        }
-
-        async function claimAddress() {
-            const street = document.getElementById('claim-street').value.trim();
-            const city = document.getElementById('claim-city').value.trim();
-            const state = document.getElementById('claim-state').value.trim().toUpperCase();
-            const postalCode = document.getElementById('claim-zip').value.trim();
-            if (!street || !city || !state || !postalCode) { showError('claim-error', 'All fields are required'); return; }
-            hideError('claim-error');
-
-            try {
-                const lookupRes = await fetch(`${API_BASE}/api/addresses/lookup`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-                    body: JSON.stringify({ street, city, state, postalCode })
-                });
-                const lookupData = await lookupRes.json();
-                if (lookupData.address?.isClaimed) { showError('claim-error', 'This address is already claimed'); return; }
-
-                const claimRes = await fetch(`${API_BASE}/api/claim`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-                    body: JSON.stringify({ addressId: lookupData.address.id })
-                });
-                const claimData = await claimRes.json();
-                if (!claimRes.ok) throw new Error(claimData.message || 'Failed to claim');
-
-                const successEl = document.getElementById('claim-success');
-                successEl.innerHTML = `
-                    <div style="font-weight: 700; margin-bottom: 8px;">🎉 Address Claimed!</div>
-                    <div style="font-family: monospace; color: var(--primary);">${claimData.claim.cryptoPropertyId}</div>
-                    <div style="margin-top: 4px;">${claimData.claim.street}, ${claimData.claim.city}</div>
-                `;
-                successEl.classList.remove('hidden');
-                
-                await loadClaims();
-                updateWelcomeMessage();
-            } catch (e) { showError('claim-error', e.message); }
         }
 
         function renderSettings() {
@@ -1102,11 +1292,12 @@
                 return;
             }
             const cpid = claims[0].cryptoPropertyId;
+            const shareUrl = `https://www.umbrassi.com/Sunday/?send=${cpid}`;
             if (navigator.share) {
-                navigator.share({ title: 'My Sunday CPiD', text: `Send me secure mail at: ${cpid}`, url: `https://sunday.app/send/${cpid}` });
+                navigator.share({ title: 'My Sunday CPiD', text: `Send me secure mail at: ${cpid}`, url: shareUrl });
             } else {
-                copyToClipboard(cpid);
-                alert('CPiD copied to clipboard!');
+                copyToClipboard(shareUrl);
+                alert('Share link copied to clipboard!');
             }
         }
 
@@ -1127,12 +1318,30 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
+            // Check for deep link parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const sendToCPiD = urlParams.get('send');
+            
             const token = localStorage.getItem('sunday_token');
             const user = localStorage.getItem('sunday_user');
+            
             if (token && user) {
                 currentToken = token;
                 currentUser = JSON.parse(user);
-                loadDashboard();
+                loadDashboard().then(() => {
+                    // If deep link, go to compose with CPiD pre-filled
+                    if (sendToCPiD) {
+                        setTab('compose');
+                        setTimeout(() => {
+                            const toField = document.getElementById('compose-to');
+                            if (toField) toField.value = sendToCPiD;
+                        }, 100);
+                    }
+                });
+            } else if (sendToCPiD) {
+                // Not logged in but has deep link - save it and show register
+                localStorage.setItem('sunday_pending_send', sendToCPiD);
+                showScreen('register');
             }
         });
     </script>
