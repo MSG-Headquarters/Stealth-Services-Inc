@@ -6,6 +6,10 @@
     <title>Sunday | Passwordless Identity</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Face-API.js for face detection and comparison -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <!-- Tesseract.js for OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-gradient-start: #e8f4f8;
@@ -53,7 +57,6 @@
         .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
         .status-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .status-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .status-info { background: rgba(43, 158, 179, 0.1); color: var(--primary); }
         .hidden { display: none !important; }
         .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; color: var(--error); font-size: 14px; }
         .info-box { background: rgba(43, 158, 179, 0.1); border-left: 4px solid var(--primary); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; }
@@ -79,7 +82,7 @@
         .log-info { color: var(--primary); }
         .camera-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
         .camera-video { width: 100%; height: 100%; object-fit: cover; }
-        .camera-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; }
+        .camera-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .camera-frame { border: 3px dashed rgba(255,255,255,0.5); border-radius: 10px; width: 85%; height: 60%; }
         .camera-frame.selfie { width: 60%; height: 75%; border-radius: 50%; }
         .capture-preview { width: 100%; border-radius: 12px; margin-bottom: 16px; }
@@ -92,6 +95,8 @@
         .verification-status .text { flex: 1; }
         .verification-status .label { font-size: 13px; color: var(--text-secondary); }
         .verification-status .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 16px 0; }
+        .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
         .back-link { margin-top: 16px; text-align: center; }
         .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
         @media (max-width: 480px) { body { padding: 20px 16px; } .card { padding: 20px; } }
@@ -146,14 +151,14 @@
 
     <!-- Dashboard Card -->
     <div class="card hidden" id="dashboard-card">
-        <span class="status-badge status-success" id="auth-badge">✓ Authenticated</span>
+        <span class="status-badge status-success">✓ Authenticated</span>
         <h2 class="card-title">Welcome, <span id="user-name-display">User</span>!</h2>
         
         <div class="verification-status">
             <span class="icon">🔐</span>
             <div class="text">
                 <div class="label">Passkey</div>
-                <div class="value" id="passkey-status">Verified</div>
+                <div class="value">Verified</div>
             </div>
             <span style="color: var(--success);">✓</span>
         </div>
@@ -180,9 +185,7 @@
         <div class="info-box" id="identity-info" style="display: none;">
             <div class="info-box-title">🎉 Identity Verified</div>
             <div class="info-box-text">
-                Your Sunday identity is now verified. You can use this across all Sunday-enabled platforms.
-                <br><br>
-                <strong>Want to receive secure mail?</strong> Claim your address to create your Crypto-Property-ID (CPiD).
+                Your Sunday identity is verified. Use it across all Sunday-enabled platforms.
             </div>
         </div>
     </div>
@@ -255,19 +258,12 @@
             <div class="step active"></div>
         </div>
         <h2 class="card-title">Verifying Identity...</h2>
-        <p class="card-subtitle">This may take a few seconds</p>
+        <p class="card-subtitle" id="processing-subtitle">Processing on your device</p>
         
-        <div style="text-align: center; padding: 40px 0;">
-            <div style="font-size: 48px; animation: pulse 1.5s infinite;">🔍</div>
-            <p id="processing-status" style="margin-top: 16px; color: var(--text-secondary);">Analyzing documents...</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
         </div>
-        
-        <style>
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.1); opacity: 0.7; }
-            }
-        </style>
+        <p id="processing-status" style="text-align: center; color: var(--text-secondary); font-size: 14px;">Initializing...</p>
     </div>
 
     <!-- Identity Verification - Success -->
@@ -281,10 +277,10 @@
         <div class="credential-display">
             <div class="credential-label">Verified Name</div>
             <div class="cpid-display" id="verified-name">—</div>
-            <div class="credential-label">Verification Level</div>
-            <div class="credential-value">✓ Passkey + ✓ Identity</div>
-            <div class="credential-label">Address on File</div>
+            <div class="credential-label">Address on DL</div>
             <div class="credential-value" id="verified-address">—</div>
+            <div class="credential-label">Face Match Confidence</div>
+            <div class="credential-value" id="verified-confidence">—</div>
         </div>
         
         <button class="btn btn-primary" onclick="goToDashboard()">
@@ -312,7 +308,8 @@
         let selfieImageData = null;
         let dlStream = null;
         let selfieStream = null;
-        let verifiedDLInfo = null; // Store DL info for address claiming
+        let verifiedDLInfo = null;
+        let faceApiLoaded = false;
 
         // ═══════════════════════════════════════════════════════════════════
         // LOGGING
@@ -325,6 +322,11 @@
             entry.innerHTML = `<span class="log-time">${time}</span><span class="log-message log-${type}">${message}</span>`;
             logEl.insertBefore(entry, logEl.firstChild);
             console.log(`[${type}] ${message}`);
+        }
+
+        function updateProgress(percent, status) {
+            document.getElementById('progress-fill').style.width = `${percent}%`;
+            document.getElementById('processing-status').textContent = status;
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -366,13 +368,37 @@
         }
 
         // ═══════════════════════════════════════════════════════════════════
+        // FACE-API INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════════
+        async function loadFaceApi() {
+            if (faceApiLoaded) return true;
+            
+            try {
+                log('Loading face detection models...', 'info');
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                ]);
+                
+                faceApiLoaded = true;
+                log('Face detection models loaded', 'success');
+                return true;
+            } catch (e) {
+                log(`Failed to load face models: ${e.message}`, 'error');
+                return false;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
         // DASHBOARD
         // ═══════════════════════════════════════════════════════════════════
         async function showDashboard() {
             showCard('dashboard-card');
             document.getElementById('user-name-display').textContent = currentUser?.name || 'User';
             
-            // Check verification status
             try {
                 const res = await fetch(`${API_BASE}/api/identity/status`, {
                     headers: { 'Authorization': `Bearer ${currentToken}` }
@@ -399,13 +425,10 @@
             }
         }
 
-        function goToDashboard() {
-            showDashboard();
-        }
+        function goToDashboard() { showDashboard(); }
 
         function startAddressClaim() {
-            // This will be the Sunday Portal feature
-            alert('Address Claiming coming soon!\n\nYou\'ll be able to claim your address using:\n• Driver\'s License\n• Property Deed\n• Utility Bill\n• Bank Statement');
+            alert('Address Claiming coming soon!');
             log('Address claim feature coming soon', 'info');
         }
 
@@ -587,7 +610,7 @@
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // IDENTITY VERIFICATION - CAMERA
+        // CAMERA FUNCTIONS
         // ═══════════════════════════════════════════════════════════════════
         async function startCamera(videoId, facingMode = 'environment') {
             try {
@@ -612,11 +635,11 @@
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0);
-            return canvas.toDataURL('image/jpeg', 0.8);
+            return canvas.toDataURL('image/jpeg', 0.9);
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // IDENTITY VERIFICATION - FLOW
+        // IDENTITY VERIFICATION FLOW
         // ═══════════════════════════════════════════════════════════════════
         async function startIdentityVerification() {
             log('Starting identity verification...', 'info');
@@ -626,7 +649,7 @@
                 dlStream = await startCamera('dl-video', 'environment');
                 log('Camera ready for DL scan', 'success');
             } catch (e) {
-                showError('dl-error', 'Could not access camera. Please allow camera permissions.');
+                showError('dl-error', 'Could not access camera.');
             }
         }
 
@@ -685,52 +708,191 @@
         }
 
         async function confirmSelfie() {
-            log('Processing verification...', 'info');
+            log('Processing verification on-device...', 'info');
             showCard('verify-processing-card');
             
             try {
-                document.getElementById('processing-status').textContent = 'Analyzing driver\'s license...';
+                // Step 1: Load face-api models
+                updateProgress(10, 'Loading face detection...');
+                const modelsLoaded = await loadFaceApi();
+                if (!modelsLoaded) throw new Error('Could not load face detection');
                 
-                const res = await fetch(`${API_BASE}/api/identity/complete`, {
+                // Step 2: Extract DL text with Tesseract
+                updateProgress(25, 'Reading driver\'s license...');
+                log('Running OCR on DL...', 'info');
+                
+                const ocrResult = await Tesseract.recognize(dlImageData, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            updateProgress(25 + (m.progress * 25), 'Reading driver\'s license...');
+                        }
+                    }
+                });
+                
+                const dlText = ocrResult.data.text;
+                log(`OCR complete: ${dlText.length} chars extracted`, 'success');
+                
+                // Parse DL info from text
+                const dlInfo = parseDLText(dlText);
+                log(`Parsed: ${dlInfo.name || 'Name not found'}`, 'info');
+                
+                // Step 3: Detect faces
+                updateProgress(55, 'Detecting faces...');
+                
+                // Create image elements for face-api
+                const dlImg = await createImageElement(dlImageData);
+                const selfieImg = await createImageElement(selfieImageData);
+                
+                // Detect face in DL
+                updateProgress(65, 'Analyzing DL photo...');
+                const dlDetection = await faceapi
+                    .detectSingleFace(dlImg, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+                
+                if (!dlDetection) {
+                    throw new Error('Could not detect face in driver\'s license. Please retake with better lighting.');
+                }
+                log('Face detected in DL', 'success');
+                
+                // Detect face in selfie
+                updateProgress(80, 'Analyzing selfie...');
+                const selfieDetection = await faceapi
+                    .detectSingleFace(selfieImg, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+                
+                if (!selfieDetection) {
+                    throw new Error('Could not detect face in selfie. Please retake with better lighting.');
+                }
+                log('Face detected in selfie', 'success');
+                
+                // Step 4: Compare faces
+                updateProgress(90, 'Comparing faces...');
+                const distance = faceapi.euclideanDistance(
+                    dlDetection.descriptor,
+                    selfieDetection.descriptor
+                );
+                
+                // Distance < 0.6 is typically considered a match
+                const confidence = Math.round((1 - distance) * 100);
+                const isMatch = distance < 0.6;
+                
+                log(`Face comparison: distance=${distance.toFixed(3)}, confidence=${confidence}%`, isMatch ? 'success' : 'error');
+                
+                if (!isMatch) {
+                    throw new Error(`Face verification failed. Confidence: ${confidence}%. Please ensure good lighting and try again.`);
+                }
+                
+                // Step 5: Save verification to backend
+                updateProgress(95, 'Saving verification...');
+                
+                const saveRes = await fetch(`${API_BASE}/api/identity/save-verification`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${currentToken}`
                     },
                     body: JSON.stringify({
-                        dlImage: dlImageData,
-                        selfieImage: selfieImageData
+                        name: dlInfo.name,
+                        address: dlInfo.address,
+                        dateOfBirth: dlInfo.dob,
+                        faceMatchConfidence: confidence,
+                        verifiedAt: new Date().toISOString()
                     })
                 });
                 
-                const result = await res.json();
-                
-                if (result.success) {
-                    log('✓ Identity verified!', 'success');
-                    document.getElementById('verified-name').textContent = result.name;
-                    
-                    // Store DL info for address claiming later
-                    verifiedDLInfo = result.dlInfo;
-                    localStorage.setItem('sunday_dl_info', JSON.stringify(result.dlInfo));
-                    
-                    // Show address from DL
-                    if (result.dlInfo?.address?.full) {
-                        document.getElementById('verified-address').textContent = result.dlInfo.address.full;
-                    }
-                    
-                    currentUser.name = result.name;
-                    localStorage.setItem('sunday_user', JSON.stringify(currentUser));
-                    showCard('verify-success-card');
-                } else {
-                    log(`Verification failed: ${result.error}`, 'error');
-                    alert(`Verification failed: ${result.error}\n\n${result.concerns ? result.concerns.join('\n') : ''}`);
-                    showDashboard();
+                if (!saveRes.ok) {
+                    // Even if save fails, local verification passed
+                    log('Warning: Could not save to server, but verification passed locally', 'info');
                 }
+                
+                // Success!
+                updateProgress(100, 'Complete!');
+                
+                verifiedDLInfo = dlInfo;
+                localStorage.setItem('sunday_dl_info', JSON.stringify(dlInfo));
+                
+                currentUser.name = dlInfo.name || currentUser.name;
+                localStorage.setItem('sunday_user', JSON.stringify(currentUser));
+                
+                document.getElementById('verified-name').textContent = dlInfo.name || 'Name extracted';
+                document.getElementById('verified-address').textContent = dlInfo.address || 'Address extracted';
+                document.getElementById('verified-confidence').textContent = `${confidence}% match`;
+                
+                log('✓ Identity verified!', 'success');
+                
+                setTimeout(() => showCard('verify-success-card'), 500);
+                
             } catch (error) {
                 log(`Error: ${error.message}`, 'error');
-                alert('Verification failed. Please try again.');
+                alert(`Verification failed: ${error.message}`);
                 showDashboard();
             }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // HELPER FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════
+        
+        function createImageElement(dataUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = dataUrl;
+            });
+        }
+        
+        function parseDLText(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+            
+            let name = '';
+            let address = '';
+            let dob = '';
+            
+            // Look for common DL patterns
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].toUpperCase();
+                
+                // Name patterns
+                if (line.includes('LN ') || line.includes('LAST')) {
+                    const nextLine = lines[i + 1];
+                    if (nextLine) name = nextLine;
+                }
+                if (line.includes('FN ') || line.includes('FIRST')) {
+                    const nextLine = lines[i + 1];
+                    if (nextLine) name = nextLine + ' ' + name;
+                }
+                
+                // DOB patterns
+                if (line.includes('DOB') || line.includes('BIRTH')) {
+                    const dobMatch = line.match(/\d{2}[\/\-]\d{2}[\/\-]\d{4}/);
+                    if (dobMatch) dob = dobMatch[0];
+                }
+                
+                // Address patterns - look for street numbers
+                if (/^\d+\s+\w+/.test(lines[i]) && !lines[i].match(/^\d{2}[\/\-]/)) {
+                    address = lines[i];
+                    // Check if next line is city/state
+                    if (lines[i + 1] && /[A-Z]{2}\s+\d{5}/.test(lines[i + 1].toUpperCase())) {
+                        address += ', ' + lines[i + 1];
+                    }
+                }
+            }
+            
+            // If we didn't find structured name, look for any name-like text
+            if (!name) {
+                for (const line of lines) {
+                    // Look for lines that look like names (2-3 words, all letters)
+                    if (/^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(line)) {
+                        name = line;
+                        break;
+                    }
+                }
+            }
+            
+            return { name: name.trim(), address: address.trim(), dob };
         }
 
         function cancelVerification() {
@@ -765,7 +927,7 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday v4 - Identity Platform', 'info');
+            log('Sunday v5 - On-Device Verification', 'info');
             detectDevice();
             checkExistingSession();
         });
