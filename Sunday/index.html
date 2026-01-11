@@ -21,7 +21,754 @@
             --border: #e2e8f0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunday | Passwordless Identity</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-start: #e8f4f8;
+            --bg-gradient-end: #d4e8d4;
+            --card-bg: #ffffff;
+            --primary: #2B9EB3;
+            --primary-dark: #237a8a;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --text-primary: #1a1a2e;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; }
+        .logo-icon { width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .logo-text { font-size: 32px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; }
+        .subtitle { color: var(--text-secondary); font-size: 16px; }
+        .live-badge { display: inline-block; background: var(--success); color: white; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; margin-top: 8px; }
+        .card { background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); padding: 28px; width: 100%; max-width: 440px; margin-bottom: 20px; }
+        .card-title { font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .card-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+        .input-group { margin-bottom: 16px; }
+        .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+        .input-field { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-family: inherit; transition: all 0.2s; }
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(43, 158, 179, 0.1); }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
+        .status-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .status-info { background: rgba(43, 158, 179, 0.1); color: var(--primary); }
+        .hidden { display: none !important; }
+        .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; color: var(--error); font-size: 14px; }
+        .info-box { background: rgba(43, 158, 179, 0.1); border-left: 4px solid var(--primary); border-radius: 0 10px 10px 0; padding: 14px; margin-top: 16px; }
+        .info-box-title { font-weight: 600; color: var(--primary); margin-bottom: 6px; font-size: 14px; }
+        .info-box-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+        .device-info { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f8fafc; border-radius: 10px; margin-bottom: 16px; }
+        .device-icon { font-size: 28px; }
+        .device-details { flex: 1; }
+        .device-name { font-weight: 600; color: var(--text-primary); font-size: 14px; }
+        .device-type { font-size: 12px; color: var(--text-secondary); }
+        .credential-display { background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%); border-radius: 14px; padding: 20px; color: white; margin-top: 16px; }
+        .credential-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); margin-bottom: 4px; }
+        .credential-value { font-family: 'SF Mono', monospace; font-size: 12px; color: white; word-break: break-all; margin-bottom: 14px; }
+        .cpid-display { font-size: 16px; font-weight: 600; color: #10B981; margin-bottom: 14px; }
+        .log-container { background: #f8fafc; border-radius: 10px; padding: 14px; max-height: 200px; overflow-y: auto; }
+        .log-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .log-entry { font-family: 'SF Mono', monospace; font-size: 10px; padding: 4px 0; border-bottom: 1px solid var(--border); display: flex; gap: 6px; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: var(--text-secondary); flex-shrink: 0; }
+        .log-message { color: var(--text-primary); word-break: break-word; }
+        .log-success { color: var(--success); }
+        .log-error { color: var(--error); }
+        .log-info { color: var(--primary); }
+        .camera-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+        .camera-video { width: 100%; height: 100%; object-fit: cover; }
+        .camera-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; }
+        .camera-frame { border: 3px dashed rgba(255,255,255,0.5); border-radius: 10px; width: 85%; height: 60%; }
+        .camera-frame.selfie { width: 60%; height: 75%; border-radius: 50%; }
+        .capture-preview { width: 100%; border-radius: 12px; margin-bottom: 16px; }
+        .step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .step { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+        .step.active { background: var(--primary); }
+        .step.done { background: var(--success); }
+        .verification-status { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border-radius: 10px; margin-bottom: 12px; }
+        .verification-status .icon { font-size: 20px; }
+        .verification-status .text { flex: 1; }
+        .verification-status .label { font-size: 13px; color: var(--text-secondary); }
+        .verification-status .value { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .back-link { margin-top: 16px; text-align: center; }
+        .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
+        @media (max-width: 480px) { body { padding: 20px 16px; } .card { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">📬</div>
+            <span class="logo-text">SUNDAY</span>
+        </div>
+        <p class="subtitle">Passwordless Identity for the Internet</p>
+        <span class="live-badge">🔴 LIVE</span>
+    </header>
+
+    <!-- Registration Card -->
+    <div class="card" id="registration-card">
+        <h2 class="card-title">Create Your Sunday Identity</h2>
+        <p class="card-subtitle">Use your device's biometric — Face ID, Touch ID, or fingerprint</p>
+        <div id="device-detected" class="device-info">
+            <span class="device-icon" id="device-icon">🔍</span>
+            <div class="device-details">
+                <div class="device-name" id="device-name">Detecting device...</div>
+                <div class="device-type" id="device-type">Checking WebAuthn support</div>
+            </div>
+        </div>
+        <div class="input-group">
+            <label class="input-label">Display Name</label>
+            <input type="text" class="input-field" id="displayName" placeholder="Enter your name">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Phone Number</label>
+            <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567">
+        </div>
+        <button class="btn btn-primary" id="registerBtn" onclick="startRegistration()">
+            <span>🔐</span> Register with Biometric
+        </button>
+        <button class="btn btn-outline" onclick="showLogin()">Already registered? Sign in</button>
+        <div id="register-error" class="error-box hidden"></div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card hidden" id="login-card">
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-subtitle">Sign in with your biometric</p>
+        <button class="btn btn-primary" onclick="startLogin()">
+            <span>👆</span> Sign in with Face ID
+        </button>
+        <button class="btn btn-outline" onclick="showRegister()">Need an account? Register</button>
+        <div id="login-error" class="error-box hidden"></div>
+    </div>
+
+    <!-- Dashboard Card (after login) -->
+    <div class="card hidden" id="dashboard-card">
+        <span class="status-badge status-success" id="auth-badge">✓ Authenticated</span>
+        <h2 class="card-title">Welcome, <span id="user-name-display">User</span>!</h2>
+        
+        <div class="verification-status">
+            <span class="icon">🔐</span>
+            <div class="text">
+                <div class="label">Passkey</div>
+                <div class="value" id="passkey-status">Verified</div>
+            </div>
+            <span style="color: var(--success);">✓</span>
+        </div>
+        
+        <div class="verification-status" id="identity-status-box">
+            <span class="icon">🪪</span>
+            <div class="text">
+                <div class="label">Identity</div>
+                <div class="value" id="identity-status">Not verified</div>
+            </div>
+            <span id="identity-check" style="color: var(--warning);">⚠</span>
+        </div>
+        
+        <button class="btn btn-warning hidden" id="verify-identity-btn" onclick="startIdentityVerification()">
+            <span>📷</span> Verify Identity
+        </button>
+        
+        <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
+    </div>
+
+    <!-- Identity Verification - Step 1: DL Scan -->
+    <div class="card hidden" id="verify-dl-card">
+        <div class="step-indicator">
+            <div class="step active"></div>
+            <div class="step"></div>
+            <div class="step"></div>
+        </div>
+        <h2 class="card-title">Scan Driver's License</h2>
+        <p class="card-subtitle">Position your DL within the frame</p>
+        
+        <div class="camera-container" id="dl-camera-container">
+            <video id="dl-video" class="camera-video" autoplay playsinline></video>
+            <div class="camera-overlay">
+                <div class="camera-frame"></div>
+            </div>
+        </div>
+        
+        <img id="dl-preview" class="capture-preview hidden" alt="DL Preview">
+        
+        <button class="btn btn-primary" id="capture-dl-btn" onclick="captureDL()">
+            <span>📸</span> Capture DL
+        </button>
+        <button class="btn btn-outline hidden" id="retake-dl-btn" onclick="retakeDL()">Retake Photo</button>
+        <button class="btn btn-success hidden" id="confirm-dl-btn" onclick="confirmDL()">
+            <span>✓</span> Looks Good, Continue
+        </button>
+        <button class="btn btn-outline" onclick="cancelVerification()">Cancel</button>
+        <div id="dl-error" class="error-box hidden"></div>
+    </div>
+
+    <!-- Identity Verification - Step 2: Selfie -->
+    <div class="card hidden" id="verify-selfie-card">
+        <div class="step-indicator">
+            <div class="step done"></div>
+            <div class="step active"></div>
+            <div class="step"></div>
+        </div>
+        <h2 class="card-title">Take a Selfie</h2>
+        <p class="card-subtitle">Position your face in the circle</p>
+        
+        <div class="camera-container" id="selfie-camera-container">
+            <video id="selfie-video" class="camera-video" autoplay playsinline></video>
+            <div class="camera-overlay">
+                <div class="camera-frame selfie"></div>
+            </div>
+        </div>
+        
+        <img id="selfie-preview" class="capture-preview hidden" alt="Selfie Preview">
+        
+        <button class="btn btn-primary" id="capture-selfie-btn" onclick="captureSelfie()">
+            <span>🤳</span> Take Selfie
+        </button>
+        <button class="btn btn-outline hidden" id="retake-selfie-btn" onclick="retakeSelfie()">Retake Photo</button>
+        <button class="btn btn-success hidden" id="confirm-selfie-btn" onclick="confirmSelfie()">
+            <span>✓</span> Looks Good, Verify
+        </button>
+        <button class="btn btn-outline" onclick="cancelVerification()">Cancel</button>
+        <div id="selfie-error" class="error-box hidden"></div>
+    </div>
+
+    <!-- Identity Verification - Step 3: Processing -->
+    <div class="card hidden" id="verify-processing-card">
+        <div class="step-indicator">
+            <div class="step done"></div>
+            <div class="step done"></div>
+            <div class="step active"></div>
+        </div>
+        <h2 class="card-title">Verifying Identity...</h2>
+        <p class="card-subtitle">This may take a few seconds</p>
+        
+        <div style="text-align: center; padding: 40px 0;">
+            <div style="font-size: 48px; animation: pulse 1.5s infinite;">🔍</div>
+            <p id="processing-status" style="margin-top: 16px; color: var(--text-secondary);">Analyzing documents...</p>
+        </div>
+        
+        <style>
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.7; }
+            }
+        </style>
+    </div>
+
+    <!-- Identity Verification - Success -->
+    <div class="card hidden" id="verify-success-card">
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 64px; margin-bottom: 16px;">✅</div>
+            <h2 class="card-title">Identity Verified!</h2>
+            <p class="card-subtitle">Your Sunday account is now fully verified</p>
+        </div>
+        
+        <div class="credential-display">
+            <div class="credential-label">Verified Name</div>
+            <div class="cpid-display" id="verified-name">—</div>
+            <div class="credential-label">Verification Level</div>
+            <div class="credential-value">✓ Passkey + ✓ Identity</div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToDashboard()">
+            <span>🏠</span> Go to Dashboard
+        </button>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="card">
+        <div class="log-container">
+            <div class="log-title">Activity Log</div>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <div class="back-link"><a href="/">← Back to Stealth Services</a></div>
+
+    <script>
+        const API_BASE = 'https://sunday-platform.onrender.com';
+        const RP_ID = 'umbrassi.com';
+        
+        let currentToken = null;
+        let currentUser = null;
+        let dlImageData = null;
+        let selfieImageData = null;
+        let dlStream = null;
+        let selfieStream = null;
+
+        // ═══════════════════════════════════════════════════════════════════
+        // LOGGING
+        // ═══════════════════════════════════════════════════════════════════
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">${time}</span><span class="log-message log-${type}">${message}</span>`;
+            logEl.insertBefore(entry, logEl.firstChild);
+            console.log(`[${type}] ${message}`);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // UI HELPERS
+        // ═══════════════════════════════════════════════════════════════════
+        function hideAllCards() {
+            document.querySelectorAll('.card').forEach(c => {
+                if (!c.querySelector('.log-container')) c.classList.add('hidden');
+            });
+        }
+
+        function showCard(id) {
+            hideAllCards();
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function showLogin() { showCard('login-card'); }
+        function showRegister() { showCard('registration-card'); }
+        
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).classList.add('hidden');
+        }
+
+        function signOut() {
+            currentToken = null;
+            currentUser = null;
+            localStorage.removeItem('sunday_token');
+            localStorage.removeItem('sunday_user');
+            showRegister();
+            log('Signed out', 'info');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // DASHBOARD
+        // ═══════════════════════════════════════════════════════════════════
+        async function showDashboard() {
+            showCard('dashboard-card');
+            document.getElementById('user-name-display').textContent = currentUser?.name || 'User';
+            
+            // Check verification status
+            try {
+                const res = await fetch(`${API_BASE}/api/identity/status`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const status = await res.json();
+                
+                if (status.identity) {
+                    document.getElementById('identity-status').textContent = 'Verified';
+                    document.getElementById('identity-check').textContent = '✓';
+                    document.getElementById('identity-check').style.color = 'var(--success)';
+                    document.getElementById('verify-identity-btn').classList.add('hidden');
+                } else {
+                    document.getElementById('identity-status').textContent = 'Not verified';
+                    document.getElementById('identity-check').textContent = '⚠';
+                    document.getElementById('identity-check').style.color = 'var(--warning)';
+                    document.getElementById('verify-identity-btn').classList.remove('hidden');
+                }
+            } catch (e) {
+                log('Could not fetch status', 'error');
+            }
+        }
+
+        function goToDashboard() {
+            showDashboard();
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // DEVICE DETECTION
+        // ═══════════════════════════════════════════════════════════════════
+        async function detectDevice() {
+            const deviceIcon = document.getElementById('device-icon');
+            const deviceName = document.getElementById('device-name');
+            const deviceType = document.getElementById('device-type');
+
+            if (!window.PublicKeyCredential) {
+                deviceIcon.textContent = '❌';
+                deviceName.textContent = 'WebAuthn Not Supported';
+                deviceType.textContent = 'Use Safari, Chrome, or Firefox';
+                return;
+            }
+
+            let available = false;
+            try { available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); } catch {}
+
+            const ua = navigator.userAgent;
+            let icon = '💻', name = 'Desktop', type = 'Windows Hello';
+            if (/iPhone|iPad|iPod/.test(ua)) { icon = '📱'; name = 'iPhone/iPad'; type = 'Face ID / Touch ID'; }
+            else if (/Android/.test(ua)) { icon = '📱'; name = 'Android'; type = 'Fingerprint'; }
+            else if (/Mac/.test(ua)) { icon = '💻'; name = 'Mac'; type = 'Touch ID'; }
+
+            deviceIcon.textContent = icon;
+            deviceName.textContent = name;
+            deviceType.textContent = available ? `✓ ${type} Ready` : '⚠️ May need security key';
+            log(`Device: ${name}`, 'success');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // WEBAUTHN HELPERS
+        // ═══════════════════════════════════════════════════════════════════
+        function base64URLToBuffer(base64url) {
+            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+            const pad = base64.length % 4;
+            const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
+            const binary = atob(padded);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            return bytes.buffer;
+        }
+
+        function bufferToBase64URL(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // REGISTRATION
+        // ═══════════════════════════════════════════════════════════════════
+        async function startRegistration() {
+            const displayName = document.getElementById('displayName').value.trim() || 'Sunday User';
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) { showError('register-error', 'Please enter your phone number'); return; }
+            hideError('register-error');
+            log('Starting registration...', 'info');
+
+            try {
+                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, displayName })
+                });
+                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed');
+                const { options, userId } = await optionsRes.json();
+                log('Got challenge', 'success');
+
+                const publicKeyOptions = {
+                    challenge: base64URLToBuffer(options.challenge),
+                    rp: { id: RP_ID, name: options.rp.name },
+                    user: { id: base64URLToBuffer(options.user.id), name: options.user.name, displayName: options.user.displayName },
+                    pubKeyCredParams: options.pubKeyCredParams,
+                    timeout: 60000,
+                    attestation: 'none',
+                    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required', requireResidentKey: true }
+                };
+
+                log('Prompting biometric...', 'info');
+                const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+                log('✓ Biometric verified!', 'success');
+
+                const credentialJSON = {
+                    id: credential.id,
+                    rawId: bufferToBase64URL(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+                        attestationObject: bufferToBase64URL(credential.response.attestationObject),
+                        transports: credential.response.getTransports ? credential.response.getTransports() : ['internal']
+                    }
+                };
+
+                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, credential: credentialJSON })
+                });
+                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Verification failed');
+                const { token } = await verifyRes.json();
+                
+                currentToken = token;
+                currentUser = { name: displayName, phone };
+                localStorage.setItem('sunday_token', token);
+                localStorage.setItem('sunday_user', JSON.stringify(currentUser));
+                
+                log('✓ Registration complete!', 'success');
+                showDashboard();
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                showError('register-error', error.message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // LOGIN
+        // ═══════════════════════════════════════════════════════════════════
+        async function startLogin() {
+            hideError('login-error');
+            log('Starting authentication...', 'info');
+
+            try {
+                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed');
+                const { options, challengeKey } = await optionsRes.json();
+                log('Got challenge', 'success');
+
+                const publicKeyOptions = {
+                    challenge: base64URLToBuffer(options.challenge),
+                    rpId: RP_ID,
+                    timeout: 60000,
+                    userVerification: 'required'
+                };
+
+                log('Prompting Face ID...', 'info');
+                const credential = await navigator.credentials.get({ publicKey: publicKeyOptions });
+                log('✓ Biometric verified!', 'success');
+
+                const credentialJSON = {
+                    id: credential.id,
+                    rawId: bufferToBase64URL(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+                        authenticatorData: bufferToBase64URL(credential.response.authenticatorData),
+                        signature: bufferToBase64URL(credential.response.signature),
+                        userHandle: credential.response.userHandle ? bufferToBase64URL(credential.response.userHandle) : null
+                    }
+                };
+
+                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ challengeKey, credential: credentialJSON })
+                });
+                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Auth failed');
+                const { token, user } = await verifyRes.json();
+                
+                currentToken = token;
+                currentUser = user;
+                localStorage.setItem('sunday_token', token);
+                localStorage.setItem('sunday_user', JSON.stringify(user));
+                
+                log('✓ Authentication complete!', 'success');
+                showDashboard();
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                showError('login-error', error.message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // IDENTITY VERIFICATION - CAMERA
+        // ═══════════════════════════════════════════════════════════════════
+        async function startCamera(videoId, facingMode = 'environment') {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+                });
+                document.getElementById(videoId).srcObject = stream;
+                return stream;
+            } catch (e) {
+                log(`Camera error: ${e.message}`, 'error');
+                throw e;
+            }
+        }
+
+        function stopCamera(stream) {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+        }
+
+        function captureFrame(videoId) {
+            const video = document.getElementById(videoId);
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            return canvas.toDataURL('image/jpeg', 0.8);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // IDENTITY VERIFICATION - FLOW
+        // ═══════════════════════════════════════════════════════════════════
+        async function startIdentityVerification() {
+            log('Starting identity verification...', 'info');
+            showCard('verify-dl-card');
+            
+            try {
+                dlStream = await startCamera('dl-video', 'environment');
+                log('Camera ready for DL scan', 'success');
+            } catch (e) {
+                showError('dl-error', 'Could not access camera. Please allow camera permissions.');
+            }
+        }
+
+        function captureDL() {
+            dlImageData = captureFrame('dl-video');
+            document.getElementById('dl-preview').src = dlImageData;
+            document.getElementById('dl-preview').classList.remove('hidden');
+            document.getElementById('dl-camera-container').classList.add('hidden');
+            document.getElementById('capture-dl-btn').classList.add('hidden');
+            document.getElementById('retake-dl-btn').classList.remove('hidden');
+            document.getElementById('confirm-dl-btn').classList.remove('hidden');
+            stopCamera(dlStream);
+            log('DL captured', 'info');
+        }
+
+        async function retakeDL() {
+            document.getElementById('dl-preview').classList.add('hidden');
+            document.getElementById('dl-camera-container').classList.remove('hidden');
+            document.getElementById('capture-dl-btn').classList.remove('hidden');
+            document.getElementById('retake-dl-btn').classList.add('hidden');
+            document.getElementById('confirm-dl-btn').classList.add('hidden');
+            dlStream = await startCamera('dl-video', 'environment');
+        }
+
+        async function confirmDL() {
+            log('DL confirmed, starting selfie...', 'info');
+            showCard('verify-selfie-card');
+            
+            try {
+                selfieStream = await startCamera('selfie-video', 'user');
+                log('Camera ready for selfie', 'success');
+            } catch (e) {
+                showError('selfie-error', 'Could not access front camera.');
+            }
+        }
+
+        function captureSelfie() {
+            selfieImageData = captureFrame('selfie-video');
+            document.getElementById('selfie-preview').src = selfieImageData;
+            document.getElementById('selfie-preview').classList.remove('hidden');
+            document.getElementById('selfie-camera-container').classList.add('hidden');
+            document.getElementById('capture-selfie-btn').classList.add('hidden');
+            document.getElementById('retake-selfie-btn').classList.remove('hidden');
+            document.getElementById('confirm-selfie-btn').classList.remove('hidden');
+            stopCamera(selfieStream);
+            log('Selfie captured', 'info');
+        }
+
+        async function retakeSelfie() {
+            document.getElementById('selfie-preview').classList.add('hidden');
+            document.getElementById('selfie-camera-container').classList.remove('hidden');
+            document.getElementById('capture-selfie-btn').classList.remove('hidden');
+            document.getElementById('retake-selfie-btn').classList.add('hidden');
+            document.getElementById('confirm-selfie-btn').classList.add('hidden');
+            selfieStream = await startCamera('selfie-video', 'user');
+        }
+
+        async function confirmSelfie() {
+            log('Processing verification...', 'info');
+            showCard('verify-processing-card');
+            
+            try {
+                document.getElementById('processing-status').textContent = 'Analyzing driver\'s license...';
+                
+                // For now, we'll use a dummy address. In production, this would come from user's claimed address.
+                const claimedAddress = {
+                    street: '123 Main St',
+                    city: 'Tampa',
+                    state: 'FL',
+                    zipCode: '33602'
+                };
+                
+                const res = await fetch(`${API_BASE}/api/identity/complete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({
+                        dlImage: dlImageData,
+                        selfieImage: selfieImageData,
+                        claimedAddress
+                    })
+                });
+                
+                const result = await res.json();
+                
+                if (result.success) {
+                    log('✓ Identity verified!', 'success');
+                    document.getElementById('verified-name').textContent = result.name;
+                    currentUser.name = result.name;
+                    localStorage.setItem('sunday_user', JSON.stringify(currentUser));
+                    showCard('verify-success-card');
+                } else {
+                    log(`Verification failed: ${result.error}`, 'error');
+                    
+                    if (result.needsSecondaryVerification) {
+                        alert(`Address mismatch!\n\nDL Address: ${result.dlAddress}\nClaimed: ${result.claimedAddress}\n\nSecondary verification coming soon.`);
+                    } else {
+                        alert(`Verification failed: ${result.error}`);
+                    }
+                    showDashboard();
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                alert('Verification failed. Please try again.');
+                showDashboard();
+            }
+        }
+
+        function cancelVerification() {
+            stopCamera(dlStream);
+            stopCamera(selfieStream);
+            dlImageData = null;
+            selfieImageData = null;
+            showDashboard();
+            log('Verification cancelled', 'info');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // SESSION RESTORE
+        // ═══════════════════════════════════════════════════════════════════
+        function checkExistingSession() {
+            const token = localStorage.getItem('sunday_token');
+            const user = localStorage.getItem('sunday_user');
+            if (token && user) {
+                try {
+                    currentToken = token;
+                    currentUser = JSON.parse(user);
+                    showDashboard();
+                    log('Session restored', 'info');
+                } catch { localStorage.clear(); }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Sunday v3 - Identity Verification', 'info');
+            detectDevice();
+            checkExistingSession();
+        });
+    </script>
+</body>
+</html>
+
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
