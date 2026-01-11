@@ -3,29 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunday | Sign in with Your Face</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-gradient-start: #e8f4f8;
-            --bg-gradient-end: #d4e8d4;
-            --card-bg: #ffffff;
-            --primary: #2B9EB3;
-            --primary-dark: #237a8a;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-            --text-primary: #1a1a2e;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sunday | Passwordless Identity</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -167,7 +144,7 @@
         <div id="login-error" class="error-box hidden"></div>
     </div>
 
-    <!-- Dashboard Card (after login) -->
+    <!-- Dashboard Card -->
     <div class="card hidden" id="dashboard-card">
         <span class="status-badge status-success" id="auth-badge">✓ Authenticated</span>
         <h2 class="card-title">Welcome, <span id="user-name-display">User</span>!</h2>
@@ -193,8 +170,21 @@
         <button class="btn btn-warning hidden" id="verify-identity-btn" onclick="startIdentityVerification()">
             <span>📷</span> Verify Identity
         </button>
+
+        <button class="btn btn-primary hidden" id="claim-address-btn" onclick="startAddressClaim()">
+            <span>🏠</span> Claim Your Address
+        </button>
         
         <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
+
+        <div class="info-box" id="identity-info" style="display: none;">
+            <div class="info-box-title">🎉 Identity Verified</div>
+            <div class="info-box-text">
+                Your Sunday identity is now verified. You can use this across all Sunday-enabled platforms.
+                <br><br>
+                <strong>Want to receive secure mail?</strong> Claim your address to create your Crypto-Property-ID (CPiD).
+            </div>
+        </div>
     </div>
 
     <!-- Identity Verification - Step 1: DL Scan -->
@@ -293,6 +283,8 @@
             <div class="cpid-display" id="verified-name">—</div>
             <div class="credential-label">Verification Level</div>
             <div class="credential-value">✓ Passkey + ✓ Identity</div>
+            <div class="credential-label">Address on File</div>
+            <div class="credential-value" id="verified-address">—</div>
         </div>
         
         <button class="btn btn-primary" onclick="goToDashboard()">
@@ -320,6 +312,7 @@
         let selfieImageData = null;
         let dlStream = null;
         let selfieStream = null;
+        let verifiedDLInfo = null; // Store DL info for address claiming
 
         // ═══════════════════════════════════════════════════════════════════
         // LOGGING
@@ -364,8 +357,10 @@
         function signOut() {
             currentToken = null;
             currentUser = null;
+            verifiedDLInfo = null;
             localStorage.removeItem('sunday_token');
             localStorage.removeItem('sunday_user');
+            localStorage.removeItem('sunday_dl_info');
             showRegister();
             log('Signed out', 'info');
         }
@@ -389,11 +384,15 @@
                     document.getElementById('identity-check').textContent = '✓';
                     document.getElementById('identity-check').style.color = 'var(--success)';
                     document.getElementById('verify-identity-btn').classList.add('hidden');
+                    document.getElementById('claim-address-btn').classList.remove('hidden');
+                    document.getElementById('identity-info').style.display = 'block';
                 } else {
                     document.getElementById('identity-status').textContent = 'Not verified';
                     document.getElementById('identity-check').textContent = '⚠';
                     document.getElementById('identity-check').style.color = 'var(--warning)';
                     document.getElementById('verify-identity-btn').classList.remove('hidden');
+                    document.getElementById('claim-address-btn').classList.add('hidden');
+                    document.getElementById('identity-info').style.display = 'none';
                 }
             } catch (e) {
                 log('Could not fetch status', 'error');
@@ -402,6 +401,12 @@
 
         function goToDashboard() {
             showDashboard();
+        }
+
+        function startAddressClaim() {
+            // This will be the Sunday Portal feature
+            alert('Address Claiming coming soon!\n\nYou\'ll be able to claim your address using:\n• Driver\'s License\n• Property Deed\n• Utility Bill\n• Bank Statement');
+            log('Address claim feature coming soon', 'info');
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -686,14 +691,6 @@
             try {
                 document.getElementById('processing-status').textContent = 'Analyzing driver\'s license...';
                 
-                // For now, we'll use a dummy address. In production, this would come from user's claimed address.
-                const claimedAddress = {
-                    street: '123 Main St',
-                    city: 'Tampa',
-                    state: 'FL',
-                    zipCode: '33602'
-                };
-                
                 const res = await fetch(`${API_BASE}/api/identity/complete`, {
                     method: 'POST',
                     headers: {
@@ -702,8 +699,7 @@
                     },
                     body: JSON.stringify({
                         dlImage: dlImageData,
-                        selfieImage: selfieImageData,
-                        claimedAddress
+                        selfieImage: selfieImageData
                     })
                 });
                 
@@ -712,17 +708,22 @@
                 if (result.success) {
                     log('✓ Identity verified!', 'success');
                     document.getElementById('verified-name').textContent = result.name;
+                    
+                    // Store DL info for address claiming later
+                    verifiedDLInfo = result.dlInfo;
+                    localStorage.setItem('sunday_dl_info', JSON.stringify(result.dlInfo));
+                    
+                    // Show address from DL
+                    if (result.dlInfo?.address?.full) {
+                        document.getElementById('verified-address').textContent = result.dlInfo.address.full;
+                    }
+                    
                     currentUser.name = result.name;
                     localStorage.setItem('sunday_user', JSON.stringify(currentUser));
                     showCard('verify-success-card');
                 } else {
                     log(`Verification failed: ${result.error}`, 'error');
-                    
-                    if (result.needsSecondaryVerification) {
-                        alert(`Address mismatch!\n\nDL Address: ${result.dlAddress}\nClaimed: ${result.claimedAddress}\n\nSecondary verification coming soon.`);
-                    } else {
-                        alert(`Verification failed: ${result.error}`);
-                    }
+                    alert(`Verification failed: ${result.error}\n\n${result.concerns ? result.concerns.join('\n') : ''}`);
                     showDashboard();
                 }
             } catch (error) {
@@ -747,10 +748,13 @@
         function checkExistingSession() {
             const token = localStorage.getItem('sunday_token');
             const user = localStorage.getItem('sunday_user');
+            const dlInfo = localStorage.getItem('sunday_dl_info');
+            
             if (token && user) {
                 try {
                     currentToken = token;
                     currentUser = JSON.parse(user);
+                    if (dlInfo) verifiedDLInfo = JSON.parse(dlInfo);
                     showDashboard();
                     log('Session restored', 'info');
                 } catch { localStorage.clear(); }
@@ -761,407 +765,7 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday v3 - Identity Verification', 'info');
-            detectDevice();
-            checkExistingSession();
-        });
-    </script>
-</body>
-</html>
-
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        .header { text-align: center; margin-bottom: 40px; }
-        .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
-        .logo-icon { width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .logo-text { font-size: 32px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; }
-        .subtitle { color: var(--text-secondary); font-size: 16px; }
-        .live-badge { display: inline-block; background: var(--success); color: white; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-        .card { background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); padding: 32px; width: 100%; max-width: 440px; margin-bottom: 24px; }
-        .card-title { font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-        .card-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
-        .input-group { margin-bottom: 20px; }
-        .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
-        .input-field { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; transition: all 0.2s; }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(43, 158, 179, 0.1); }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
-        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 12px; }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 100px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
-        .status-authenticated { background: rgba(43, 158, 179, 0.1); color: var(--primary); }
-        .credential-display { background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%); border-radius: 16px; padding: 24px; color: white; margin-top: 20px; }
-        .credential-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); margin-bottom: 4px; }
-        .credential-value { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: white; word-break: break-all; margin-bottom: 16px; }
-        .cpid-display { font-size: 18px; font-weight: 600; color: #10B981; margin-bottom: 16px; }
-        .info-box { background: rgba(43, 158, 179, 0.1); border-left: 4px solid var(--primary); border-radius: 0 12px 12px 0; padding: 16px; margin-top: 20px; }
-        .info-box-title { font-weight: 600; color: var(--primary); margin-bottom: 8px; font-size: 14px; }
-        .info-box-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-        .device-info { display: flex; align-items: center; gap: 12px; padding: 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 20px; }
-        .device-icon { font-size: 32px; }
-        .device-details { flex: 1; }
-        .device-name { font-weight: 600; color: var(--text-primary); }
-        .device-type { font-size: 13px; color: var(--text-secondary); }
-        .hidden { display: none !important; }
-        .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error); border-radius: 0 12px 12px 0; padding: 16px; margin-top: 20px; color: var(--error); font-size: 14px; }
-        .log-container { background: #f8fafc; border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; }
-        .log-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .log-entry { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; }
-        .log-entry:last-child { border-bottom: none; }
-        .log-time { color: var(--text-secondary); flex-shrink: 0; }
-        .log-message { color: var(--text-primary); word-break: break-word; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--error); }
-        .log-info { color: var(--primary); }
-        .back-link { margin-top: 20px; text-align: center; }
-        .back-link a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
-        .back-link a:hover { color: var(--primary); }
-        @media (max-width: 480px) { body { padding: 20px 16px; } .card { padding: 24px; } }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon">📬</div>
-            <span class="logo-text">SUNDAY</span>
-        </div>
-        <p class="subtitle">Passwordless Identity for the Internet</p>
-        <span class="live-badge">🔴 LIVE - Production</span>
-    </header>
-
-    <!-- Registration Card -->
-    <div class="card" id="registration-card">
-        <h2 class="card-title">Create Your Sunday Identity</h2>
-        <p class="card-subtitle">Use your device's biometric — Face ID, Touch ID, or fingerprint</p>
-        <div id="device-detected" class="device-info">
-            <span class="device-icon" id="device-icon">🔍</span>
-            <div class="device-details">
-                <div class="device-name" id="device-name">Detecting device...</div>
-                <div class="device-type" id="device-type">Checking WebAuthn support</div>
-            </div>
-        </div>
-        <div class="input-group">
-            <label class="input-label">Display Name</label>
-            <input type="text" class="input-field" id="displayName" placeholder="Enter your name">
-        </div>
-        <div class="input-group">
-            <label class="input-label">Phone Number</label>
-            <input type="tel" class="input-field" id="phone" placeholder="+1 (555) 123-4567">
-        </div>
-        <button class="btn btn-primary" id="registerBtn" onclick="startRegistration()">
-            <span>🔐</span> Register with Biometric
-        </button>
-        <button class="btn btn-outline" onclick="showLogin()">Already registered? Sign in</button>
-        <div id="register-error" class="error-box hidden"></div>
-        <div class="info-box">
-            <div class="info-box-title">🔒 Your biometric stays on your device</div>
-            <div class="info-box-text">Sunday <strong>never sees</strong> your face or fingerprint. Your device creates a unique passkey and only sends cryptographic proof.</div>
-        </div>
-    </div>
-
-    <!-- Login Card -->
-    <div class="card hidden" id="login-card">
-        <h2 class="card-title">Welcome Back</h2>
-        <p class="card-subtitle">Sign in with your biometric</p>
-        <button class="btn btn-primary" id="loginBtn" onclick="startLogin()">
-            <span>👆</span> Sign in with Face ID
-        </button>
-        <button class="btn btn-outline" onclick="showRegister()">Need an account? Register</button>
-        <div id="login-error" class="error-box hidden"></div>
-    </div>
-
-    <!-- Success Card -->
-    <div class="card hidden" id="success-card">
-        <span class="status-badge status-authenticated">🎉 Authenticated</span>
-        <h2 class="card-title">Welcome to Sunday!</h2>
-        <p class="card-subtitle">You're signed in with your biometric — no password needed</p>
-        <div class="credential-display">
-            <div class="credential-label">Signed In As</div>
-            <div class="cpid-display" id="user-name">—</div>
-            <div class="credential-label">Phone</div>
-            <div class="credential-value" id="user-phone">—</div>
-            <div class="credential-label">Session Token</div>
-            <div class="credential-value" id="user-token">—</div>
-        </div>
-        <button class="btn btn-outline" onclick="resetAll()">Sign Out</button>
-    </div>
-
-    <!-- Activity Log -->
-    <div class="card">
-        <div class="log-container">
-            <div class="log-title">Activity Log</div>
-            <div id="log"></div>
-        </div>
-    </div>
-
-    <div class="back-link"><a href="/">← Back to Stealth Services</a></div>
-
-    <script>
-        const API_BASE = 'https://sunday-platform.onrender.com';
-        const RP_ID = 'umbrassi.com';
-
-        function log(message, type = 'info') {
-            const logEl = document.getElementById('log');
-            const time = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="log-time">${time}</span><span class="log-message log-${type}">${message}</span>`;
-            logEl.insertBefore(entry, logEl.firstChild);
-            console.log(`[${type}] ${message}`);
-        }
-
-        function showLogin() {
-            document.getElementById('registration-card').classList.add('hidden');
-            document.getElementById('login-card').classList.remove('hidden');
-            document.getElementById('success-card').classList.add('hidden');
-        }
-
-        function showRegister() {
-            document.getElementById('registration-card').classList.remove('hidden');
-            document.getElementById('login-card').classList.add('hidden');
-            document.getElementById('success-card').classList.add('hidden');
-        }
-
-        function showSuccess(user, token) {
-            document.getElementById('registration-card').classList.add('hidden');
-            document.getElementById('login-card').classList.add('hidden');
-            document.getElementById('success-card').classList.remove('hidden');
-            document.getElementById('user-name').textContent = user.name || 'Sunday User';
-            document.getElementById('user-phone').textContent = user.phone || '—';
-            document.getElementById('user-token').textContent = token.substring(0, 50) + '...';
-            localStorage.setItem('sunday_token', token);
-            localStorage.setItem('sunday_user', JSON.stringify(user));
-        }
-
-        function showError(elementId, message) {
-            const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.classList.remove('hidden');
-        }
-
-        function hideError(elementId) {
-            document.getElementById(elementId).classList.add('hidden');
-        }
-
-        function resetAll() {
-            localStorage.removeItem('sunday_token');
-            localStorage.removeItem('sunday_user');
-            showRegister();
-            log('Signed out', 'info');
-        }
-
-        async function detectDevice() {
-            const deviceIcon = document.getElementById('device-icon');
-            const deviceName = document.getElementById('device-name');
-            const deviceType = document.getElementById('device-type');
-            const registerBtn = document.getElementById('registerBtn');
-
-            if (!window.PublicKeyCredential) {
-                deviceIcon.textContent = '❌';
-                deviceName.textContent = 'WebAuthn Not Supported';
-                deviceType.textContent = 'Please use Safari, Chrome, or Firefox';
-                registerBtn.disabled = true;
-                log('WebAuthn not supported', 'error');
-                return;
-            }
-
-            let available = false;
-            try {
-                available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-            } catch (e) {
-                log('Platform authenticator check failed', 'info');
-            }
-
-            const ua = navigator.userAgent;
-            let icon = '💻', name = 'Desktop', type = 'Windows Hello';
-            if (/iPhone|iPad|iPod/.test(ua)) { icon = '📱'; name = 'iPhone/iPad'; type = 'Face ID / Touch ID'; }
-            else if (/Android/.test(ua)) { icon = '📱'; name = 'Android'; type = 'Fingerprint'; }
-            else if (/Mac/.test(ua)) { icon = '💻'; name = 'Mac'; type = 'Touch ID'; }
-
-            deviceIcon.textContent = icon;
-            deviceName.textContent = name;
-            deviceType.textContent = available ? `✓ ${type} Ready` : '⚠️ May need security key';
-            log(`Device: ${name}`, 'success');
-        }
-
-        function base64URLToBuffer(base64url) {
-            const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-            const pad = base64.length % 4;
-            const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
-            const binary = atob(padded);
-            const bytes = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-            return bytes.buffer;
-        }
-
-        function bufferToBase64URL(buffer) {
-            const bytes = new Uint8Array(buffer);
-            let binary = '';
-            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // REGISTRATION
-        // ═══════════════════════════════════════════════════════════════════
-        async function startRegistration() {
-            const displayName = document.getElementById('displayName').value.trim() || 'Sunday User';
-            const phone = document.getElementById('phone').value.trim();
-            if (!phone) { showError('register-error', 'Please enter your phone number'); return; }
-            hideError('register-error');
-            log('Starting registration...', 'info');
-
-            try {
-                log('Fetching options...', 'info');
-                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, displayName })
-                });
-                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed to get options');
-
-                const { options, userId } = await optionsRes.json();
-                log(`Got challenge, userId: ${userId.substring(0,8)}...`, 'success');
-                log(`RP ID: ${options.rp.id}`, 'info');
-
-                const publicKeyOptions = {
-                    challenge: base64URLToBuffer(options.challenge),
-                    rp: { id: RP_ID, name: options.rp.name },
-                    user: {
-                        id: base64URLToBuffer(options.user.id),
-                        name: options.user.name,
-                        displayName: options.user.displayName
-                    },
-                    pubKeyCredParams: options.pubKeyCredParams,
-                    timeout: options.timeout || 60000,
-                    attestation: 'none',
-                    authenticatorSelection: {
-                        authenticatorAttachment: 'platform',
-                        userVerification: 'required',
-                        residentKey: 'required',
-                        requireResidentKey: true
-                    }
-                };
-
-                log('Prompting biometric...', 'info');
-                const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
-                log('✓ Biometric verified!', 'success');
-                log(`Credential ID: ${credential.id.substring(0,20)}...`, 'info');
-
-                const credentialJSON = {
-                    id: credential.id,
-                    rawId: bufferToBase64URL(credential.rawId),
-                    type: credential.type,
-                    response: {
-                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
-                        attestationObject: bufferToBase64URL(credential.response.attestationObject),
-                        transports: credential.response.getTransports ? credential.response.getTransports() : ['internal']
-                    }
-                };
-
-                log('Verifying with server...', 'info');
-                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, credential: credentialJSON })
-                });
-                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Verification failed');
-
-                const { token } = await verifyRes.json();
-                log('✓ Registration complete!', 'success');
-                showSuccess({ name: displayName, phone }, token);
-
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                showError('register-error', error.message);
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // LOGIN - Uses discoverable credentials (no phone needed)
-        // ═══════════════════════════════════════════════════════════════════
-        async function startLogin() {
-            hideError('login-error');
-            log('Starting authentication...', 'info');
-
-            try {
-                // Get a challenge from server (no phone needed for discoverable)
-                log('Fetching challenge...', 'info');
-                const optionsRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})  // Empty - discoverable credentials
-                });
-                if (!optionsRes.ok) throw new Error((await optionsRes.json()).error || 'Failed to get options');
-
-                const { options, challengeKey } = await optionsRes.json();
-                log(`Got challenge: ${options.challenge.substring(0,15)}...`, 'success');
-
-                // Minimal options - let browser find the credential
-                const publicKeyOptions = {
-                    challenge: base64URLToBuffer(options.challenge),
-                    rpId: RP_ID,
-                    timeout: 60000,
-                    userVerification: 'required'
-                    // NO allowCredentials - browser finds discoverable credential
-                };
-
-                log('Prompting Face ID...', 'info');
-                const credential = await navigator.credentials.get({ publicKey: publicKeyOptions });
-                log('✓ Biometric verified!', 'success');
-                log(`Credential ID: ${credential.id.substring(0,20)}...`, 'info');
-
-                const credentialJSON = {
-                    id: credential.id,
-                    rawId: bufferToBase64URL(credential.rawId),
-                    type: credential.type,
-                    response: {
-                        clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
-                        authenticatorData: bufferToBase64URL(credential.response.authenticatorData),
-                        signature: bufferToBase64URL(credential.response.signature),
-                        userHandle: credential.response.userHandle ? bufferToBase64URL(credential.response.userHandle) : null
-                    }
-                };
-
-                log('Verifying signature...', 'info');
-                const verifyRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ challengeKey, credential: credentialJSON })
-                });
-                if (!verifyRes.ok) throw new Error((await verifyRes.json()).error || 'Authentication failed');
-
-                const { token, user } = await verifyRes.json();
-                log('✓ Authentication complete!', 'success');
-                showSuccess(user, token);
-
-            } catch (error) {
-                log(`Error: ${error.message}`, 'error');
-                showError('login-error', error.message);
-            }
-        }
-
-        function checkExistingSession() {
-            const token = localStorage.getItem('sunday_token');
-            const user = localStorage.getItem('sunday_user');
-            if (token && user) {
-                try {
-                    showSuccess(JSON.parse(user), token);
-                    log('Restored session', 'info');
-                } catch { localStorage.clear(); }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            log('Sunday WebAuthn v2', 'info');
-            log(`RP_ID: ${RP_ID}`, 'info');
+            log('Sunday v4 - Identity Platform', 'info');
             detectDevice();
             checkExistingSession();
         });
