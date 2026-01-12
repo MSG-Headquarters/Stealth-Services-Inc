@@ -3,1299 +3,1041 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stealth Services Inc | umbrassi.com</title>
+    <title>SSI | Stealth Services Inc.</title>
+    <meta name="description" content="Precise. Perfect. Delivered. Security consulting, intelligence research, and technology solutions.">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-:root {
-    --umbra-black: #0A0A0F;
-    --umbra-deep: #0D1117;
-    --umbra-surface: #161B22;
-    --umbra-border: #21262D;
-    --umbra-muted: #484F58;
-    --cyan-glow: #06B6D4;
-    --cyan-dim: #0891B2;
-    --cyan-bright: #22D3EE;
-    --gold-accent: #F59E0B;
-    --gold-dim: #D97706;
-    --emerald: #10B981;
-    --violet: #8B5CF6;
-    --sunday-primary: #3B82F6;
-    --sunday-secondary: #60A5FA;
-    --sunday-glow: rgba(59, 130, 246, 0.3);
-    --text-primary: #F0F6FC;
-    --text-secondary: #8B949E;
-    --text-muted: #6E7681;
-    --gradient-cyan: linear-gradient(135deg, #06B6D4, #0891B2);
-    --gradient-gold: linear-gradient(135deg, #F59E0B, #D97706);
-    --gradient-sunday: linear-gradient(135deg, #3B82F6, #1D4ED8);
-    --gradient-surface: linear-gradient(180deg, #161B22 0%, #0D1117 100%);
-    --glow-cyan: 0 0 30px rgba(6, 182, 212, 0.3);
-    --glow-gold: 0 0 30px rgba(245, 158, 11, 0.3);
-    --glow-sunday: 0 0 30px rgba(59, 130, 246, 0.4);
-}
+        :root {
+            --deep-navy: #0A1628;
+            --obsidian: #0D0D0D;
+            --midnight: #050A12;
+            --shimmer-purple: #7B2D8E;
+            --electric-violet: #9945FF;
+            --tactical-green: #00FF88;
+            --muted-emerald: #2ECC71;
+            --steel-gray: #1a2332;
+            --ghost-white: #E8E8E8;
+            --muted-white: #B8B8B8;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-    font-family: 'Rajdhani', sans-serif;
-    background: var(--umbra-black);
-    color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 1000;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-/* Login Overlay */
-.login-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: var(--umbra-black);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
-}
-.login-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--obsidian);
+            color: var(--ghost-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-.login-container {
-    text-align: center;
-    max-width: 480px;
-    padding: 3rem;
-    animation: fadeInUp 0.8s ease;
-}
+        /* ========== GEOMETRIC BACKGROUND ========== */
+        .geo-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(30deg, var(--tactical-green) 1px, transparent 1px),
+                linear-gradient(150deg, var(--electric-violet) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        /* ========== NAVIGATION ========== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(5,10,18,0.95) 0%, transparent 100%);
+        }
 
-.ssi-hero-logo {
-    width: 80px; height: 80px;
-    margin: 0 auto 1.5rem;
-    background: var(--gradient-cyan);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--umbra-black);
-    box-shadow: var(--glow-cyan);
-}
+        .logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 0.3em;
+            color: var(--ghost-white);
+            text-decoration: none;
+            position: relative;
+        }
 
-.login-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: var(--gradient-cyan);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
 
-.login-subtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin-bottom: 3rem;
-    letter-spacing: 0.5px;
-}
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
 
-.sunday-signin-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-    max-width: 320px;
-    padding: 1.1rem 2rem;
-    background: var(--gradient-sunday);
-    border: none;
-    border-radius: 14px;
-    color: white;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-.sunday-signin-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s ease;
-}
-.sunday-signin-btn:hover { transform: translateY(-3px); box-shadow: var(--glow-sunday); }
-.sunday-signin-btn:hover::before { left: 100%; }
-.sunday-signin-btn:active { transform: translateY(-1px); }
+        .nav-links a {
+            color: var(--muted-white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
 
-.sunday-icon {
-    width: 28px; height: 28px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-}
+        .nav-links a:hover {
+            color: var(--tactical-green);
+        }
 
-.register-link { margin-top: 2rem; font-size: 0.95rem; color: var(--text-secondary); }
-.register-link a { color: var(--sunday-secondary); text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
-.register-link a:hover { color: var(--cyan-glow); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--tactical-green);
+            transition: width 0.3s ease;
+        }
 
-.sunday-tagline { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--umbra-border); }
-.sunday-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-family: 'Space Mono', monospace;
-}
-.sunday-badge-icon { font-size: 1rem; }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
 
-.auth-features { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
-.auth-feature { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
-.auth-feature-icon { color: var(--emerald); }
+        /* ========== HERO SECTION ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
 
-.login-loading { display: none; flex-direction: column; align-items: center; gap: 1rem; }
-.login-loading.active { display: flex; }
-.login-content.loading { display: none; }
+        /* Stealth Bomber Angular Background */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
-.spinner {
-    width: 48px; height: 48px;
-    border: 3px solid var(--umbra-border);
-    border-top-color: var(--sunday-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { font-size: 1rem; color: var(--text-secondary); }
+        .angular-shape {
+            position: absolute;
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%);
+        }
 
-/* Main App */
-.app-container { display: none; min-height: 100vh; }
-.app-container.active { display: block; animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .angular-shape.shape-1 {
+            width: 120%;
+            height: 60%;
+            top: -10%;
+            left: -10%;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 85% 100%, 15% 100%, 0 70%);
+            background: linear-gradient(160deg, var(--deep-navy) 0%, rgba(123,45,142,0.1) 100%);
+        }
 
-/* Navigation */
-.nav-header {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    padding: 1rem 2rem;
-    background: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--umbra-border);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+        .angular-shape.shape-2 {
+            width: 50%;
+            height: 80%;
+            bottom: -20%;
+            right: -5%;
+            clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%, 0 30%);
+            background: linear-gradient(200deg, rgba(153,69,255,0.08) 0%, transparent 60%);
+        }
 
-.nav-brand { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-.brand-icon {
-    width: 42px; height: 42px;
-    background: var(--gradient-cyan);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--umbra-black);
-}
-.brand-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: var(--text-primary);
-}
-.brand-text span { color: var(--cyan-glow); }
+        .angular-shape.shape-3 {
+            width: 40%;
+            height: 70%;
+            bottom: -10%;
+            left: -5%;
+            clip-path: polygon(0 20%, 80% 0, 100% 30%, 100% 100%, 0 100%);
+            background: linear-gradient(45deg, rgba(0,255,136,0.05) 0%, transparent 50%);
+        }
 
-.nav-tabs {
-    display: flex;
-    gap: 0.5rem;
-    background: var(--umbra-surface);
-    padding: 0.35rem;
-    border-radius: 12px;
-    border: 1px solid var(--umbra-border);
-}
-.nav-tab {
-    padding: 0.65rem 1.5rem;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    color: var(--text-secondary);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.nav-tab:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.05); }
-.nav-tab.active { background: var(--gradient-cyan); color: var(--umbra-black); }
+        /* Glowing accent lines */
+        .accent-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tactical-green), transparent);
+            opacity: 0.4;
+            z-index: 2;
+        }
 
-.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+        .accent-line.line-1 {
+            width: 60%;
+            top: 25%;
+            left: 20%;
+            transform: rotate(-15deg);
+        }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.user-profile:hover { border-color: var(--cyan-dim); }
+        .accent-line.line-2 {
+            width: 40%;
+            top: 75%;
+            right: 10%;
+            transform: rotate(20deg);
+            background: linear-gradient(90deg, transparent, var(--electric-violet), transparent);
+        }
 
-.user-avatar {
-    width: 32px; height: 32px;
-    background: var(--gradient-sunday);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: white;
-}
-.user-info { display: flex; flex-direction: column; }
-.user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
-.user-verified { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; color: var(--emerald); }
-.user-verified.unverified { color: var(--text-muted); }
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 900px;
+        }
 
-.logout-btn {
-    padding: 0.5rem 1rem;
-    background: transparent;
-    border: 1px solid var(--umbra-border);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.logout-btn:hover { border-color: #EF4444; color: #EF4444; }
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0,255,136,0.08);
+            border: 1px solid rgba(0,255,136,0.3);
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--tactical-green);
+            margin-bottom: 2rem;
+            animation: fadeSlideDown 0.8s ease-out;
+        }
 
-/* Main Content */
-.main-content { padding-top: 80px; min-height: 100vh; }
+        .hero-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            animation: fadeSlideUp 0.8s ease-out 0.2s both;
+        }
 
-/* Sections */
-.section { display: none; padding: 3rem 2rem; max-width: 1400px; margin: 0 auto; }
-.section.active { display: block; animation: sectionFadeIn 0.4s ease; }
-@keyframes sectionFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        .hero-title span {
+            display: block;
+            background: linear-gradient(135deg, var(--ghost-white) 0%, var(--muted-white) 50%, var(--tactical-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.section-header { margin-bottom: 3rem; text-align: center; }
-.section-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    background: var(--gradient-cyan);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.section-subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+        .hero-tagline {
+            font-size: 1.1rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--muted-white);
+            margin-bottom: 3rem;
+            animation: fadeSlideUp 0.8s ease-out 0.4s both;
+        }
 
-/* Apps Grid */
-.apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .hero-tagline strong {
+            color: var(--tactical-green);
+            font-weight: 600;
+        }
 
-.app-card {
-    background: var(--gradient-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 20px;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    cursor: pointer;
-    text-decoration: none;
-    display: block;
-}
-.app-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-    background: var(--gradient-cyan);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
-.app-card:hover { transform: translateY(-8px); border-color: var(--cyan-dim); box-shadow: var(--glow-cyan); }
-.app-card:hover::before { transform: scaleX(1); }
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeSlideUp 0.8s ease-out 0.6s both;
+        }
 
-.app-icon {
-    width: 64px; height: 64px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-}
-.app-icon.iaxis { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
-.app-icon.axis-fit { background: linear-gradient(135deg, #10B981, #059669); }
-.app-icon.covrd { background: linear-gradient(135deg, #06B6D4, #0891B2); }
-.app-icon.be-still { background: linear-gradient(135deg, #F59E0B, #D97706); }
-.app-icon.sunday { background: var(--gradient-sunday); }
+        .btn {
+            padding: 1rem 2.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-.app-badge {
-    position: absolute;
-    top: -5px; right: -5px;
-    padding: 0.25rem 0.5rem;
-    background: var(--emerald);
-    border-radius: 6px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--umbra-black);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.app-badge.coming-soon { background: var(--gold-accent); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
+            color: var(--obsidian);
+            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+            border: none;
+        }
 
-.app-name { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-primary); }
-.app-tagline { font-size: 0.85rem; color: var(--cyan-glow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
-.app-description { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; }
-.app-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.app-tag {
-    padding: 0.35rem 0.75rem;
-    background: rgba(6, 182, 212, 0.1);
-    border: 1px solid rgba(6, 182, 212, 0.2);
-    border-radius: 6px;
-    font-size: 0.75rem;
-    color: var(--cyan-glow);
-    font-family: 'Space Mono', monospace;
-}
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,255,136,0.3);
+        }
 
-/* Zenith OS Section */
-.zenith-hero { text-align: center; padding: 4rem 2rem; position: relative; }
-.zenith-hero::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-    pointer-events: none;
-}
+        .btn-secondary {
+            background: transparent;
+            color: var(--ghost-white);
+            border: 1px solid rgba(255,255,255,0.2);
+            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+        }
 
-.zenith-logo {
-    width: 100px; height: 100px;
-    margin: 0 auto 2rem;
-    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: white;
-    box-shadow: 0 0 50px rgba(139, 92, 246, 0.4);
-}
-.zenith-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #8B5CF6, #A78BFA);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.zenith-edition { font-family: 'Space Mono', monospace; font-size: 1rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; }
-.zenith-tagline { font-size: 1.3rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 3rem; }
+        .btn-secondary:hover {
+            border-color: var(--electric-violet);
+            color: var(--electric-violet);
+        }
 
-.zenith-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
-.zenith-tab {
-    padding: 0.75rem 1.5rem;
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 10px;
-    color: var(--text-secondary);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.zenith-tab:hover { border-color: var(--violet); color: var(--text-primary); }
-.zenith-tab.active { background: linear-gradient(135deg, #8B5CF6, #6D28D9); border-color: transparent; color: white; }
+        /* ========== SERVICES SECTION ========== */
+        .services {
+            padding: 8rem 4rem;
+            position: relative;
+            z-index: 10;
+        }
 
-.zenith-panel { display: none; max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
-.zenith-panel.active { display: block; animation: panelFadeIn 0.4s ease; }
-@keyframes panelFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
 
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-.module-card {
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 16px;
-    padding: 1.75rem;
-    transition: all 0.3s ease;
-}
-.module-card:hover { border-color: var(--violet); transform: translateY(-4px); }
-.module-icon {
-    width: 48px; height: 48px;
-    background: rgba(139, 92, 246, 0.15);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-.module-name { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
-.module-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+        .section-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--electric-violet);
+            margin-bottom: 1rem;
+        }
 
-/* License Form */
-.license-form {
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 20px;
-    padding: 2.5rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-.form-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
-.form-subtitle { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 2rem; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-.form-group { margin-bottom: 1rem; }
-.form-label {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 0.4rem;
-    font-family: 'Space Mono', monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.form-input, .form-select {
-    width: 100%;
-    padding: 0.85rem 1rem;
-    background: var(--umbra-deep);
-    border: 1px solid var(--umbra-border);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-.form-input:focus, .form-select:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
-.form-select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B949E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-}
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
 
-.submit-btn {
-    width: 100%;
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 1rem;
-}
-.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(139, 92, 246, 0.4); }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-/* Download Panel */
-.download-container { text-align: center; padding: 2rem; }
-.license-input-section { max-width: 500px; margin: 0 auto 3rem; }
-.license-input-wrapper { display: flex; gap: 1rem; margin-top: 1rem; }
-.license-input {
-    flex: 1;
-    padding: 1rem 1.25rem;
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 12px;
-    color: var(--text-primary);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.95rem;
-}
-.license-input:focus { outline: none; border-color: var(--violet); }
+        .service-card {
+            background: linear-gradient(145deg, rgba(26,35,50,0.8) 0%, rgba(13,13,13,0.9) 100%);
+            padding: 3rem 2rem;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
 
-.validate-btn {
-    padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-.validate-btn:hover { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
 
-.download-card {
-    background: var(--umbra-surface);
-    border: 1px solid var(--umbra-border);
-    border-radius: 20px;
-    padding: 3rem;
-    max-width: 500px;
-    margin: 0 auto;
-    opacity: 0.5;
-    pointer-events: none;
-    transition: all 0.4s ease;
-}
-.download-card.unlocked { opacity: 1; pointer-events: auto; border-color: var(--emerald); }
-.download-icon {
-    width: 80px; height: 80px;
-    margin: 0 auto 1.5rem;
-    background: rgba(16, 185, 129, 0.15);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-}
-.download-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
-.download-info { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 2rem; }
-.download-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 2.5rem;
-    background: var(--emerald);
-    border: none;
-    border-radius: 12px;
-    color: var(--umbra-black);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.download-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0,255,136,0.2);
+        }
 
-/* Footer */
-.footer { padding: 3rem 2rem; border-top: 1px solid var(--umbra-border); text-align: center; margin-top: 4rem; }
-.footer-brand { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); }
-.footer-tagline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
-.footer-crown { font-size: 1.5rem; margin-bottom: 0.5rem; }
-.footer-faith { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold-accent); letter-spacing: 2px; }
+        .service-card:hover::before {
+            opacity: 1;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .nav-header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.75rem; }
-    .nav-brand { order: 1; }
-    .nav-right { order: 2; }
-    .nav-tabs { order: 3; width: 100%; justify-content: center; }
-    .user-profile { padding: 0.4rem 0.6rem; }
-    .user-info { display: none; }
-    .section-title { font-size: 1.8rem; }
-    .zenith-title { font-size: 2.2rem; }
-    .form-row { grid-template-columns: 1fr; }
-    .license-input-wrapper { flex-direction: column; }
-    .apps-grid { grid-template-columns: 1fr; }
-    .auth-features { flex-direction: column; gap: 0.75rem; }
-}
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--tactical-green);
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .service-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            color: var(--ghost-white);
+        }
+
+        .service-card p {
+            color: var(--muted-white);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .service-card .card-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.03);
+            line-height: 1;
+        }
+
+        /* ========== ABOUT SECTION ========== */
+        .about {
+            padding: 8rem 4rem;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, transparent 0%, rgba(10,22,40,0.5) 50%, transparent 100%);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .about-visual {
+            position: relative;
+            height: 500px;
+        }
+
+        .stealth-graphic {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Angular stealth shape */
+        .stealth-shape {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--deep-navy) 0%, rgba(123,45,142,0.3) 100%);
+            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .stealth-shape::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: var(--obsidian);
+            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
+        }
+
+        .stealth-shape::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: linear-gradient(135deg, transparent 0%, rgba(0,255,136,0.1) 100%);
+            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(153,69,255,0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .orbit-ring.ring-1 {
+            width: 350px;
+            height: 350px;
+        }
+
+        .orbit-ring.ring-2 {
+            width: 420px;
+            height: 420px;
+            animation-direction: reverse;
+            animation-duration: 30s;
+            border-color: rgba(0,255,136,0.1);
+        }
+
+        .about-content h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .about-content h2 span {
+            color: var(--tactical-green);
+        }
+
+        .about-content p {
+            color: var(--muted-white);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.9;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--tactical-green);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted-white);
+            margin-top: 0.5rem;
+        }
+
+        /* ========== MSG AFFILIATION ========== */
+        .affiliation {
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .affiliation-text {
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--muted-white);
+            opacity: 0.6;
+        }
+
+        .affiliation-text span {
+            color: var(--electric-violet);
+            font-weight: 600;
+        }
+
+        /* ========== CONTACT SECTION ========== */
+        .contact {
+            padding: 8rem 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: linear-gradient(145deg, rgba(26,35,50,0.6) 0%, rgba(13,13,13,0.8) 100%);
+            padding: 4rem;
+            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px));
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted-white);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--ghost-white);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--tactical-green);
+            box-shadow: 0 0 20px rgba(0,255,136,0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
+            color: var(--obsidian);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 50px rgba(0,255,136,0.3);
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            color: var(--ghost-white);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.85rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--muted-white);
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--muted-white);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--tactical-green);
+        }
+
+        .copyright {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.1em;
+        }
+
+        .copyright a {
+            color: var(--electric-violet);
+            text-decoration: none;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 968px) {
+            nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .services {
+                padding: 4rem 2rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .about-visual {
+                height: 350px;
+            }
+
+            .contact-form {
+                padding: 2.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                letter-spacing: 0.1em;
+            }
+
+            .hero-tagline {
+                letter-spacing: 0.2em;
+            }
+
+            .cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
     </style>
 </head>
-    <!-- LOGIN OVERLAY (Sunday OAuth) -->
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-container">
-            <!-- Loading State -->
-            <div class="login-loading" id="loginLoading">
-                <div class="spinner"></div>
-                <p class="loading-text">Authenticating with Sunday...</p>
+<body>
+
+    <!-- Geometric Grid Background -->
+    <div class="geo-grid"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">SSI</a>
+        <ul class="nav-links">
+            <li><a href="/apps/">Apps</a></li>
+            <li><a href="/enterprise/">Enterprise</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="angular-shape shape-1"></div>
+            <div class="angular-shape shape-2"></div>
+            <div class="angular-shape shape-3"></div>
+            <div class="accent-line line-1"></div>
+            <div class="accent-line line-2"></div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-badge">Covert Operations • Elite Solutions</div>
+            <h1 class="hero-title">
+                <span>STEALTH SERVICES</span>
+            </h1>
+            <p class="hero-tagline">
+                <strong>Precise.</strong> Perfect. <strong>Delivered.</strong>
+            </p>
+            <div class="cta-group">
+                <a href="#contact" class="btn btn-primary">Engage Now</a>
+                <a href="#services" class="btn btn-secondary">Our Capabilities</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <p class="section-label">What We Do</p>
+            <h2 class="section-title">Capabilities</h2>
+        </div>
+
+        <div class="services-grid">
+            <!-- Security Consulting -->
+            <div class="service-card">
+                <span class="card-number">01</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3>Security Consulting</h3>
+                <p>Comprehensive threat assessment and mitigation strategies. We identify vulnerabilities before they become liabilities. Defense architecture designed for the modern threat landscape.</p>
             </div>
 
-            <!-- Login Content -->
-            <div class="login-content" id="loginContent">
-                <div class="ssi-hero-logo">S</div>
-                <h1 class="login-title">Welcome to SSI</h1>
-                <p class="login-subtitle">Sign in with your Sunday account to access the ecosystem</p>
-                
-                <button class="sunday-signin-btn" id="sundaySigninBtn">
-                    <span class="sunday-icon">📬</span>
-                    Sign in with Sunday
-                </button>
-                
-                <p class="register-link">
-                    Don't have a Sunday account? <a href="/Sunday/" id="registerLink">Create one free</a>
-                </p>
-                
-                <div class="sunday-tagline">
-                    <div class="sunday-badge">
-                        <span class="sunday-badge-icon">🔐</span>
-                        Secured by Sunday Authentication
+            <!-- Intelligence Research -->
+            <div class="service-card">
+                <span class="card-number">02</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                        <path d="M11 8v6M8 11h6"/>
+                    </svg>
+                </div>
+                <h3>Intelligence Research</h3>
+                <p>Deep-dive analysis and actionable intelligence. We transform raw data into strategic advantage. Discrete investigations with comprehensive reporting and verified findings.</p>
+            </div>
+
+            <!-- Technology Development -->
+            <div class="service-card">
+                <span class="card-number">03</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                        <line x1="12" y1="2" x2="12" y2="22"/>
+                    </svg>
+                </div>
+                <h3>Technology Solutions</h3>
+                <p>Custom-engineered systems built for performance and security. From secure platforms to integrated solutions, we architect technology that operates at the speed of now.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-visual">
+                <div class="stealth-graphic">
+                    <div class="orbit-ring ring-1"></div>
+                    <div class="orbit-ring ring-2"></div>
+                    <div class="stealth-shape"></div>
+                </div>
+            </div>
+
+            <div class="about-content">
+                <h2>Invisible Until <span>Impact</span></h2>
+                <p>Stealth Services Inc. operates at the intersection of security, intelligence, and technology. We exist to provide elite solutions for those who demand precision without compromise.</p>
+                <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect and deserve.</p>
+                <p>Part of the <strong>Main Street Group</strong> portfolio — where legacy meets innovation.</p>
+
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Discretion</div>
                     </div>
-                    
-                    <div class="auth-features">
-                        <div class="auth-feature">
-                            <span class="auth-feature-icon">✓</span>
-                            Passkey Auth
-                        </div>
-                        <div class="auth-feature">
-                            <span class="auth-feature-icon">✓</span>
-                            Identity Verified
-                        </div>
-                        <div class="auth-feature">
-                            <span class="auth-feature-icon">✓</span>
-                            CPiD Enabled
-                        </div>
+                    <div class="stat">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Operations</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">Elite</div>
+                        <div class="stat-label">Standards</div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- MSG Affiliation -->
+    <div class="affiliation">
+        <p class="affiliation-text">A <span>Main Street Group</span> Company</p>
     </div>
 
-    <!-- MAIN APPLICATION -->
-    <div class="app-container" id="appContainer">
-        <!-- Navigation -->
-        <nav class="nav-header">
-            <a href="/" class="nav-brand">
-                <div class="brand-icon">S</div>
-                <div class="brand-text">STEALTH <span>SERVICES</span></div>
-            </a>
-            
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-section="apps">Apps</button>
-                <button class="nav-tab" data-section="zenith">Zenith OS</button>
-            </div>
-            
-            <div class="nav-right">
-                <div class="user-profile" id="userProfile">
-                    <div class="user-avatar" id="userAvatar">?</div>
-                    <div class="user-info">
-                        <span class="user-name" id="userName">Loading...</span>
-                        <span class="user-verified" id="userVerified">
-                            <span>●</span> Verified
-                        </span>
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-header">
+            <p class="section-label">Initiate Contact</p>
+            <h2 class="section-title">Engage</h2>
+        </div>
+
+        <div class="contact-container">
+            <form class="contact-form" action="#" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
                 </div>
-                <button class="logout-btn" id="logoutBtn">Sign Out</button>
-            </div>
-        </nav>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Transmit</button>
+            </form>
+        </div>
+    </section>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- APPS SECTION -->
-            <section class="section active" id="appsSection">
-                <div class="section-header">
-                    <h2 class="section-title">Applications</h2>
-                    <p class="section-subtitle">Your suite of intelligent tools. Built for performance. Designed for you.</p>
-                </div>
-                
-                <div class="apps-grid">
-                    <!-- Sunday (Auth Provider) -->
-                    <a href="/Sunday/" class="app-card">
-                        <div class="app-icon sunday">
-                            📬
-                            <span class="app-badge">Live</span>
-                        </div>
-                        <h3 class="app-name">Sunday</h3>
-                        <p class="app-tagline">Identity Platform</p>
-                        <p class="app-description">Your verified identity hub. Manage passkeys, verify your identity, claim CPiDs, and control connected apps from The Locker.</p>
-                        <div class="app-tags">
-                            <span class="app-tag">Identity</span>
-                            <span class="app-tag">Passkeys</span>
-                            <span class="app-tag">CPiD</span>
-                        </div>
-                    </a>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">SSI</div>
+        <p class="footer-tagline">Excellence. Executed.</p>
+        <div class="footer-links">
+            <a href="/apps/">Apps</a>
+            <a href="/enterprise/">Enterprise</a>
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <p class="copyright">© 2025 Stealth Services Inc. — A <a href="#">Main Street Group</a> Company</p>
+    </footer>
 
-                    <!-- iAXIS Hub -->
-                    <a href="/iaxis/" class="app-card">
-                        <div class="app-icon iaxis">
-                            🎯
-                            <span class="app-badge">Live</span>
-                        </div>
-                        <h3 class="app-name">iAXIS Hub</h3>
-                        <p class="app-tagline">Command Center</p>
-                        <p class="app-description">Real estate portfolio command center. Track properties, analyze performance, and manage your investments from one unified dashboard.</p>
-                        <div class="app-tags">
-                            <span class="app-tag">Portfolio</span>
-                            <span class="app-tag">Analytics</span>
-                            <span class="app-tag">Properties</span>
-                        </div>
-                    </a>
-                    
-                    <!-- AXIS Fit -->
-                    <a href="/axis-fit/" class="app-card">
-                        <div class="app-icon axis-fit">
-                            💪
-                            <span class="app-badge">Live</span>
-                        </div>
-                        <h3 class="app-name">AXIS Fit</h3>
-                        <p class="app-tagline">Personal Fitness</p>
-                        <p class="app-description">AI-powered fitness tracking with video workout analysis. Log exercises, track nutrition, and let Claude analyze your form in real-time.</p>
-                        <div class="app-tags">
-                            <span class="app-tag">Workouts</span>
-                            <span class="app-tag">Nutrition</span>
-                            <span class="app-tag">AI Vision</span>
-                        </div>
-                    </a>
-                    
-                    <!-- COVRD -->
-                    <a href="/covrd/" class="app-card">
-                        <div class="app-icon covrd">
-                            🛡️
-                            <span class="app-badge">Live</span>
-                        </div>
-                        <h3 class="app-name">COVRD</h3>
-                        <p class="app-tagline">Roofing + Solar</p>
-                        <p class="app-description">Instant roofing and solar quotes powered by real roof data. Hurricane-ready protection for Southwest Florida homeowners.</p>
-                        <div class="app-tags">
-                            <span class="app-tag">Roofing</span>
-                            <span class="app-tag">Solar</span>
-                            <span class="app-tag">Hurricane</span>
-                        </div>
-                    </a>
-                    
-                    <!-- Be Still -->
-                    <a href="/be-still/" class="app-card">
-                        <div class="app-icon be-still">
-                            🕊️
-                            <span class="app-badge coming-soon">Coming</span>
-                        </div>
-                        <h3 class="app-name">Be Still</h3>
-                        <p class="app-tagline">Faith & Meditation</p>
-                        <p class="app-description">A sacred space for reflection, prayer, and meditation. Daily devotionals, scripture study, and guided moments of stillness.</p>
-                        <div class="app-tags">
-                            <span class="app-tag">Devotional</span>
-                            <span class="app-tag">Prayer</span>
-                            <span class="app-tag">Scripture</span>
-                        </div>
-                    </a>
-                </div>
-            </section>
-
-            <!-- ZENITH OS SECTION -->
-            <section class="section" id="zenithSection">
-                <div class="zenith-hero">
-                    <div class="zenith-logo">Z</div>
-                    <h2 class="zenith-title">ZENITH OS</h2>
-                    <p class="zenith-edition">WhiteLabel Edition</p>
-                    <p class="zenith-tagline">One Platform. Total Control. Total Security.</p>
-                    
-                    <div class="zenith-tabs">
-                        <button class="zenith-tab active" data-panel="preview">Preview</button>
-                        <button class="zenith-tab" data-panel="license">Request License</button>
-                        <button class="zenith-tab" data-panel="download">Download</button>
-                    </div>
-                </div>
-                
-                <!-- Preview Panel -->
-                <div class="zenith-panel active" id="previewPanel">
-                    <div class="preview-grid">
-                        <div class="module-card">
-                            <div class="module-icon">📊</div>
-                            <h4 class="module-name">AXIS Dashboard</h4>
-                            <p class="module-desc">Personal command center with live statistics, quick actions, and unified navigation across all modules.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">🎯</div>
-                            <h4 class="module-name">CRM Pipeline</h4>
-                            <p class="module-desc">Full-featured customer relationship management with Kanban boards, lead scoring, and deal tracking.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">🔍</div>
-                            <h4 class="module-name">Danimal Data</h4>
-                            <p class="module-desc">Lead intelligence platform with DBPR license scraping, property data integration, and smart scoring.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">💬</div>
-                            <h4 class="module-name">The Huddle</h4>
-                            <p class="module-desc">Real-time team messaging with deal-specific channels, @mentions, and async standups.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">📧</div>
-                            <h4 class="module-name">Mailer</h4>
-                            <p class="module-desc">Email campaigns with M365/AWS SES integration, drip sequences, and open/click tracking.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">🔐</div>
-                            <h4 class="module-name">The Vault</h4>
-                            <p class="module-desc">Encrypted document storage with version history, secure sharing, and client portals.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">💰</div>
-                            <h4 class="module-name">CFO Dashboard</h4>
-                            <p class="module-desc">Revenue tracking, pipeline value, P&L visibility, and cash flow projections.</p>
-                        </div>
-                        <div class="module-card">
-                            <div class="module-icon">👥</div>
-                            <h4 class="module-name">Tenant Manager</h4>
-                            <p class="module-desc">Master-level control for license provisioning, access control, and tenant oversight.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- License Request Panel -->
-                <div class="zenith-panel" id="licensePanel">
-                    <div class="license-form">
-                        <h3 class="form-title">Request a License</h3>
-                        <p class="form-subtitle">Complete the form below to begin your Zenith OS journey.</p>
-                        
-                        <form id="licenseForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Company Name</label>
-                                    <input type="text" class="form-input" name="company" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">EIN</label>
-                                    <input type="text" class="form-input" name="ein" placeholder="XX-XXXXXXX">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Business Address</label>
-                                <input type="text" class="form-input" name="address" required>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Primary Contact</label>
-                                    <input type="text" class="form-input" name="contact" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-input" name="email" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Phone</label>
-                                    <input type="tel" class="form-input" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Industry</label>
-                                    <select class="form-select" name="industry">
-                                        <option value="">Select Industry</option>
-                                        <option value="real-estate">Real Estate</option>
-                                        <option value="business-brokerage">Business Brokerage</option>
-                                        <option value="insurance">Insurance</option>
-                                        <option value="financial-services">Financial Services</option>
-                                        <option value="consulting">Consulting</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Estimated Users</label>
-                                    <select class="form-select" name="users">
-                                        <option value="1-5">1-5 Users</option>
-                                        <option value="6-15">6-15 Users</option>
-                                        <option value="16-50">16-50 Users</option>
-                                        <option value="50+">50+ Users</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tier Interest</label>
-                                    <select class="form-select" name="tier">
-                                        <option value="trial">Trial (Free)</option>
-                                        <option value="professional">Professional</option>
-                                        <option value="enterprise">Enterprise</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="submit-btn">Submit Request</button>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- Download Panel -->
-                <div class="zenith-panel" id="downloadPanel">
-                    <div class="download-container">
-                        <div class="license-input-section">
-                            <label class="form-label" style="text-align: left; display: block;">Enter Your License Key</label>
-                            <div class="license-input-wrapper">
-                                <input type="text" class="license-input" id="licenseKey" placeholder="COMPANY-2026-PRO-XXXX">
-                                <button class="validate-btn" id="validateBtn">Validate</button>
-                            </div>
-                        </div>
-                        
-                        <div class="download-card" id="downloadCard">
-                            <div class="download-icon">📦</div>
-                            <h4 class="download-title">Zenith OS Package</h4>
-                            <p class="download-info">Your licensed deployment package is ready for download.</p>
-                            <button class="download-btn" id="downloadBtn">
-                                <span>⬇️</span>
-                                Download Package
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-crown">👑</div>
-            <p class="footer-brand">Main Street Group • Stealth Services Inc</p>
-            <p class="footer-tagline">umbrassi.com</p>
-            <p class="footer-faith">CHRIST IS KING</p>
-        </footer>
-    </div>
-
-    <script src="sunday-auth.js"></script>
+    <!-- Scroll Animations -->
     <script>
-// ============================================
-// SUNDAY OAUTH CONFIGURATION
-// ============================================
-const SUNDAY = {
-    API_URL: 'https://sunday-platform.onrender.com',
-    FRONTEND_URL: 'https://www.umbrassi.com/Sunday/',
-    APP_ID: 'ssi'
-};
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-// ============================================
-// STATE MANAGEMENT
-// ============================================
-const state = {
-    isAuthenticated: false,
-    user: null,
-    currentSection: 'apps',
-    currentZenithPanel: 'preview'
-};
-
-// ============================================
-// DOM ELEMENTS
-// ============================================
-let loginOverlay, loginContent, loginLoading, appContainer, sundaySigninBtn, logoutBtn;
-let navTabs, sections, zenithTabs, zenithPanels, licenseForm, validateBtn, licenseKeyInput, downloadCard;
-
-// ============================================
-// SUNDAY AUTHENTICATION FUNCTIONS
-// ============================================
-
-/**
- * Check if user is authenticated via Sunday
- * Looks for sunday_token and sunday_user in localStorage
- */
-function checkSundayAuth() {
-    const token = localStorage.getItem('sunday_token');
-    const user = localStorage.getItem('sunday_user');
-    
-    if (token && user) {
-        return { token, user: JSON.parse(user) };
-    }
-    return null;
-}
-
-/**
- * Get the authenticated Sunday user data
- * Returns: { userId, name, phone, isIdentityVerified, cpids }
- */
-function getSundayUser() {
-    const user = localStorage.getItem('sunday_user');
-    return user ? JSON.parse(user) : null;
-}
-
-/**
- * Redirect to Sunday for OAuth authentication
- * Passes app_id and redirect URL as parameters
- */
-function loginWithSunday() {
-    showLoading();
-    const redirect = encodeURIComponent(window.location.href);
-    window.location.href = `${SUNDAY.FRONTEND_URL}?app=${SUNDAY.APP_ID}&redirect=${redirect}`;
-}
-
-/**
- * Sign out - clear Sunday tokens and reload
- */
-function signOutSunday() {
-    localStorage.removeItem('sunday_token');
-    localStorage.removeItem('sunday_user');
-    window.location.reload();
-}
-
-/**
- * Handle successful authentication
- * Updates UI with user data
- */
-function handleAuthSuccess(authData) {
-    state.isAuthenticated = true;
-    state.user = authData.user;
-    
-    updateUserDisplay();
-    showApp();
-}
-
-// ============================================
-// UI FUNCTIONS
-// ============================================
-
-function showLoading() {
-    if (loginContent) loginContent.classList.add('loading');
-    if (loginLoading) loginLoading.classList.add('active');
-}
-
-function hideLoading() {
-    if (loginContent) loginContent.classList.remove('loading');
-    if (loginLoading) loginLoading.classList.remove('active');
-}
-
-function updateUserDisplay() {
-    if (state.user) {
-        const initial = state.user.name ? state.user.name.charAt(0).toUpperCase() : '?';
-        const userAvatarEl = document.getElementById('userAvatar');
-        const userNameEl = document.getElementById('userName');
-        const verifiedEl = document.getElementById('userVerified');
-        
-        if (userAvatarEl) userAvatarEl.textContent = initial;
-        if (userNameEl) userNameEl.textContent = state.user.name || 'User';
-        
-        if (verifiedEl) {
-            if (state.user.isIdentityVerified) {
-                verifiedEl.innerHTML = '<span>●</span> Verified';
-                verifiedEl.classList.remove('unverified');
-            } else {
-                verifiedEl.innerHTML = '<span>○</span> Unverified';
-                verifiedEl.classList.add('unverified');
-            }
-        }
-    }
-}
-
-function showApp() {
-    if (loginOverlay) loginOverlay.classList.add('hidden');
-    if (appContainer) appContainer.classList.add('active');
-}
-
-function hideApp() {
-    if (loginOverlay) loginOverlay.classList.remove('hidden');
-    if (appContainer) appContainer.classList.remove('active');
-    hideLoading();
-}
-
-// ============================================
-// NAVIGATION
-// ============================================
-
-function switchSection(sectionId) {
-    state.currentSection = sectionId;
-    
-    navTabs.forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.section === sectionId);
-    });
-    
-    sections.forEach(section => {
-        section.classList.toggle('active', section.id === `${sectionId}Section`);
-    });
-}
-
-function switchZenithPanel(panelId) {
-    state.currentZenithPanel = panelId;
-    
-    zenithTabs.forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.panel === panelId);
-    });
-    
-    zenithPanels.forEach(panel => {
-        panel.classList.toggle('active', panel.id === `${panelId}Panel`);
-    });
-}
-
-// ============================================
-// LICENSE MANAGEMENT
-// ============================================
-
-function validateLicense(key) {
-    // Validate license key format: COMPANY-YEAR-TIER-SEQUENCE
-    const pattern = /^[A-Z]+-\d{4}-[A-Z]+-\d{4}$/;
-    return pattern.test(key);
-}
-
-function unlockDownload() {
-    if (downloadCard) downloadCard.classList.add('unlocked');
-}
-
-// ============================================
-// EVENT LISTENERS SETUP
-// ============================================
-
-function setupEventListeners() {
-    // Sunday Sign In
-    if (sundaySigninBtn) {
-        sundaySigninBtn.addEventListener('click', loginWithSunday);
-    }
-    
-    // Logout
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', signOutSunday);
-    }
-
-    // Main Navigation Tabs
-    navTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            switchSection(tab.dataset.section);
-        });
-    });
-
-    // Zenith OS Tabs
-    zenithTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            switchZenithPanel(tab.dataset.panel);
-        });
-    });
-
-    // License Request Form
-    if (licenseForm) {
-        licenseForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(licenseForm);
-            const data = Object.fromEntries(formData.entries());
-            
-            // Add Sunday user context if available
-            if (state.user) {
-                data.sundayUserId = state.user.userId;
-                data.sundayPhone = state.user.phone;
-            }
-            
-            // In production, POST to Zenith OS CRM API
-            console.log('License Request:', data);
-            
-            try {
-                // Uncomment for production:
-                // const response = await fetch('https://zenith-crm-production.up.railway.app/api/leads', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({
-                //         ...data,
-                //         source: 'SSI Landing - Zenith OS License Request'
-                //     })
-                // });
-                
-                alert('License request submitted! Our team will review your application and contact you within 24-48 hours.');
-                licenseForm.reset();
-            } catch (error) {
-                console.error('Failed to submit license request:', error);
-                alert('Failed to submit request. Please try again or contact team@stealthservices.io');
-            }
-        });
-    }
-
-    // License Validation
-    if (validateBtn) {
-        validateBtn.addEventListener('click', () => {
-            const key = licenseKeyInput.value.trim().toUpperCase();
-            if (validateLicense(key)) {
-                unlockDownload();
-            } else {
-                alert('Invalid license key format. Expected: COMPANY-YEAR-TIER-XXXX');
-            }
-        });
-    }
-
-    // Download Button
-    const downloadBtn = document.getElementById('downloadBtn');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            alert('Download starting... Your Zenith OS package will begin downloading shortly.');
-        });
-    }
-}
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Cache DOM elements
-    loginOverlay = document.getElementById('loginOverlay');
-    loginContent = document.getElementById('loginContent');
-    loginLoading = document.getElementById('loginLoading');
-    appContainer = document.getElementById('appContainer');
-    sundaySigninBtn = document.getElementById('sundaySigninBtn');
-    logoutBtn = document.getElementById('logoutBtn');
-    navTabs = document.querySelectorAll('.nav-tab');
-    sections = document.querySelectorAll('.section');
-    zenithTabs = document.querySelectorAll('.zenith-tab');
-    zenithPanels = document.querySelectorAll('.zenith-panel');
-    licenseForm = document.getElementById('licenseForm');
-    validateBtn = document.getElementById('validateBtn');
-    licenseKeyInput = document.getElementById('licenseKey');
-    downloadCard = document.getElementById('downloadCard');
-    
-    // Setup event listeners
-    setupEventListeners();
-    
-    // Check for existing Sunday authentication
-    const authData = checkSundayAuth();
-    
-    if (authData) {
-        // User is authenticated
-        handleAuthSuccess(authData);
-    } else {
-        // Check URL for OAuth callback parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const authSuccess = urlParams.get('auth');
-        
-        if (authSuccess === 'success') {
-            // Just returned from Sunday auth - check storage again
-            setTimeout(() => {
-                const retryAuth = checkSundayAuth();
-                if (retryAuth) {
-                    handleAuthSuccess(retryAuth);
-                    // Clean up URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                } else {
-                    hideApp();
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
                 }
-            }, 100);
-        } else {
-            // Not authenticated - show login
-            hideApp();
-        }
-    }
-});
+            });
+        }, observerOptions);
+
+        // Animate service cards
+        document.querySelectorAll('.service-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(40px)';
+            card.style.transition = `all 0.6s ease ${index * 0.15}s`;
+            observer.observe(card);
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Form submission handling
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.submit-btn');
+            btn.textContent = 'Transmitted';
+            btn.style.background = 'linear-gradient(135deg, var(--electric-violet) 0%, var(--shimmer-purple) 100%)';
+            
+            setTimeout(() => {
+                btn.textContent = 'Transmit';
+                btn.style.background = '';
+                this.reset();
+            }, 3000);
+        });
     </script>
+
 </body>
 </html>
