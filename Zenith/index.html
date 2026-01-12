@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise | Zenith OS | Stealth Services Inc.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --umbra-black: #0A0A0F;
+            --umbra-deep: #0D1117;
+            --umbra-surface: #161B22;
+            --umbra-border: #21262D;
+            --cyan-glow: #06B6D4;
+            --cyan-dim: #0891B2;
+            --gold-accent: #F59E0B;
+            --emerald: #10B981;
+            --violet: #8B5CF6;
+            --violet-dim: #6D28D9;
+            --text-primary: #F0F6FC;
+            --text-secondary: #8B949E;
+            --text-muted: #6E7681;
+            --gradient-cyan: linear-gradient(135deg, #06B6D4, #0891B2);
+            --gradient-violet: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            --glow-violet: 0 0 30px rgba(139, 92, 246, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--umbra-black);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        .nav-header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--umbra-border);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .brand-icon {
+            width: 42px; height: 42px;
+            background: var(--gradient-cyan);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--umbra-black);
+        }
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .brand-text span { color: var(--cyan-glow); }
+
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: var(--cyan-glow); }
+        .nav-link.active { color: var(--violet); }
+
+        /* Main Content */
+        .main-content { padding-top: 80px; min-height: 100vh; }
+
+        /* Zenith Hero */
+        .zenith-hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            position: relative;
+        }
+        .zenith-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .zenith-logo {
+            width: 120px; height: 120px;
+            margin: 0 auto 2rem;
+            background: var(--gradient-violet);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            box-shadow: var(--glow-violet);
+            position: relative;
+        }
+        .zenith-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-violet);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .zenith-edition {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-muted);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .zenith-tagline {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Zenith Tabs */
+        .zenith-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .zenith-tab {
+            padding: 0.85rem 1.75rem;
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .zenith-tab:hover { border-color: var(--violet); color: var(--text-primary); }
+        .zenith-tab.active { background: var(--gradient-violet); border-color: transparent; color: white; }
+
+        /* Zenith Panels */
+        .zenith-panel { display: none; max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+        .zenith-panel.active { display: block; animation: panelFadeIn 0.4s ease; }
+        @keyframes panelFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .module-card {
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+        .module-card:hover { border-color: var(--violet); transform: translateY(-4px); }
+        .module-icon {
+            width: 48px; height: 48px;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .module-name { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+        .module-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* License Form */
+        .license-form {
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+        .form-subtitle { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 2rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--umbra-deep);
+            border: 1px solid var(--umbra-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B949E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--gradient-violet);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-violet); }
+
+        /* Download Panel */
+        .download-container { text-align: center; padding: 2rem; }
+        .license-input-section { max-width: 500px; margin: 0 auto 3rem; }
+        .license-input-wrapper { display: flex; gap: 1rem; margin-top: 1rem; }
+        .license-input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+        }
+        .license-input:focus { outline: none; border-color: var(--violet); }
+        .validate-btn {
+            padding: 1rem 1.5rem;
+            background: var(--gradient-violet);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .validate-btn:hover { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+
+        .download-card {
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+        .download-card.unlocked { opacity: 1; pointer-events: auto; border-color: var(--emerald); }
+        .download-icon {
+            width: 80px; height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        .download-title { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .download-info { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 2rem; }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            background: var(--emerald);
+            border: none;
+            border-radius: 12px;
+            color: var(--umbra-black);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--umbra-border);
+            text-align: center;
+            margin-top: 4rem;
+        }
+        .footer-brand { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .footer-tagline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .footer-crown { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .footer-faith { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold-accent); letter-spacing: 2px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-header { padding: 0.75rem 1rem; }
+            .nav-links { display: none; }
+            .zenith-title { font-size: 2.5rem; }
+            .zenith-logo { width: 90px; height: 90px; font-size: 2.2rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .license-input-wrapper { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="/" class="nav-brand">
+            <div class="brand-icon">S</div>
+            <div class="brand-text">STEALTH <span>SERVICES</span></div>
+        </a>
+        <div class="nav-links">
+            <a href="/apps/" class="nav-link">Apps</a>
+            <a href="/enterprise/" class="nav-link active">Enterprise</a>
+            <a href="/#services" class="nav-link">Services</a>
+            <a href="/#about" class="nav-link">About</a>
+            <a href="/#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="zenith-hero">
+            <div class="zenith-logo">Z</div>
+            <h1 class="zenith-title">ZENITH OS</h1>
+            <p class="zenith-edition">WhiteLabel Edition</p>
+            <p class="zenith-tagline">One Platform. Total Control. Total Security.</p>
+            
+            <div class="zenith-tabs">
+                <button class="zenith-tab active" data-panel="preview">Preview</button>
+                <button class="zenith-tab" data-panel="license">Request License</button>
+                <button class="zenith-tab" data-panel="download">Download</button>
+            </div>
+        </section>
+        
+        <!-- Preview Panel -->
+        <div class="zenith-panel active" id="previewPanel">
+            <div class="preview-grid">
+                <div class="module-card"><div class="module-icon">📊</div><h4 class="module-name">AXIS Dashboard</h4><p class="module-desc">Personal command center with live statistics, quick actions, and unified navigation across all modules.</p></div>
+                <div class="module-card"><div class="module-icon">🎯</div><h4 class="module-name">CRM Pipeline</h4><p class="module-desc">Full-featured customer relationship management with Kanban boards, lead scoring, and deal tracking.</p></div>
+                <div class="module-card"><div class="module-icon">🔍</div><h4 class="module-name">Danimal Data</h4><p class="module-desc">Lead intelligence platform with DBPR license scraping, property data integration, and smart scoring.</p></div>
+                <div class="module-card"><div class="module-icon">💬</div><h4 class="module-name">The Huddle</h4><p class="module-desc">Real-time team messaging with deal-specific channels, @mentions, and async standups.</p></div>
+                <div class="module-card"><div class="module-icon">📧</div><h4 class="module-name">Mailer</h4><p class="module-desc">Email campaigns with M365/AWS SES integration, drip sequences, and open/click tracking.</p></div>
+                <div class="module-card"><div class="module-icon">🔐</div><h4 class="module-name">The Vault</h4><p class="module-desc">Encrypted document storage with version history, secure sharing, and client portals.</p></div>
+                <div class="module-card"><div class="module-icon">💰</div><h4 class="module-name">CFO Dashboard</h4><p class="module-desc">Revenue tracking, pipeline value, P&L visibility, and cash flow projections.</p></div>
+                <div class="module-card"><div class="module-icon">👥</div><h4 class="module-name">Tenant Manager</h4><p class="module-desc">Master-level control for license provisioning, access control, and tenant oversight.</p></div>
+            </div>
+        </div>
+        
+        <!-- License Request Panel -->
+        <div class="zenith-panel" id="licensePanel">
+            <div class="license-form">
+                <h3 class="form-title">Request a License</h3>
+                <p class="form-subtitle">Complete the form below to begin your Zenith OS journey.</p>
+                <form id="licenseForm">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Company Name</label><input type="text" class="form-input" name="company" required></div>
+                        <div class="form-group"><label class="form-label">EIN</label><input type="text" class="form-input" name="ein" placeholder="XX-XXXXXXX"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Business Address</label><input type="text" class="form-input" name="address" required></div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Primary Contact</label><input type="text" class="form-input" name="contact" required></div>
+                        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" name="email" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" name="phone"></div>
+                        <div class="form-group"><label class="form-label">Industry</label><select class="form-select" name="industry"><option value="">Select Industry</option><option value="real-estate">Real Estate</option><option value="business-brokerage">Business Brokerage</option><option value="insurance">Insurance</option><option value="financial-services">Financial Services</option><option value="consulting">Consulting</option><option value="other">Other</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Estimated Users</label><select class="form-select" name="users"><option value="1-5">1-5 Users</option><option value="6-15">6-15 Users</option><option value="16-50">16-50 Users</option><option value="50+">50+ Users</option></select></div>
+                        <div class="form-group"><label class="form-label">Tier Interest</label><select class="form-select" name="tier"><option value="trial">Trial (Free)</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select></div>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Request</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Download Panel -->
+        <div class="zenith-panel" id="downloadPanel">
+            <div class="download-container">
+                <div class="license-input-section">
+                    <label class="form-label" style="text-align:left;display:block;">Enter Your License Key</label>
+                    <div class="license-input-wrapper">
+                        <input type="text" class="license-input" id="licenseKey" placeholder="COMPANY-2026-PRO-XXXX">
+                        <button class="validate-btn" id="validateBtn">Validate</button>
+                    </div>
+                </div>
+                <div class="download-card" id="downloadCard">
+                    <div class="download-icon">📦</div>
+                    <h4 class="download-title">Zenith OS Package</h4>
+                    <p class="download-info">Your licensed deployment package is ready for download.</p>
+                    <button class="download-btn" id="downloadBtn"><span>⬇️</span> Download Package</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-crown">👑</div>
+        <p class="footer-brand">Main Street Group • Stealth Services Inc</p>
+        <p class="footer-tagline">umbrassi.com</p>
+        <p class="footer-faith">CHRIST IS KING</p>
+    </footer>
+
+    <script>
+        // Tab switching
+        const tabs = document.querySelectorAll('.zenith-tab');
+        const panels = document.querySelectorAll('.zenith-panel');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const panelId = tab.dataset.panel;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                panels.forEach(p => p.classList.remove('active'));
+                document.getElementById(`${panelId}Panel`).classList.add('active');
+            });
+        });
+
+        // License form
+        document.getElementById('licenseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('License request submitted! Our team will review your application and contact you within 24-48 hours.');
+            e.target.reset();
+        });
+
+        // License validation
+        document.getElementById('validateBtn').addEventListener('click', () => {
+            const key = document.getElementById('licenseKey').value.trim().toUpperCase();
+            const pattern = /^[A-Z]+-\d{4}-[A-Z]+-\d{4}$/;
+            if (pattern.test(key)) {
+                document.getElementById('downloadCard').classList.add('unlocked');
+            } else {
+                alert('Invalid license key format. Expected: COMPANY-YEAR-TIER-XXXX');
+            }
+        });
+
+        // Download button
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            alert('Download starting... Your Zenith OS package will begin downloading shortly.');
+        });
+    </script>
+</body>
+</html>
