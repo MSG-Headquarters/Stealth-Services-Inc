@@ -1219,7 +1219,11 @@
 
             try {
                 const res = await fetch(`${API_BASE}/api/messages/send`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
                     body: JSON.stringify({ toAddress: to, subject, content, fromPhone: currentUser?.phone || 'Unknown' })
                 });
                 const data = await res.json();
