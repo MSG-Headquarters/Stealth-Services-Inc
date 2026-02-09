@@ -46,14 +46,10 @@
             min-height: 100vh;
         }
 
-        /* Grid background */
         .tactical-grid {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.03;
+            pointer-events: none; z-index: 0; opacity: 0.03;
             background-image: 
                 linear-gradient(0deg, var(--cyber-green) 1px, transparent 1px),
                 linear-gradient(90deg, var(--cyber-green) 1px, transparent 1px);
@@ -61,12 +57,10 @@
         }
 
         .scan-line {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0.1;
-            z-index: 1;
+            opacity: 0.1; z-index: 1;
             animation: scanMove 8s linear infinite;
         }
 
@@ -74,32 +68,20 @@
 
         /* Navigation */
         .nav-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
             padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 100%);
             backdrop-filter: blur(10px);
         }
 
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            text-decoration: none;
-        }
+        .nav-logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
 
         .logo-mark {
             width: 40px; height: 40px;
             border: 1px solid var(--cyber-green);
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             background: var(--cyber-green-dim);
         }
 
@@ -108,115 +90,100 @@
         .logo-class { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.2em; margin-top: 2px; }
 
         .nav-back {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            color: var(--text-muted);
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid var(--border-gray);
+            font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em;
+            color: var(--text-muted); text-decoration: none;
+            padding: 8px 16px; border: 1px solid var(--border-gray);
             transition: all 0.3s ease;
         }
 
-        .nav-back:hover {
-            color: var(--cyber-green);
-            border-color: var(--cyber-green);
-        }
-
+        .nav-back:hover { color: var(--cyber-green); border-color: var(--cyber-green); }
         .nav-back::before { content: '← '; }
 
         /* Page Content */
         .page-content {
-            position: relative;
-            z-index: 5;
-            max-width: 1200px;
-            margin: 0 auto;
+            position: relative; z-index: 5;
+            max-width: 1200px; margin: 0 auto;
             padding: 140px 48px 80px;
         }
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
+        .page-header { text-align: center; margin-bottom: 80px; }
 
         .page-number {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            margin-bottom: 16px;
+            font-family: var(--font-mono); font-size: 11px;
+            letter-spacing: 0.3em; color: var(--text-dim); margin-bottom: 16px;
         }
 
         .page-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            color: var(--cyber-green);
-            margin-bottom: 16px;
+            font-family: var(--font-mono); font-size: 11px;
+            letter-spacing: 0.4em; text-transform: uppercase;
+            color: var(--cyber-green); margin-bottom: 16px;
         }
 
         .page-title {
             font-family: var(--font-display);
-            font-size: clamp(32px, 6vw, 56px);
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: var(--white);
-            margin-bottom: 16px;
+            font-size: clamp(32px, 6vw, 56px); font-weight: 700;
+            letter-spacing: 0.1em; color: var(--white); margin-bottom: 16px;
         }
 
         .page-subtitle {
-            font-family: var(--font-body);
-            font-size: 16px;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
+            font-family: var(--font-body); font-size: 16px;
+            color: var(--text-muted); max-width: 600px; margin: 0 auto;
         }
 
         /* Apps Grid */
         .apps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 2px;
-            background: var(--border-gray);
+            gap: 2px; background: var(--border-gray);
         }
 
         .app-card {
-            background: var(--deep-black);
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
+            background: var(--deep-black); padding: 40px;
+            position: relative; overflow: hidden;
             transition: all 0.5s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
+            text-decoration: none; color: inherit; display: block;
         }
 
         .app-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
+            content: ''; position: absolute; top: 0; left: 0;
             width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.3s ease;
         }
 
         .app-card:hover::before { opacity: 1; }
         .app-card:hover { background: var(--stealth-gray); }
 
+        /* Inactive */
+        .app-card.inactive {
+            opacity: 0.35; pointer-events: none;
+        }
+        .app-card.inactive::before { display: none; }
+        .app-card.inactive .app-icon {
+            border-color: var(--border-gray);
+            background: rgba(42,47,56,0.3);
+            filter: grayscale(1);
+        }
+        .app-card.inactive .app-name { color: var(--text-muted); }
+
+        /* Coming soon */
+        .app-card.coming-soon { cursor: default; }
+        .app-card.coming-soon:hover { background: var(--deep-black); }
+        .app-card.coming-soon::before {
+            background: linear-gradient(90deg, transparent, var(--warning-amber), transparent);
+        }
+        .app-card.coming-soon .app-icon {
+            border-color: rgba(255,170,0,0.3);
+            background: rgba(255,170,0,0.05);
+        }
+
         .app-card-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
         }
 
         .app-icon {
             width: 56px; height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 28px;
             border: 1px solid var(--border-gray);
             background: var(--panel-gray);
@@ -224,79 +191,62 @@
             transition: all 0.3s ease;
         }
 
-        .app-card:hover .app-icon {
+        .app-card:not(.inactive):not(.coming-soon):hover .app-icon {
             border-color: var(--cyber-green);
             background: var(--cyber-green-dim);
         }
 
         .app-name {
-            font-family: var(--font-display);
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            color: var(--white);
-            text-transform: uppercase;
+            font-family: var(--font-display); font-size: 18px; font-weight: 600;
+            letter-spacing: 0.1em; color: var(--white); text-transform: uppercase;
         }
 
         .app-category {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 0.15em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-top: 4px;
+            font-family: var(--font-mono); font-size: 9px;
+            letter-spacing: 0.15em; color: var(--text-dim);
+            text-transform: uppercase; margin-top: 4px;
         }
 
         .app-desc {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 20px;
+            font-size: 14px; color: var(--text-muted);
+            line-height: 1.8; margin-bottom: 20px;
         }
 
-        .app-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
+        .app-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 
         .app-tag {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 0.1em;
-            padding: 4px 10px;
-            background: var(--panel-gray);
-            color: var(--text-dim);
-            text-transform: uppercase;
+            font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+            padding: 4px 10px; background: var(--panel-gray);
+            color: var(--text-dim); text-transform: uppercase;
+        }
+
+        .app-footer {
+            display: flex; align-items: center; justify-content: space-between;
         }
 
         .app-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-mono); font-size: 10px;
+            letter-spacing: 0.15em; text-transform: uppercase;
         }
 
         .app-status.live { color: var(--cyber-green); }
         .app-status.live::before {
-            content: '';
-            width: 6px; height: 6px;
-            background: var(--cyber-green);
-            border-radius: 50%;
+            content: ''; width: 6px; height: 6px;
+            background: var(--cyber-green); border-radius: 50%;
             animation: pulse 2s ease-in-out infinite;
+        }
+
+        .app-status.inactive-label { color: var(--text-dim); }
+        .app-status.inactive-label::before {
+            content: ''; width: 6px; height: 6px;
+            background: var(--text-dim); border-radius: 50%; opacity: 0.5;
         }
 
         .app-status.coming { color: var(--warning-amber); }
         .app-status.coming::before {
-            content: '';
-            width: 6px; height: 6px;
-            background: var(--warning-amber);
-            border-radius: 50%;
-            opacity: 0.6;
+            content: ''; width: 6px; height: 6px;
+            background: var(--warning-amber); border-radius: 50%; opacity: 0.6;
         }
 
         @keyframes pulse {
@@ -305,75 +255,55 @@
         }
 
         .app-action {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--cyber-green);
-            float: right;
-            transition: all 0.3s ease;
+            font-family: var(--font-mono); font-size: 10px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--cyber-green); transition: all 0.3s ease;
         }
 
-        .app-card:hover .app-action { letter-spacing: 0.35em; }
+        .app-card:not(.inactive):not(.coming-soon):hover .app-action {
+            letter-spacing: 0.35em;
+        }
 
         /* Install Section */
         .install-section {
-            margin-top: 80px;
-            padding: 40px;
+            margin-top: 80px; padding: 40px;
             background: var(--deep-black);
             border: 1px solid var(--border-gray);
             text-align: center;
         }
 
         .install-section h4 {
-            font-family: var(--font-display);
-            font-size: 14px;
-            letter-spacing: 0.15em;
-            color: var(--white);
-            margin-bottom: 12px;
-            text-transform: uppercase;
+            font-family: var(--font-display); font-size: 14px;
+            letter-spacing: 0.15em; color: var(--white);
+            margin-bottom: 12px; text-transform: uppercase;
         }
 
         .install-section p {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
+            font-family: var(--font-mono); font-size: 11px;
+            color: var(--text-muted); letter-spacing: 0.05em;
         }
 
         .install-section strong { color: var(--cyber-green); }
 
         /* Footer */
         footer {
-            padding: 60px 48px;
-            border-top: 1px solid var(--border-gray);
-            text-align: center;
-            position: relative;
-            z-index: 5;
+            padding: 60px 48px; border-top: 1px solid var(--border-gray);
+            text-align: center; position: relative; z-index: 5;
         }
 
         .footer-logo {
-            font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 0.4em;
-            color: var(--white);
-            margin-bottom: 12px;
+            font-family: var(--font-display); font-size: 24px; font-weight: 800;
+            letter-spacing: 0.4em; color: var(--white); margin-bottom: 12px;
         }
 
         .footer-tagline {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            margin-bottom: 24px;
+            font-family: var(--font-mono); font-size: 10px;
+            letter-spacing: 0.3em; color: var(--text-dim); margin-bottom: 24px;
         }
 
         .copyright {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
+            font-family: var(--font-mono); font-size: 10px;
+            color: var(--text-dim); letter-spacing: 0.1em;
         }
 
         .copyright a { color: var(--cyber-green); text-decoration: none; }
@@ -418,51 +348,30 @@
         </div>
 
         <div class="apps-grid">
-            <!-- iAXIS Hub -->
-            <a href="/iaxis/" class="app-card">
+
+            <!-- MACRA — LIVE -->
+            <a href="https://macra.umbrassi.com" class="app-card" target="_blank">
                 <div class="app-card-header">
-                    <div class="app-icon">🎯</div>
+                    <div class="app-icon">🏋️</div>
                     <div>
-                        <div class="app-name">iAXIS Hub</div>
-                        <div class="app-category">Personal Command Center</div>
+                        <div class="app-name">MACRA</div>
+                        <div class="app-category">AI Fitness Tracking</div>
                     </div>
                 </div>
-                <p class="app-desc">Your personal command center for tracking mental, physical, time, and mission metrics. AI-powered insights, dream analysis, and comprehensive life dashboard.</p>
+                <p class="app-desc">AI-powered daily weight tracking, food parsing, workout analysis, and Athlete Code community features. Your intelligent fitness companion.</p>
                 <div class="app-tags">
-                    <span class="app-tag">Analytics</span>
-                    <span class="app-tag">Dreams</span>
-                    <span class="app-tag">Goals</span>
-                    <span class="app-tag">Sync</span>
+                    <span class="app-tag">AI Parsing</span>
+                    <span class="app-tag">Weight</span>
+                    <span class="app-tag">Nutrition</span>
+                    <span class="app-tag">Athlete Code</span>
                 </div>
-                <div>
+                <div class="app-footer">
                     <span class="app-status live">OPERATIONAL</span>
                     <span class="app-action">LAUNCH →</span>
                 </div>
             </a>
 
-            <!-- AXIS Fit -->
-            <a href="/axis-fit/" class="app-card">
-                <div class="app-card-header">
-                    <div class="app-icon">💪</div>
-                    <div>
-                        <div class="app-name">AXIS Fit</div>
-                        <div class="app-category">Fitness + Community</div>
-                    </div>
-                </div>
-                <p class="app-desc">AI-powered fitness tracking with video workout logging, nutrition scanning, leaderboards, challenges, and seamless iAXIS Hub integration.</p>
-                <div class="app-tags">
-                    <span class="app-tag">AI Video</span>
-                    <span class="app-tag">Food Scan</span>
-                    <span class="app-tag">Leaderboard</span>
-                    <span class="app-tag">Challenges</span>
-                </div>
-                <div>
-                    <span class="app-status live">OPERATIONAL</span>
-                    <span class="app-action">LAUNCH →</span>
-                </div>
-            </a>
-
-            <!-- COVRD -->
+            <!-- COVRD — LIVE -->
             <a href="/covrd/" class="app-card">
                 <div class="app-card-header">
                     <div class="app-icon">🛡️</div>
@@ -478,36 +387,58 @@
                     <span class="app-tag">Hurricane</span>
                     <span class="app-tag">Local</span>
                 </div>
-                <div>
+                <div class="app-footer">
                     <span class="app-status live">OPERATIONAL</span>
                     <span class="app-action">GET QUOTE →</span>
                 </div>
             </a>
 
-            <!-- MACRA -->
-            <a href="https://macra.umbrassi.com" class="app-card">
+            <!-- Still Waters — LIVE -->
+            <a href="https://app.stillwaters.umbrassi.com" class="app-card" target="_blank">
                 <div class="app-card-header">
-                    <div class="app-icon">🏋️</div>
+                    <div class="app-icon">🌊</div>
                     <div>
-                        <div class="app-name">MACRA</div>
-                        <div class="app-category">AI Fitness Tracking</div>
+                        <div class="app-name">Still Waters</div>
+                        <div class="app-category">Faith + Wellness</div>
                     </div>
                 </div>
-                <p class="app-desc">AI-powered daily weight tracking, food parsing, workout analysis, and Athlete Code community features. Your intelligent fitness companion.</p>
+                <p class="app-desc">A sacred digital space for spiritual growth, reflection, and wellness. Daily devotionals, guided prayer, scripture study, and moments of peace.</p>
                 <div class="app-tags">
-                    <span class="app-tag">AI Parsing</span>
-                    <span class="app-tag">Weight</span>
-                    <span class="app-tag">Nutrition</span>
-                    <span class="app-tag">Athlete Code</span>
+                    <span class="app-tag">Devotional</span>
+                    <span class="app-tag">Prayer</span>
+                    <span class="app-tag">Scripture</span>
+                    <span class="app-tag">Wellness</span>
                 </div>
-                <div>
+                <div class="app-footer">
                     <span class="app-status live">OPERATIONAL</span>
                     <span class="app-action">LAUNCH →</span>
                 </div>
             </a>
 
-            <!-- Be Still -->
-            <div class="app-card" style="cursor: default;">
+            <!-- FL RE Adapt — LIVE -->
+            <a href="https://fl-re-adapt.umbrassi.com" class="app-card" target="_blank">
+                <div class="app-card-header">
+                    <div class="app-icon">🎓</div>
+                    <div>
+                        <div class="app-name">FL RE Adapt</div>
+                        <div class="app-category">Real Estate Exam Prep</div>
+                    </div>
+                </div>
+                <p class="app-desc">Adaptive study platform for the Florida Real Estate exam. Spaced repetition flashcards, practice exams, gamified progress tracking, and AI-powered quiz generation.</p>
+                <div class="app-tags">
+                    <span class="app-tag">Spaced Repetition</span>
+                    <span class="app-tag">Flashcards</span>
+                    <span class="app-tag">Practice Exams</span>
+                    <span class="app-tag">Gamified</span>
+                </div>
+                <div class="app-footer">
+                    <span class="app-status live">OPERATIONAL</span>
+                    <span class="app-action">LAUNCH →</span>
+                </div>
+            </a>
+
+            <!-- Be Still — COMING SOON -->
+            <div class="app-card coming-soon">
                 <div class="app-card-header">
                     <div class="app-icon">🕊️</div>
                     <div>
@@ -515,16 +446,37 @@
                         <div class="app-category">Faith + Meditation</div>
                     </div>
                 </div>
-                <p class="app-desc">A sacred space for reflection, prayer, and meditation. Daily devotionals, scripture study, and guided moments of stillness.</p>
+                <p class="app-desc">A sacred space for reflection, prayer, and guided meditation. Daily devotionals, scripture study, and guided moments of stillness.</p>
                 <div class="app-tags">
-                    <span class="app-tag">Devotional</span>
+                    <span class="app-tag">Meditation</span>
                     <span class="app-tag">Prayer</span>
-                    <span class="app-tag">Scripture</span>
+                    <span class="app-tag">Stillness</span>
                 </div>
-                <div>
+                <div class="app-footer">
                     <span class="app-status coming">INCOMING</span>
                 </div>
             </div>
+
+            <!-- iAXIS Hub — INACTIVE -->
+            <div class="app-card inactive">
+                <div class="app-card-header">
+                    <div class="app-icon">🎯</div>
+                    <div>
+                        <div class="app-name">iAXIS Hub</div>
+                        <div class="app-category">Personal Command Center</div>
+                    </div>
+                </div>
+                <p class="app-desc">Your personal command center for tracking mental, physical, time, and mission metrics. AI-powered insights and comprehensive life dashboard.</p>
+                <div class="app-tags">
+                    <span class="app-tag">Analytics</span>
+                    <span class="app-tag">Goals</span>
+                    <span class="app-tag">Dashboard</span>
+                </div>
+                <div class="app-footer">
+                    <span class="app-status inactive-label">INACTIVE</span>
+                </div>
+            </div>
+
         </div>
 
         <div class="install-section">
