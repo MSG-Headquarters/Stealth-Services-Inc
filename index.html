@@ -3,26 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSI | Stealth Services Inc.</title>
-    <meta name="description" content="Precise. Perfect. Delivered. Security consulting, intelligence research, and technology solutions.">
+    <title>SSI | CLASSIFIED</title>
+    <meta name="description" content="[REDACTED] Stealth Services Inc. — Precise. Perfect. Delivered.">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
     
     <style>
         :root {
-            --deep-navy: #0A1628;
-            --obsidian: #0D0D0D;
-            --midnight: #050A12;
-            --shimmer-purple: #7B2D8E;
-            --electric-violet: #9945FF;
-            --tactical-green: #00FF88;
-            --muted-emerald: #2ECC71;
-            --steel-gray: #1a2332;
-            --ghost-white: #E8E8E8;
-            --muted-white: #B8B8B8;
+            --void: #000000;
+            --abyss: #030508;
+            --deep-black: #0a0c0f;
+            --stealth-gray: #12151a;
+            --panel-gray: #1a1d24;
+            --border-gray: #2a2f38;
+            --text-dim: #4a5568;
+            --text-muted: #718096;
+            --text-light: #a0aec0;
+            --text-bright: #e2e8f0;
+            --white: #ffffff;
+            
+            --cyber-green: #00ff88;
+            --cyber-green-dim: rgba(0,255,136,0.15);
+            --threat-red: #ff2d55;
+            --threat-red-dim: rgba(255,45,85,0.15);
+            --intel-blue: #00d4ff;
+            --intel-blue-dim: rgba(0,212,255,0.1);
+            --warning-amber: #ffaa00;
+            
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
         }
 
         * {
@@ -36,15 +54,87 @@
         }
 
         body {
-            font-family: 'Exo 2', sans-serif;
-            background: var(--obsidian);
-            color: var(--ghost-white);
+            font-family: var(--font-body);
+            background: var(--void);
+            color: var(--text-light);
             overflow-x: hidden;
             line-height: 1.6;
+            cursor: crosshair;
         }
 
-        /* ========== GEOMETRIC BACKGROUND ========== */
-        .geo-grid {
+        ::selection {
+            background: var(--cyber-green);
+            color: var(--void);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           LOADING / BOOT SEQUENCE
+        ═══════════════════════════════════════════════════════════════ */
+        .boot-sequence {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--void);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+        }
+
+        .boot-sequence.complete {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s ease;
+        }
+
+        .boot-logo {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: 0.5em;
+            color: var(--white);
+            margin-bottom: 40px;
+            opacity: 0;
+        }
+
+        .boot-text {
+            font-size: 12px;
+            color: var(--cyber-green);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            min-height: 20px;
+        }
+
+        .boot-progress {
+            width: 300px;
+            height: 2px;
+            background: var(--border-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .boot-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyber-green), var(--intel-blue));
+        }
+
+        .boot-status {
+            margin-top: 20px;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 0.3em;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RADAR / GRID BACKGROUND
+        ═══════════════════════════════════════════════════════════════ */
+        .tactical-grid {
             position: fixed;
             top: 0;
             left: 0;
@@ -54,83 +144,193 @@
             z-index: 0;
             opacity: 0.03;
             background-image: 
-                linear-gradient(30deg, var(--tactical-green) 1px, transparent 1px),
-                linear-gradient(150deg, var(--electric-violet) 1px, transparent 1px);
-            background-size: 60px 60px;
+                linear-gradient(0deg, var(--cyber-green) 1px, transparent 1px),
+                linear-gradient(90deg, var(--cyber-green) 1px, transparent 1px);
+            background-size: 80px 80px;
         }
 
-        /* ========== NAVIGATION ========== */
-        nav {
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
+            opacity: 0.1;
+            z-index: 1;
+            animation: scanMove 8s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.02;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           NAVIGATION
+        ═══════════════════════════════════════════════════════════════ */
+        .nav-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 1000;
-            padding: 1.5rem 4rem;
+            padding: 24px 48px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(180deg, rgba(5,10,18,0.95) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            mix-blend-mode: normal;
         }
 
-        .logo {
-            font-family: 'Rajdhani', sans-serif;
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--cyber-green);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cyber-green-dim);
+        }
+
+        .logo-mark svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--cyber-green);
+            stroke-width: 1.5;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 20px;
             font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: 0.3em;
-            color: var(--ghost-white);
-            text-decoration: none;
-            position: relative;
+            letter-spacing: 0.4em;
+            color: var(--white);
         }
 
-        .logo::before {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
-            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        .logo-class {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--threat-red);
+            letter-spacing: 0.2em;
+            margin-top: 2px;
         }
 
         .nav-links {
             display: flex;
-            gap: 3rem;
+            gap: 40px;
             list-style: none;
         }
 
         .nav-links a {
-            color: var(--muted-white);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.15em;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            transition: color 0.3s ease;
+            color: var(--text-muted);
+            text-decoration: none;
             position: relative;
+            padding: 8px 0;
+            transition: color 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--tactical-green);
+            color: var(--cyber-green);
         }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--tactical-green);
-            transition: width 0.3s ease;
+        .nav-links a::before {
+            content: '//';
+            margin-right: 6px;
+            color: var(--text-dim);
+            transition: color 0.3s ease;
         }
 
-        .nav-links a:hover::after {
-            width: 100%;
+        .nav-links a:hover::before {
+            color: var(--cyber-green);
         }
 
-        /* ========== HERO SECTION ========== */
+        .nav-links a.nav-highlight {
+            color: var(--cyber-green);
+            border: 1px solid rgba(0,255,136,0.25);
+            padding: 6px 14px;
+            background: rgba(0,255,136,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a.nav-highlight:hover {
+            background: rgba(0,255,136,0.15);
+            border-color: var(--cyber-green);
+            box-shadow: 0 0 15px rgba(0,255,136,0.1);
+        }
+
+        .nav-links a.nav-highlight::before {
+            content: '◆';
+            font-size: 6px;
+            vertical-align: middle;
+            color: var(--cyber-green);
+        }
+
+        .nav-links a.nav-highlight.enterprise {
+            color: var(--intel-blue);
+            border-color: rgba(0,212,255,0.25);
+            background: rgba(0,212,255,0.05);
+        }
+
+        .nav-links a.nav-highlight.enterprise:hover {
+            background: rgba(0,212,255,0.15);
+            border-color: var(--intel-blue);
+            box-shadow: 0 0 15px rgba(0,212,255,0.1);
+        }
+
+        .nav-links a.nav-highlight.enterprise::before {
+            color: var(--intel-blue);
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--cyber-green); }
+            50% { opacity: 0.5; box-shadow: 0 0 0 8px transparent; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HERO SECTION
+        ═══════════════════════════════════════════════════════════════ */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -138,438 +338,620 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            padding: 2rem;
         }
 
-        /* Stealth Bomber Angular Background */
-        .hero-bg {
+        /* Stealth Bomber Silhouette */
+        .stealth-bomber {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 1400px;
+            height: auto;
+            opacity: 0.04;
+            z-index: 1;
+        }
+
+        .stealth-bomber svg {
+            width: 100%;
+            height: auto;
+            fill: var(--white);
+        }
+
+        /* HUD Frame Elements */
+        .hud-frame {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-        }
-
-        .angular-shape {
-            position: absolute;
-            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%);
-        }
-
-        .angular-shape.shape-1 {
-            width: 120%;
-            height: 60%;
-            top: -10%;
-            left: -10%;
-            clip-path: polygon(0 0, 100% 0, 100% 70%, 85% 100%, 15% 100%, 0 70%);
-            background: linear-gradient(160deg, var(--deep-navy) 0%, rgba(123,45,142,0.1) 100%);
-        }
-
-        .angular-shape.shape-2 {
-            width: 50%;
-            height: 80%;
-            bottom: -20%;
-            right: -5%;
-            clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%, 0 30%);
-            background: linear-gradient(200deg, rgba(153,69,255,0.08) 0%, transparent 60%);
-        }
-
-        .angular-shape.shape-3 {
-            width: 40%;
-            height: 70%;
-            bottom: -10%;
-            left: -5%;
-            clip-path: polygon(0 20%, 80% 0, 100% 30%, 100% 100%, 0 100%);
-            background: linear-gradient(45deg, rgba(0,255,136,0.05) 0%, transparent 50%);
-        }
-
-        /* Glowing accent lines */
-        .accent-line {
-            position: absolute;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--tactical-green), transparent);
-            opacity: 0.4;
+            pointer-events: none;
             z-index: 2;
         }
 
-        .accent-line.line-1 {
-            width: 60%;
-            top: 25%;
-            left: 20%;
-            transform: rotate(-15deg);
+        .hud-corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 1px solid var(--border-gray);
         }
 
-        .accent-line.line-2 {
-            width: 40%;
-            top: 75%;
-            right: 10%;
-            transform: rotate(20deg);
-            background: linear-gradient(90deg, transparent, var(--electric-violet), transparent);
+        .hud-corner.top-left {
+            top: 60px;
+            left: 40px;
+            border-right: none;
+            border-bottom: none;
         }
 
+        .hud-corner.top-right {
+            top: 60px;
+            right: 40px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .hud-corner.bottom-left {
+            bottom: 60px;
+            left: 40px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .hud-corner.bottom-right {
+            bottom: 60px;
+            right: 40px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .hud-label {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+        }
+
+        .hud-label.coords {
+            bottom: 80px;
+            left: 60px;
+        }
+
+        .hud-label.timestamp {
+            bottom: 80px;
+            right: 60px;
+        }
+
+        .hud-label.classification {
+            top: 80px;
+            right: 60px;
+            color: var(--threat-red);
+        }
+
+        /* Hero Content */
         .hero-content {
             position: relative;
             z-index: 10;
             text-align: center;
-            max-width: 900px;
+            max-width: 1000px;
+            padding: 0 40px;
         }
 
-        .hero-badge {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: rgba(0,255,136,0.08);
-            border: 1px solid rgba(0,255,136,0.3);
-            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
-            font-size: 0.75rem;
+        .hero-classification {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            background: var(--threat-red-dim);
+            border: 1px solid rgba(255,45,85,0.3);
+            margin-bottom: 40px;
+            font-family: var(--font-mono);
+            font-size: 10px;
             letter-spacing: 0.3em;
             text-transform: uppercase;
-            color: var(--tactical-green);
-            margin-bottom: 2rem;
-            animation: fadeSlideDown 0.8s ease-out;
+            color: var(--threat-red);
+        }
+
+        .hero-classification::before {
+            content: '◆';
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         .hero-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(3rem, 10vw, 7rem);
-            font-weight: 700;
-            letter-spacing: 0.2em;
+            font-family: var(--font-display);
+            font-size: clamp(48px, 10vw, 120px);
+            font-weight: 800;
+            letter-spacing: 0.15em;
             line-height: 1;
-            margin-bottom: 1.5rem;
-            animation: fadeSlideUp 0.8s ease-out 0.2s both;
+            color: var(--white);
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        .hero-title span {
-            display: block;
-            background: linear-gradient(135deg, var(--ghost-white) 0%, var(--muted-white) 50%, var(--tactical-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .hero-title .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+        }
+
+        .hero-subtitle span {
+            color: var(--cyber-green);
         }
 
         .hero-tagline {
-            font-size: 1.1rem;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            color: var(--muted-white);
-            margin-bottom: 3rem;
-            animation: fadeSlideUp 0.8s ease-out 0.4s both;
+            font-family: var(--font-body);
+            font-size: 20px;
+            font-weight: 300;
+            color: var(--text-light);
+            margin-bottom: 60px;
+            letter-spacing: 0.1em;
         }
 
         .hero-tagline strong {
-            color: var(--tactical-green);
+            color: var(--white);
             font-weight: 600;
         }
 
-        .cta-group {
+        .hero-cta {
             display: flex;
-            gap: 1.5rem;
+            gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            animation: fadeSlideUp 0.8s ease-out 0.6s both;
         }
 
         .btn {
-            padding: 1rem 2.5rem;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-family: var(--font-mono);
+            font-size: 11px;
             letter-spacing: 0.2em;
             text-transform: uppercase;
+            padding: 16px 40px;
             text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
-            color: var(--obsidian);
-            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
             border: none;
         }
 
+        .btn-primary {
+            background: var(--cyber-green);
+            color: var(--void);
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        }
+
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0,255,136,0.3);
+            background: var(--white);
+            box-shadow: 0 0 30px var(--cyber-green-dim);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--ghost-white);
-            border: 1px solid rgba(255,255,255,0.2);
-            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+            color: var(--text-light);
+            border: 1px solid var(--border-gray);
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
 
         .btn-secondary:hover {
-            border-color: var(--electric-violet);
-            color: var(--electric-violet);
+            border-color: var(--cyber-green);
+            color: var(--cyber-green);
         }
 
-        /* ========== SERVICES SECTION ========== */
-        .services {
-            padding: 8rem 4rem;
-            position: relative;
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
             z-index: 10;
+        }
+
+        .scroll-text {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--cyber-green), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SECTION STYLES
+        ═══════════════════════════════════════════════════════════════ */
+        section {
+            position: relative;
+            z-index: 5;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 5rem;
+            margin-bottom: 80px;
+        }
+
+        .section-number {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: var(--text-dim);
+            margin-bottom: 16px;
         }
 
         .section-label {
-            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 11px;
             letter-spacing: 0.4em;
             text-transform: uppercase;
-            color: var(--electric-violet);
-            margin-bottom: 1rem;
+            color: var(--cyber-green);
+            margin-bottom: 16px;
         }
 
         .section-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-family: var(--font-display);
+            font-size: clamp(32px, 6vw, 56px);
             font-weight: 700;
             letter-spacing: 0.1em;
+            color: var(--white);
         }
 
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
+        /* ═══════════════════════════════════════════════════════════════
+           CAPABILITIES / SERVICES
+        ═══════════════════════════════════════════════════════════════ */
+        .capabilities {
+            padding: 120px 48px;
+            background: linear-gradient(180deg, var(--void) 0%, var(--abyss) 50%, var(--void) 100%);
+        }
+
+        .capabilities-grid {
             max-width: 1400px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: var(--border-gray);
         }
 
-        .service-card {
-            background: linear-gradient(145deg, rgba(26,35,50,0.8) 0%, rgba(13,13,13,0.9) 100%);
-            padding: 3rem 2rem;
+        @media (max-width: 1000px) {
+            .capabilities-grid { grid-template-columns: 1fr; }
+        }
+
+        .capability-card {
+            background: var(--deep-black);
+            padding: 48px;
             position: relative;
-            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
-            transition: all 0.4s ease;
-            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: all 0.5s ease;
         }
 
-        .service-card::before {
+        .capability-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
+            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
-        .service-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(0,255,136,0.2);
-        }
-
-        .service-card:hover::before {
+        .capability-card:hover::before {
             opacity: 1;
         }
 
-        .service-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem;
-            position: relative;
+        .capability-card:hover {
+            background: var(--stealth-gray);
         }
 
-        .service-icon svg {
-            width: 100%;
-            height: 100%;
-            stroke: var(--tactical-green);
-            stroke-width: 1.5;
+        .capability-number {
+            font-family: var(--font-display);
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--panel-gray);
+            line-height: 1;
+            margin-bottom: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .capability-card:hover .capability-number {
+            color: var(--cyber-green-dim);
+        }
+
+        .capability-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 24px;
+            stroke: var(--cyber-green);
+            stroke-width: 1;
             fill: none;
         }
 
-        .service-card h3 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.4rem;
+        .capability-title {
+            font-family: var(--font-display);
+            font-size: 18px;
             font-weight: 600;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-            color: var(--ghost-white);
+            letter-spacing: 0.15em;
+            color: var(--white);
+            margin-bottom: 16px;
+            text-transform: uppercase;
         }
 
-        .service-card p {
-            color: var(--muted-white);
-            font-size: 0.95rem;
+        .capability-desc {
+            font-size: 14px;
+            color: var(--text-muted);
             line-height: 1.8;
+            margin-bottom: 24px;
         }
 
-        .service-card .card-number {
-            position: absolute;
-            top: 1.5rem;
-            right: 2rem;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.03);
-            line-height: 1;
+        .capability-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        /* ========== ABOUT SECTION ========== */
-        .about {
-            padding: 8rem 4rem;
+        .capability-tag {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            padding: 4px 10px;
+            background: var(--panel-gray);
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           INTEL SECTION (Timeline/History style)
+        ═══════════════════════════════════════════════════════════════ */
+        .intel-section {
+            padding: 120px 48px;
             position: relative;
-            z-index: 10;
-            background: linear-gradient(180deg, transparent 0%, rgba(10,22,40,0.5) 50%, transparent 100%);
         }
 
-        .about-container {
+        .intel-container {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6rem;
+            gap: 80px;
             align-items: center;
         }
 
-        .about-visual {
+        @media (max-width: 900px) {
+            .intel-container { grid-template-columns: 1fr; }
+        }
+
+        .intel-visual {
             position: relative;
             height: 500px;
         }
 
-        .stealth-graphic {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Angular stealth shape */
-        .stealth-shape {
+        .radar-display {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(135deg, var(--deep-navy) 0%, rgba(123,45,142,0.3) 100%);
-            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
-            animation: pulse 4s ease-in-out infinite;
+            width: 400px;
+            height: 400px;
         }
 
-        .stealth-shape::before {
-            content: '';
-            position: absolute;
-            inset: 2px;
-            background: var(--obsidian);
-            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
-        }
-
-        .stealth-shape::after {
-            content: '';
+        .radar-ring {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
-            background: linear-gradient(135deg, transparent 0%, rgba(0,255,136,0.1) 100%);
-            clip-path: polygon(50% 0%, 100% 35%, 85% 100%, 15% 100%, 0% 35%);
-        }
-
-        .orbit-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid rgba(153,69,255,0.2);
+            border: 1px solid var(--border-gray);
             border-radius: 50%;
-            animation: rotate 20s linear infinite;
         }
 
-        .orbit-ring.ring-1 {
-            width: 350px;
-            height: 350px;
+        .radar-ring.ring-1 { width: 100%; height: 100%; }
+        .radar-ring.ring-2 { width: 70%; height: 70%; }
+        .radar-ring.ring-3 { width: 40%; height: 40%; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-green), transparent);
+            transform-origin: left center;
+            animation: radarSweep 4s linear infinite;
         }
 
-        .orbit-ring.ring-2 {
-            width: 420px;
-            height: 420px;
-            animation-direction: reverse;
-            animation-duration: 30s;
-            border-color: rgba(0,255,136,0.1);
+        @keyframes radarSweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .about-content h2 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(2rem, 4vw, 3rem);
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--cyber-green);
+        }
+
+        .radar-blip {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--threat-red);
+            border-radius: 50%;
+            animation: blipPulse 2s ease-in-out infinite;
+        }
+
+        .radar-blip.blip-1 { top: 20%; left: 60%; animation-delay: 0s; }
+        .radar-blip.blip-2 { top: 70%; left: 30%; animation-delay: 0.5s; }
+        .radar-blip.blip-3 { top: 40%; left: 80%; animation-delay: 1s; }
+
+        @keyframes blipPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.5); }
+        }
+
+        .intel-content h2 {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 42px);
             font-weight: 700;
             letter-spacing: 0.05em;
-            margin-bottom: 1.5rem;
+            color: var(--white);
+            margin-bottom: 32px;
             line-height: 1.2;
         }
 
-        .about-content h2 span {
-            color: var(--tactical-green);
+        .intel-content h2 span {
+            color: var(--cyber-green);
         }
 
-        .about-content p {
-            color: var(--muted-white);
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-            line-height: 1.9;
+        .intel-content p {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.8;
         }
 
-        .stats-row {
-            display: flex;
-            gap: 3rem;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+        .intel-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border-gray);
         }
 
-        .stat {
-            text-align: left;
+        .intel-stat {
+            text-align: center;
         }
 
-        .stat-value {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 2.5rem;
+        .intel-stat-value {
+            font-family: var(--font-display);
+            font-size: 32px;
             font-weight: 700;
-            color: var(--tactical-green);
+            color: var(--cyber-green);
+            margin-bottom: 8px;
+        }
+
+        .intel-stat-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           DOSSIER / VALUES
+        ═══════════════════════════════════════════════════════════════ */
+        .dossier-section {
+            padding: 120px 48px;
+            background: var(--abyss);
+        }
+
+        .dossier-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .dossier-item {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 48px;
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border-gray);
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .dossier-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.8s ease;
+        }
+
+        .dossier-number {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--panel-gray);
             line-height: 1;
         }
 
-        .stat-label {
-            font-size: 0.8rem;
-            letter-spacing: 0.15em;
+        .dossier-content h3 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--white);
+            margin-bottom: 16px;
             text-transform: uppercase;
-            color: var(--muted-white);
-            margin-top: 0.5rem;
         }
 
-        /* ========== MSG AFFILIATION ========== */
+        .dossier-content p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           AFFILIATION BAR
+        ═══════════════════════════════════════════════════════════════ */
         .affiliation {
-            padding: 4rem;
+            padding: 60px 48px;
+            background: var(--deep-black);
+            border-top: 1px solid var(--border-gray);
+            border-bottom: 1px solid var(--border-gray);
             text-align: center;
-            position: relative;
-            z-index: 10;
         }
 
         .affiliation-text {
-            font-size: 0.8rem;
-            letter-spacing: 0.3em;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 0.4em;
             text-transform: uppercase;
-            color: var(--muted-white);
-            opacity: 0.6;
+            color: var(--text-dim);
         }
 
         .affiliation-text span {
-            color: var(--electric-violet);
+            color: var(--cyber-green);
             font-weight: 600;
         }
 
-        /* ========== CONTACT SECTION ========== */
-        .contact {
-            padding: 8rem 4rem;
-            position: relative;
-            z-index: 10;
+        /* ═══════════════════════════════════════════════════════════════
+           CONTACT / ENGAGE
+        ═══════════════════════════════════════════════════════════════ */
+        .contact-section {
+            padding: 120px 48px;
         }
 
         .contact-container {
@@ -578,42 +960,53 @@
         }
 
         .contact-form {
-            background: linear-gradient(145deg, rgba(26,35,50,0.6) 0%, rgba(13,13,13,0.8) 100%);
-            padding: 4rem;
-            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px));
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--deep-black);
+            border: 1px solid var(--border-gray);
+            padding: 48px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 24px;
         }
 
         .form-group label {
-            display: block;
-            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 10px;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--muted-white);
-            margin-bottom: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
         }
 
         .form-group input,
         .form-group textarea {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--ghost-white);
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
+            background: var(--stealth-gray);
+            border: 1px solid var(--border-gray);
+            padding: 14px 16px;
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--tactical-green);
-            box-shadow: 0 0 20px rgba(0,255,136,0.1);
+            border-color: var(--cyber-green);
+            box-shadow: 0 0 0 1px var(--cyber-green-dim);
         }
 
         .form-group textarea {
@@ -621,352 +1014,413 @@
             resize: vertical;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
         .submit-btn {
             width: 100%;
-            padding: 1.25rem 2rem;
-            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
-            color: var(--obsidian);
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
+            padding: 18px;
+            background: var(--cyber-green);
             border: none;
+            color: var(--void);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
             cursor: pointer;
-            clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
             transition: all 0.3s ease;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 50px rgba(0,255,136,0.3);
+            background: var(--white);
         }
 
-        /* ========== FOOTER ========== */
+        /* ═══════════════════════════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════════════════════════ */
         footer {
-            padding: 4rem;
+            padding: 80px 48px;
+            background: var(--void);
+            border-top: 1px solid var(--border-gray);
             text-align: center;
-            position: relative;
-            z-index: 10;
-            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .footer-logo {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.3em;
-            color: var(--ghost-white);
-            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 0.4em;
+            color: var(--white);
+            margin-bottom: 16px;
         }
 
         .footer-tagline {
-            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            font-size: 11px;
             letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--muted-white);
-            margin-bottom: 2rem;
+            color: var(--text-dim);
+            margin-bottom: 40px;
         }
 
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
-            color: var(--muted-white);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
             transition: color 0.3s ease;
         }
 
         .footer-links a:hover {
-            color: var(--tactical-green);
+            color: var(--cyber-green);
         }
 
         .copyright {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.3);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
             letter-spacing: 0.1em;
         }
 
         .copyright a {
-            color: var(--electric-violet);
+            color: var(--cyber-green);
             text-decoration: none;
         }
 
-        /* ========== ANIMATIONS ========== */
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 16px 24px;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                opacity: 0.8;
-                transform: translate(-50%, -50%) scale(1.02);
-            }
-        }
-
-        @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 968px) {
-            nav {
-                padding: 1rem 2rem;
-            }
-
+            
             .nav-links {
                 display: none;
             }
 
-            .services {
-                padding: 4rem 2rem;
+            .nav-status {
+                display: none;
             }
 
-            .about-container {
+            .hero-content {
+                padding: 0 20px;
+            }
+
+            .capabilities,
+            .intel-section,
+            .dossier-section,
+            .contact-section {
+                padding: 80px 24px;
+            }
+
+            .hud-corner {
+                display: none;
+            }
+
+            .hud-label {
+                display: none;
+            }
+
+            .intel-visual {
+                height: 300px;
+            }
+
+            .radar-display {
+                width: 280px;
+                height: 280px;
+            }
+
+            .dossier-item {
                 grid-template-columns: 1fr;
-                gap: 4rem;
-            }
-
-            .about-visual {
-                height: 350px;
-            }
-
-            .contact-form {
-                padding: 2.5rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-row {
-                gap: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                letter-spacing: 0.1em;
-            }
-
-            .hero-tagline {
-                letter-spacing: 0.2em;
-            }
-
-            .cta-group {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 280px;
-                text-align: center;
-            }
-
-            .stats-row {
-                flex-direction: column;
-                gap: 1.5rem;
+                gap: 16px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Boot Sequence -->
+    <div class="boot-sequence" id="bootSequence">
+        <div class="boot-logo" id="bootLogo">SSI</div>
+        <div class="boot-text" id="bootText"></div>
+        <div class="boot-progress">
+            <div class="boot-progress-bar" id="bootProgress"></div>
+        </div>
+        <div class="boot-status" id="bootStatus">STANDBY</div>
+    </div>
 
-    <!-- Geometric Grid Background -->
-    <div class="geo-grid"></div>
+    <!-- Background Effects -->
+    <div class="tactical-grid"></div>
+    <div class="scan-line"></div>
+    <div class="noise-overlay"></div>
 
     <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo">SSI</a>
+    <nav class="nav-container">
+        <div class="nav-logo">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
+                    <path d="M12 22V12"/>
+                    <path d="M2 7l10 5 10-5"/>
+                </svg>
+            </div>
+            <div>
+                <div class="logo-text">SSI</div>
+                <div class="logo-class">// CLASSIFIED</div>
+            </div>
+        </div>
+
         <ul class="nav-links">
-            <li><a href="/apps/">Apps</a></li>
-            <li><a href="/enterprise/">Enterprise</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#capabilities">Capabilities</a></li>
+            <li><a href="#intel">Intel</a></li>
+            <li><a href="#protocol">Protocol</a></li>
+            <li><a href="/Apps/" class="nav-highlight">Apps</a></li>
+            <li><a href="/Zenith/" class="nav-highlight enterprise">Enterprise</a></li>
+            <li><a href="#engage">Engage</a></li>
         </ul>
+
+        <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>SYSTEMS NOMINAL</span>
+        </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-bg">
-            <div class="angular-shape shape-1"></div>
-            <div class="angular-shape shape-2"></div>
-            <div class="angular-shape shape-3"></div>
-            <div class="accent-line line-1"></div>
-            <div class="accent-line line-2"></div>
+        <!-- Stealth Bomber Background -->
+        <div class="stealth-bomber">
+            <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+                <!-- B-2 Spirit inspired silhouette -->
+                <path d="M400 50 L200 150 L50 180 L30 185 L50 190 L200 170 L350 180 L400 200 L450 180 L600 170 L750 190 L770 185 L750 180 L600 150 L400 50Z"/>
+                <path d="M400 80 L350 120 L400 130 L450 120 L400 80Z" fill="rgba(255,255,255,0.3)"/>
+            </svg>
         </div>
 
+        <!-- HUD Frame -->
+        <div class="hud-frame">
+            <div class="hud-corner top-left"></div>
+            <div class="hud-corner top-right"></div>
+            <div class="hud-corner bottom-left"></div>
+            <div class="hud-corner bottom-right"></div>
+            <div class="hud-label coords">LAT: [REDACTED] / LON: [REDACTED]</div>
+            <div class="hud-label timestamp" id="timestamp"></div>
+            <div class="hud-label classification">◆ TOP SECRET // SSI</div>
+        </div>
+
+        <!-- Hero Content -->
         <div class="hero-content">
-            <div class="hero-badge">Covert Operations • Elite Solutions</div>
-            <h1 class="hero-title">
-                <span>STEALTH SERVICES</span>
+            <div class="hero-classification">
+                <span>CLEARANCE LEVEL: RESTRICTED</span>
+            </div>
+            
+            <h1 class="hero-title" id="heroTitle">
+                <span class="title-text">STEALTH</span>
             </h1>
+            
+            <p class="hero-subtitle">
+                SERVICES <span>INTELLIGENCE</span>
+            </p>
+            
             <p class="hero-tagline">
                 <strong>Precise.</strong> Perfect. <strong>Delivered.</strong>
             </p>
-            <div class="cta-group">
-                <a href="#contact" class="btn btn-primary">Engage Now</a>
-                <a href="#services" class="btn btn-secondary">Our Capabilities</a>
+
+            <div class="hero-cta">
+                <a href="#engage" class="btn btn-primary">INITIATE CONTACT</a>
+                <a href="#capabilities" class="btn btn-secondary">VIEW CAPABILITIES</a>
             </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <span class="scroll-text">Scroll to Declassify</span>
+            <div class="scroll-line"></div>
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="services" id="services">
+    <!-- Capabilities Section -->
+    <section class="capabilities" id="capabilities">
         <div class="section-header">
-            <p class="section-label">What We Do</p>
-            <h2 class="section-title">Capabilities</h2>
+            <div class="section-number">// 001</div>
+            <p class="section-label">Operational Parameters</p>
+            <h2 class="section-title">CAPABILITIES</h2>
         </div>
 
-        <div class="services-grid">
-            <!-- Security Consulting -->
-            <div class="service-card">
-                <span class="card-number">01</span>
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
-                        <path d="M9 12l2 2 4-4"/>
-                    </svg>
+        <div class="capabilities-grid">
+            <div class="capability-card">
+                <div class="capability-number">01</div>
+                <svg class="capability-icon" viewBox="0 0 24 24">
+                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+                <h3 class="capability-title">Security Consulting</h3>
+                <p class="capability-desc">Comprehensive threat assessment and mitigation strategies. Defense architecture designed for the modern threat landscape. Vulnerability identification before exploitation.</p>
+                <div class="capability-tags">
+                    <span class="capability-tag">Threat Analysis</span>
+                    <span class="capability-tag">Penetration</span>
+                    <span class="capability-tag">Architecture</span>
                 </div>
-                <h3>Security Consulting</h3>
-                <p>Comprehensive threat assessment and mitigation strategies. We identify vulnerabilities before they become liabilities. Defense architecture designed for the modern threat landscape.</p>
             </div>
 
-            <!-- Intelligence Research -->
-            <div class="service-card">
-                <span class="card-number">02</span>
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="M21 21l-4.35-4.35"/>
-                        <path d="M11 8v6M8 11h6"/>
-                    </svg>
+            <div class="capability-card">
+                <div class="capability-number">02</div>
+                <svg class="capability-icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                    <path d="M11 8v6M8 11h6"/>
+                </svg>
+                <h3 class="capability-title">Intelligence Research</h3>
+                <p class="capability-desc">Deep-dive analysis and actionable intelligence. Transform raw data into strategic advantage. Discrete investigations with verified findings.</p>
+                <div class="capability-tags">
+                    <span class="capability-tag">OSINT</span>
+                    <span class="capability-tag">HUMINT</span>
+                    <span class="capability-tag">Analytics</span>
                 </div>
-                <h3>Intelligence Research</h3>
-                <p>Deep-dive analysis and actionable intelligence. We transform raw data into strategic advantage. Discrete investigations with comprehensive reporting and verified findings.</p>
             </div>
 
-            <!-- Technology Development -->
-            <div class="service-card">
-                <span class="card-number">03</span>
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24">
-                        <polyline points="16 18 22 12 16 6"/>
-                        <polyline points="8 6 2 12 8 18"/>
-                        <line x1="12" y1="2" x2="12" y2="22"/>
-                    </svg>
+            <div class="capability-card">
+                <div class="capability-number">03</div>
+                <svg class="capability-icon" viewBox="0 0 24 24">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                    <line x1="12" y1="2" x2="12" y2="22"/>
+                </svg>
+                <h3 class="capability-title">Technology Solutions</h3>
+                <p class="capability-desc">Custom-engineered systems built for performance and security. Secure platforms to integrated solutions. Technology that operates at mission speed.</p>
+                <div class="capability-tags">
+                    <span class="capability-tag">Development</span>
+                    <span class="capability-tag">Integration</span>
+                    <span class="capability-tag">Encryption</span>
                 </div>
-                <h3>Technology Solutions</h3>
-                <p>Custom-engineered systems built for performance and security. From secure platforms to integrated solutions, we architect technology that operates at the speed of now.</p>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-container">
-            <div class="about-visual">
-                <div class="stealth-graphic">
-                    <div class="orbit-ring ring-1"></div>
-                    <div class="orbit-ring ring-2"></div>
-                    <div class="stealth-shape"></div>
+    <!-- Intel Section -->
+    <section class="intel-section" id="intel">
+        <div class="intel-container">
+            <div class="intel-visual">
+                <div class="radar-display">
+                    <div class="radar-ring ring-1"></div>
+                    <div class="radar-ring ring-2"></div>
+                    <div class="radar-ring ring-3"></div>
+                    <div class="radar-sweep"></div>
+                    <div class="radar-center"></div>
+                    <div class="radar-blip blip-1"></div>
+                    <div class="radar-blip blip-2"></div>
+                    <div class="radar-blip blip-3"></div>
                 </div>
             </div>
 
-            <div class="about-content">
+            <div class="intel-content">
+                <p class="section-label">// OPERATIONAL BRIEF</p>
                 <h2>Invisible Until <span>Impact</span></h2>
                 <p>Stealth Services Inc. operates at the intersection of security, intelligence, and technology. We exist to provide elite solutions for those who demand precision without compromise.</p>
-                <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect and deserve.</p>
-                <p>Part of the <strong>Main Street Group</strong> portfolio — where legacy meets innovation.</p>
+                <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect.</p>
+                <p>Part of the <strong style="color: var(--cyber-green);">Main Street Group</strong> portfolio — where legacy meets innovation.</p>
 
-                <div class="stats-row">
-                    <div class="stat">
-                        <div class="stat-value">100%</div>
-                        <div class="stat-label">Discretion</div>
+                <div class="intel-stats">
+                    <div class="intel-stat">
+                        <div class="intel-stat-value">100%</div>
+                        <div class="intel-stat-label">Discretion</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value">24/7</div>
-                        <div class="stat-label">Operations</div>
+                    <div class="intel-stat">
+                        <div class="intel-stat-value">24/7</div>
+                        <div class="intel-stat-label">Operations</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value">Elite</div>
-                        <div class="stat-label">Standards</div>
+                    <div class="intel-stat">
+                        <div class="intel-stat-value">ELITE</div>
+                        <div class="intel-stat-label">Standards</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- MSG Affiliation -->
+    <!-- Dossier / Protocol Section -->
+    <section class="dossier-section" id="protocol">
+        <div class="section-header">
+            <div class="section-number">// 002</div>
+            <p class="section-label">Operational Protocol</p>
+            <h2 class="section-title">CORE DIRECTIVES</h2>
+        </div>
+
+        <div class="dossier-container">
+            <div class="dossier-item">
+                <div class="dossier-number">01</div>
+                <div class="dossier-content">
+                    <h3>Absolute Discretion</h3>
+                    <p>Every operation is compartmentalized. Information flows on a need-to-know basis. Our clients' identities and objectives remain protected at all costs.</p>
+                </div>
+            </div>
+
+            <div class="dossier-item">
+                <div class="dossier-number">02</div>
+                <div class="dossier-content">
+                    <h3>Precision Execution</h3>
+                    <p>No collateral. No noise. Every action is calculated for maximum effect with minimum exposure. We operate with surgical precision.</p>
+                </div>
+            </div>
+
+            <div class="dossier-item">
+                <div class="dossier-number">03</div>
+                <div class="dossier-content">
+                    <h3>Adaptive Intelligence</h3>
+                    <p>Threats evolve. So do we. Continuous monitoring and real-time adaptation ensure our methods remain ahead of emerging challenges.</p>
+                </div>
+            </div>
+
+            <div class="dossier-item">
+                <div class="dossier-number">04</div>
+                <div class="dossier-content">
+                    <h3>Zero Compromise</h3>
+                    <p>Excellence is not negotiable. We maintain the highest operational standards regardless of scope, scale, or complexity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Affiliation -->
     <div class="affiliation">
         <p class="affiliation-text">A <span>Main Street Group</span> Company</p>
     </div>
 
     <!-- Contact Section -->
-    <section class="contact" id="contact">
+    <section class="contact-section" id="engage">
         <div class="section-header">
-            <p class="section-label">Initiate Contact</p>
-            <h2 class="section-title">Engage</h2>
+            <div class="section-number">// 003</div>
+            <p class="section-label">Secure Channel</p>
+            <h2 class="section-title">INITIATE CONTACT</h2>
         </div>
 
         <div class="contact-container">
-            <form class="contact-form" action="#" method="POST">
+            <form class="contact-form" id="contactForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
+                        <label for="callsign">Callsign</label>
+                        <input type="text" id="callsign" name="callsign" required autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
+                        <label for="channel">Comm Channel</label>
+                        <input type="email" id="channel" name="channel" required autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="subject">Subject</label>
-                    <input type="text" id="subject" name="subject" required>
+                    <label for="subject">Subject Classification</label>
+                    <input type="text" id="subject" name="subject" required autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" required></textarea>
+                    <label for="transmission">Transmission</label>
+                    <textarea id="transmission" name="transmission" required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Transmit</button>
+                <button type="submit" class="submit-btn">TRANSMIT MESSAGE</button>
             </form>
         </div>
     </section>
@@ -974,70 +1428,254 @@
     <!-- Footer -->
     <footer>
         <div class="footer-logo">SSI</div>
-        <p class="footer-tagline">Excellence. Executed.</p>
+        <p class="footer-tagline">EXCELLENCE. EXECUTED.</p>
         <div class="footer-links">
-            <a href="/apps/">Apps</a>
-            <a href="/enterprise/">Enterprise</a>
-            <a href="#services">Services</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
+            <a href="#capabilities">Capabilities</a>
+            <a href="#intel">Intel</a>
+            <a href="#protocol">Protocol</a>
+            <a href="/Apps/">Apps</a>
+            <a href="/Zenith/">Enterprise</a>
+            <a href="#engage">Engage</a>
         </div>
         <p class="copyright">© 2025 Stealth Services Inc. — A <a href="#">Main Street Group</a> Company</p>
     </footer>
 
-    <!-- Scroll Animations -->
     <script>
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // ═══════════════════════════════════════════════════════════════
+        // BOOT SEQUENCE
+        // ═══════════════════════════════════════════════════════════════
+        gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
+        const bootMessages = [
+            'INITIALIZING SECURE PROTOCOLS...',
+            'ESTABLISHING ENCRYPTED CONNECTION...',
+            'VERIFYING CLEARANCE LEVEL...',
+            'LOADING TACTICAL INTERFACE...',
+            'SYSTEM READY'
+        ];
+
+        let messageIndex = 0;
+
+        function runBootSequence() {
+            const bootLogo = document.getElementById('bootLogo');
+            const bootText = document.getElementById('bootText');
+            const bootProgress = document.getElementById('bootProgress');
+            const bootStatus = document.getElementById('bootStatus');
+            const bootSequence = document.getElementById('bootSequence');
+
+            // Animate logo
+            gsap.to(bootLogo, {
+                opacity: 1,
+                duration: 0.5,
+                delay: 0.3
             });
-        }, observerOptions);
 
-        // Animate service cards
-        document.querySelectorAll('.service-card').forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(40px)';
-            card.style.transition = `all 0.6s ease ${index * 0.15}s`;
-            observer.observe(card);
-        });
+            // Progress bar
+            gsap.to(bootProgress, {
+                width: '100%',
+                duration: 3,
+                ease: 'power1.inOut'
+            });
 
-        // Smooth scroll for nav links
+            // Cycle through messages
+            function showMessage() {
+                if (messageIndex < bootMessages.length) {
+                    bootText.textContent = bootMessages[messageIndex];
+                    messageIndex++;
+                    setTimeout(showMessage, 600);
+                }
+            }
+            setTimeout(showMessage, 500);
+
+            // Status updates
+            setTimeout(() => { bootStatus.textContent = 'CONNECTING'; }, 800);
+            setTimeout(() => { bootStatus.textContent = 'AUTHENTICATING'; }, 1600);
+            setTimeout(() => { bootStatus.textContent = 'AUTHORIZED'; bootStatus.style.color = 'var(--cyber-green)'; }, 2400);
+
+            // Hide boot sequence
+            setTimeout(() => {
+                bootSequence.classList.add('complete');
+                initAnimations();
+            }, 3200);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MAIN ANIMATIONS
+        // ═══════════════════════════════════════════════════════════════
+        function initAnimations() {
+            // Hero title character animation
+            const heroTitle = document.getElementById('heroTitle');
+            const titleText = heroTitle.querySelector('.title-text');
+            const chars = titleText.textContent.split('');
+            titleText.innerHTML = chars.map(char => `<span class="char">${char}</span>`).join('');
+
+            gsap.to('.char', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.05,
+                ease: 'power3.out',
+                delay: 0.3
+            });
+
+            // Fade in other hero elements
+            gsap.from('.hero-classification', {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                delay: 0.1
+            });
+
+            gsap.from('.hero-subtitle', {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                delay: 0.8
+            });
+
+            gsap.from('.hero-tagline', {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                delay: 1
+            });
+
+            gsap.from('.hero-cta', {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                delay: 1.2
+            });
+
+            // Capability cards scroll animation
+            gsap.utils.toArray('.capability-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 80%',
+                        toggleActions: 'play none none none'
+                    },
+                    opacity: 0,
+                    y: 60,
+                    duration: 0.8,
+                    delay: i * 0.15
+                });
+            });
+
+            // Intel section parallax
+            gsap.from('.radar-display', {
+                scrollTrigger: {
+                    trigger: '.intel-section',
+                    start: 'top 70%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                scale: 0.8,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            gsap.from('.intel-content', {
+                scrollTrigger: {
+                    trigger: '.intel-section',
+                    start: 'top 70%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                x: 50,
+                duration: 1,
+                ease: 'power2.out'
+            });
+
+            // Dossier items
+            gsap.utils.toArray('.dossier-item').forEach((item, i) => {
+                gsap.from(item, {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top 80%',
+                        toggleActions: 'play none none none'
+                    },
+                    opacity: 0,
+                    x: -30,
+                    duration: 0.8,
+                    delay: i * 0.1
+                });
+            });
+
+            // Section headers
+            gsap.utils.toArray('.section-header').forEach(header => {
+                gsap.from(header, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: 'top 80%',
+                        toggleActions: 'play none none none'
+                    },
+                    opacity: 0,
+                    y: 30,
+                    duration: 0.8
+                });
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TIMESTAMP
+        // ═══════════════════════════════════════════════════════════════
+        function updateTimestamp() {
+            const now = new Date();
+            const timestamp = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            document.getElementById('timestamp').textContent = timestamp;
+        }
+        
+        setInterval(updateTimestamp, 1000);
+        updateTimestamp();
+
+        // ═══════════════════════════════════════════════════════════════
+        // SMOOTH SCROLL
+        // ═══════════════════════════════════════════════════════════════
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: { y: target, offsetY: 80 },
+                        ease: 'power2.inOut'
                     });
                 }
             });
         });
 
-        // Form submission handling
-        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+        // ═══════════════════════════════════════════════════════════════
+        // FORM HANDLING
+        // ═══════════════════════════════════════════════════════════════
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('.submit-btn');
-            btn.textContent = 'Transmitted';
-            btn.style.background = 'linear-gradient(135deg, var(--electric-violet) 0%, var(--shimmer-purple) 100%)';
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'ENCRYPTING...';
+            btn.style.background = 'var(--warning-amber)';
             
             setTimeout(() => {
-                btn.textContent = 'Transmit';
+                btn.textContent = 'TRANSMITTED';
+                btn.style.background = 'var(--intel-blue)';
+            }, 1000);
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
                 btn.style.background = '';
                 this.reset();
             }, 3000);
         });
+
+        // ═══════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', runBootSequence);
     </script>
 
+    <!-- GSAP ScrollTo Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
 </body>
 </html>
