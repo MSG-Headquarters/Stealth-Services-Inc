@@ -1929,6 +1929,12 @@
                 <button type="submit" class="auth-btn" id="signupBtn">Create Account</button>
             </form>
         </div>
+        <div style="margin-top: 16px; text-align: center;">
+            <a href="?reset=1" style="font-size: 11px; color: rgba(255,255,255,0.2); text-decoration: none; letter-spacing: 1px;"
+               title="Clear cached session data if the app is stuck on load">
+                stuck? clear session
+            </a>
+        </div>
     </div>
 
     <!-- SENTINEL Status Badge -->
@@ -5047,9 +5053,32 @@ Meal description: "${input}"`;
             
             // Hide app initially
             appContainer.style.display = 'none';
-            
-            // Check for existing session
-            const { data: { session } } = await db.auth.getSession();
+
+            // --- ESCAPE HATCH: ?reset=1 in URL clears all local auth state ---
+            if (new URLSearchParams(window.location.search).get('reset') === '1') {
+                try { await db.auth.signOut(); } catch(e) {}
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('sb-') || k.startsWith('supabase') || k.startsWith('axis')) {
+                        localStorage.removeItem(k);
+                    }
+                });
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+
+            // Check for existing session with a 5s timeout guard
+            // (prevents infinite hang if Supabase token is stale/corrupt)
+            let session = null;
+            try {
+                const sessionResult = await Promise.race([
+                    db.auth.getSession(),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('session timeout')), 5000))
+                ]);
+                session = sessionResult?.data?.session || null;
+            } catch (e) {
+                console.warn('Session check failed or timed out, clearing auth state:', e.message);
+                try { await db.auth.signOut(); } catch(_) {}
+                session = null;
+            }
             
             // Wait for splash animation (1.5s)
             setTimeout(async () => {
