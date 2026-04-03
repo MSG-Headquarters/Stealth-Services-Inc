@@ -3,334 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSI | CLASSIFIED</title>
-    <meta name="description" content="[REDACTED] Stealth Services Inc. — Precise. Perfect. Delivered.">
-    
-    <!-- Fonts -->
+    <title>SSI | Stealth Services Inc.</title>
+    <meta name="description" content="Precise. Perfect. Delivered. Security consulting, intelligence research, and technology solutions.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- GSAP -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
-    
+
     <style>
         :root {
-            --void: #000000;
-            --abyss: #030508;
-            --deep-black: #0a0c0f;
-            --stealth-gray: #12151a;
-            --panel-gray: #1a1d24;
-            --border-gray: #2a2f38;
-            --text-dim: #4a5568;
-            --text-muted: #718096;
-            --text-light: #a0aec0;
-            --text-bright: #e2e8f0;
-            --white: #ffffff;
-            
-            --cyber-green: #00ff88;
-            --cyber-green-dim: rgba(0,255,136,0.15);
-            --threat-red: #ff2d55;
-            --threat-red-dim: rgba(255,45,85,0.15);
-            --intel-blue: #00d4ff;
-            --intel-blue-dim: rgba(0,212,255,0.1);
-            --warning-amber: #ffaa00;
-            
-            --font-mono: 'Share Tech Mono', monospace;
-            --font-display: 'Orbitron', sans-serif;
-            --font-body: 'Rajdhani', sans-serif;
+            --deep-navy: #0A1628;
+            --obsidian: #0D0D0D;
+            --midnight: #050A12;
+            --shimmer-purple: #7B2D8E;
+            --electric-violet: #9945FF;
+            --tactical-green: #00FF88;
+            --muted-emerald: #2ECC71;
+            --steel-gray: #1a2332;
+            --ghost-white: #E8E8E8;
+            --muted-white: #B8B8B8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: var(--font-body);
-            background: var(--void);
-            color: var(--text-light);
+            font-family: 'Exo 2', sans-serif;
+            background: var(--obsidian);
+            color: var(--ghost-white);
             overflow-x: hidden;
             line-height: 1.6;
             cursor: crosshair;
         }
 
-        ::selection {
-            background: var(--cyber-green);
-            color: var(--void);
-        }
+        ::selection { background: var(--tactical-green); color: var(--obsidian); }
 
-        /* ═══════════════════════════════════════════════════════════════
-           LOADING / BOOT SEQUENCE
-        ═══════════════════════════════════════════════════════════════ */
-        .boot-sequence {
+        /* ========== GRID BACKGROUND ========== */
+        .geo-grid {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--void);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-        }
-
-        .boot-sequence.complete {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.8s ease;
-        }
-
-        .boot-logo {
-            font-family: var(--font-display);
-            font-size: 48px;
-            font-weight: 800;
-            letter-spacing: 0.5em;
-            color: var(--white);
-            margin-bottom: 40px;
-            opacity: 0;
-        }
-
-        .boot-text {
-            font-size: 12px;
-            color: var(--cyber-green);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            min-height: 20px;
-        }
-
-        .boot-progress {
-            width: 300px;
-            height: 2px;
-            background: var(--border-gray);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .boot-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--cyber-green), var(--intel-blue));
-        }
-
-        .boot-status {
-            margin-top: 20px;
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 0.3em;
-        }
-
-        /* ═══════════════════════════════════════════════════════════════
-           RADAR / GRID BACKGROUND
-        ═══════════════════════════════════════════════════════════════ */
-        .tactical-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.03;
-            background-image: 
-                linear-gradient(0deg, var(--cyber-green) 1px, transparent 1px),
-                linear-gradient(90deg, var(--cyber-green) 1px, transparent 1px);
-            background-size: 80px 80px;
+            opacity: 0.025;
+            background-image:
+                linear-gradient(30deg, var(--tactical-green) 1px, transparent 1px),
+                linear-gradient(150deg, var(--electric-violet) 1px, transparent 1px);
+            background-size: 60px 60px;
         }
 
         .scan-line {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0.1;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--tactical-green), transparent);
+            opacity: 0.08;
             z-index: 1;
-            animation: scanMove 8s linear infinite;
+            animation: scanMove 10s linear infinite;
         }
 
-        @keyframes scanMove {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
-        .noise-overlay {
+        /* ========== NAVIGATION ========== */
+        nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.02;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        }
-
-        /* ═══════════════════════════════════════════════════════════════
-           NAVIGATION
-        ═══════════════════════════════════════════════════════════════ */
-        .nav-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
             z-index: 1000;
-            padding: 24px 48px;
+            padding: 1.5rem 4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
-            mix-blend-mode: normal;
+            background: linear-gradient(180deg, rgba(5,10,18,0.95) 0%, transparent 100%);
         }
 
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .logo-mark {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--cyber-green);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--cyber-green-dim);
-        }
-
-        .logo-mark svg {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: var(--cyber-green);
-            stroke-width: 1.5;
-        }
-
-        .logo-text {
-            font-family: var(--font-display);
-            font-size: 20px;
+        .logo {
+            font-family: 'Rajdhani', sans-serif;
             font-weight: 700;
-            letter-spacing: 0.4em;
-            color: var(--white);
+            font-size: 1.8rem;
+            letter-spacing: 0.3em;
+            color: var(--ghost-white);
+            text-decoration: none;
+            position: relative;
         }
 
-        .logo-class {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: var(--threat-red);
-            letter-spacing: 0.2em;
-            margin-top: 2px;
+        .logo::before {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
 
         .nav-links {
             display: flex;
-            gap: 40px;
+            gap: 3rem;
             list-style: none;
+            align-items: center;
         }
 
         .nav-links a {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            color: var(--muted-white);
             text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
             position: relative;
-            padding: 8px 0;
-            transition: color 0.3s ease;
         }
 
-        .nav-links a:hover {
-            color: var(--cyber-green);
+        .nav-links a:hover { color: var(--tactical-green); }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px; left: 0;
+            width: 0; height: 1px;
+            background: var(--tactical-green);
+            transition: width 0.3s ease;
         }
 
-        .nav-links a::before {
-            content: '//';
-            margin-right: 6px;
-            color: var(--text-dim);
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover::before {
-            color: var(--cyber-green);
-        }
-
-        .nav-links a.nav-highlight {
-            color: var(--cyber-green);
-            border: 1px solid rgba(0,255,136,0.25);
-            padding: 6px 14px;
-            background: rgba(0,255,136,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a.nav-highlight:hover {
-            background: rgba(0,255,136,0.15);
-            border-color: var(--cyber-green);
-            box-shadow: 0 0 15px rgba(0,255,136,0.1);
-        }
-
-        .nav-links a.nav-highlight::before {
-            content: '◆';
-            font-size: 6px;
-            vertical-align: middle;
-            color: var(--cyber-green);
-        }
-
-        .nav-links a.nav-highlight.enterprise {
-            color: var(--intel-blue);
-            border-color: rgba(0,212,255,0.25);
-            background: rgba(0,212,255,0.05);
-        }
-
-        .nav-links a.nav-highlight.enterprise:hover {
-            background: rgba(0,212,255,0.15);
-            border-color: var(--intel-blue);
-            box-shadow: 0 0 15px rgba(0,212,255,0.1);
-        }
-
-        .nav-links a.nav-highlight.enterprise::before {
-            color: var(--intel-blue);
-        }
+        .nav-links a:hover::after { width: 100%; }
 
         .nav-status {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-dim);
+            gap: 10px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--tactical-green);
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--cyber-green);
+            width: 6px; height: 6px;
+            background: var(--tactical-green);
             border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
+            animation: blink 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--cyber-green); }
-            50% { opacity: 0.5; box-shadow: 0 0 0 8px transparent; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* ═══════════════════════════════════════════════════════════════
-           HERO SECTION
-        ═══════════════════════════════════════════════════════════════ */
+        /* ========== HERO ========== */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -338,1089 +155,726 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
+            padding: 2rem;
         }
 
-        /* Stealth Bomber Silhouette */
-        .stealth-bomber {
+        .hero-bg {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            max-width: 1400px;
-            height: auto;
-            opacity: 0.04;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
         }
 
-        .stealth-bomber svg {
-            width: 100%;
-            height: auto;
-            fill: var(--white);
+        .angular-shape {
+            position: absolute;
+            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%);
         }
 
-        /* HUD Frame Elements */
-        .hud-frame {
+        .angular-shape.shape-1 {
+            width: 120%; height: 60%;
+            top: -10%; left: -10%;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 85% 100%, 15% 100%, 0 70%);
+            background: linear-gradient(160deg, var(--deep-navy) 0%, rgba(123,45,142,0.1) 100%);
+        }
+
+        .angular-shape.shape-2 {
+            width: 50%; height: 80%;
+            bottom: -20%; right: -5%;
+            clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%, 0 30%);
+            background: linear-gradient(200deg, rgba(153,69,255,0.08) 0%, transparent 60%);
+        }
+
+        .angular-shape.shape-3 {
+            width: 40%; height: 70%;
+            bottom: -10%; left: -5%;
+            clip-path: polygon(0 20%, 80% 0, 100% 30%, 100% 100%, 0 100%);
+            background: linear-gradient(45deg, rgba(0,255,136,0.05) 0%, transparent 50%);
+        }
+
+        .accent-line {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tactical-green), transparent);
+            opacity: 0.4;
             z-index: 2;
         }
 
+        .accent-line.line-1 { width: 60%; top: 25%; left: 20%; transform: rotate(-15deg); }
+        .accent-line.line-2 {
+            width: 40%; top: 75%; right: 10%;
+            transform: rotate(20deg);
+            background: linear-gradient(90deg, transparent, var(--electric-violet), transparent);
+        }
+
+        /* HUD corners */
         .hud-corner {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            border: 1px solid var(--border-gray);
+            width: 60px; height: 60px;
+            border: 1px solid rgba(0,255,136,0.2);
+            z-index: 3;
         }
-
-        .hud-corner.top-left {
-            top: 60px;
-            left: 40px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .hud-corner.top-right {
-            top: 60px;
-            right: 40px;
-            border-left: none;
-            border-bottom: none;
-        }
-
-        .hud-corner.bottom-left {
-            bottom: 60px;
-            left: 40px;
-            border-right: none;
-            border-top: none;
-        }
-
-        .hud-corner.bottom-right {
-            bottom: 60px;
-            right: 40px;
-            border-left: none;
-            border-top: none;
-        }
+        .hud-corner.tl { top: 80px; left: 40px; border-right: none; border-bottom: none; }
+        .hud-corner.tr { top: 80px; right: 40px; border-left: none; border-bottom: none; }
+        .hud-corner.bl { bottom: 60px; left: 40px; border-right: none; border-top: none; }
+        .hud-corner.br { bottom: 60px; right: 40px; border-left: none; border-top: none; }
 
         .hud-label {
             position: absolute;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 0.15em;
-            color: var(--text-dim);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: rgba(0,255,136,0.4);
+            z-index: 3;
         }
+        .hud-label.coords { bottom: 80px; left: 60px; }
+        .hud-label.ts { bottom: 80px; right: 60px; }
+        .hud-label.class { top: 90px; right: 60px; color: rgba(255,60,60,0.5); }
 
-        .hud-label.coords {
-            bottom: 80px;
-            left: 60px;
-        }
-
-        .hud-label.timestamp {
-            bottom: 80px;
-            right: 60px;
-        }
-
-        .hud-label.classification {
-            top: 80px;
-            right: 60px;
-            color: var(--threat-red);
-        }
-
-        /* Hero Content */
         .hero-content {
             position: relative;
             z-index: 10;
             text-align: center;
-            max-width: 1000px;
-            padding: 0 40px;
+            max-width: 900px;
+            opacity: 0;
         }
 
-        .hero-classification {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 20px;
-            background: var(--threat-red-dim);
-            border: 1px solid rgba(255,45,85,0.3);
-            margin-bottom: 40px;
-            font-family: var(--font-mono);
-            font-size: 10px;
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0,255,136,0.08);
+            border: 1px solid rgba(0,255,136,0.3);
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            font-size: 0.75rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
-            color: var(--threat-red);
-        }
-
-        .hero-classification::before {
-            content: '◆';
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+            color: var(--tactical-green);
+            margin-bottom: 2rem;
         }
 
         .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(48px, 10vw, 120px);
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            line-height: 1;
-            color: var(--white);
-            margin-bottom: 20px;
-            position: relative;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
         }
 
-        .hero-title .char {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        .hero-subtitle {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 60px;
-        }
-
-        .hero-subtitle span {
-            color: var(--cyber-green);
+        .hero-title span {
+            display: block;
+            background: linear-gradient(90deg, var(--ghost-white) 0%, var(--muted-white) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-tagline {
-            font-family: var(--font-body);
-            font-size: 20px;
-            font-weight: 300;
-            color: var(--text-light);
-            margin-bottom: 60px;
+            font-size: 1.25rem;
+            color: var(--muted-white);
+            margin-bottom: 2.5rem;
             letter-spacing: 0.1em;
         }
 
-        .hero-tagline strong {
-            color: var(--white);
-            font-weight: 600;
-        }
+        .hero-tagline strong { color: var(--tactical-green); }
 
-        .hero-cta {
+        .cta-group {
             display: flex;
-            gap: 20px;
+            gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .btn {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.2em;
+            padding: 1rem 2.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            padding: 16px 40px;
             text-decoration: none;
-            position: relative;
+            border-radius: 4px;
             transition: all 0.3s ease;
             cursor: pointer;
             border: none;
+            display: inline-block;
         }
 
         .btn-primary {
-            background: var(--cyber-green);
-            color: var(--void);
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
+            color: var(--obsidian);
         }
 
         .btn-primary:hover {
-            background: var(--white);
-            box-shadow: 0 0 30px var(--cyber-green-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,255,136,0.3);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--text-light);
-            border: 1px solid var(--border-gray);
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            color: var(--ghost-white);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .btn-secondary:hover {
-            border-color: var(--cyber-green);
-            color: var(--cyber-green);
+            background: rgba(255,255,255,0.05);
+            border-color: var(--tactical-green);
+            color: var(--tactical-green);
         }
 
-        /* Scroll Indicator */
         .scroll-indicator {
             position: absolute;
-            bottom: 40px;
-            left: 50%;
+            bottom: 40px; left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             z-index: 10;
         }
 
         .scroll-text {
-            font-family: var(--font-mono);
-            font-size: 9px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.65rem;
             letter-spacing: 0.3em;
-            color: var(--text-dim);
+            color: rgba(255,255,255,0.3);
             text-transform: uppercase;
         }
 
         .scroll-line {
-            width: 1px;
-            height: 60px;
-            background: linear-gradient(180deg, var(--cyber-green), transparent);
+            width: 1px; height: 50px;
+            background: linear-gradient(180deg, var(--tactical-green), transparent);
             animation: scrollPulse 2s ease-in-out infinite;
         }
 
-        @keyframes scrollPulse {
-            0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
-            50% { opacity: 1; transform: scaleY(1); }
-        }
+        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
 
-        /* ═══════════════════════════════════════════════════════════════
-           SECTION STYLES
-        ═══════════════════════════════════════════════════════════════ */
-        section {
-            position: relative;
-            z-index: 5;
-        }
+        /* ========== SECTIONS ========== */
+        section { position: relative; z-index: 5; }
 
         .section-header {
             text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-number {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            margin-bottom: 16px;
+            margin-bottom: 4rem;
         }
 
         .section-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.4em;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
             text-transform: uppercase;
-            color: var(--cyber-green);
-            margin-bottom: 16px;
+            color: var(--tactical-green);
+            margin-bottom: 1rem;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(32px, 6vw, 56px);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
             font-weight: 700;
             letter-spacing: 0.1em;
-            color: var(--white);
         }
 
-        /* ═══════════════════════════════════════════════════════════════
-           CAPABILITIES / SERVICES
-        ═══════════════════════════════════════════════════════════════ */
-        .capabilities {
-            padding: 120px 48px;
-            background: linear-gradient(180deg, var(--void) 0%, var(--abyss) 50%, var(--void) 100%);
+        /* ========== SERVICES ========== */
+        .services {
+            padding: 8rem 4rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(10,22,40,0.3) 50%, transparent 100%);
         }
 
-        .capabilities-grid {
-            max-width: 1400px;
-            margin: 0 auto;
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            background: var(--border-gray);
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        @media (max-width: 1000px) {
-            .capabilities-grid { grid-template-columns: 1fr; }
-        }
-
-        .capability-card {
-            background: var(--deep-black);
-            padding: 48px;
+        .service-card {
+            background: linear-gradient(135deg, var(--steel-gray) 0%, var(--deep-navy) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2.5rem;
             position: relative;
-            overflow: hidden;
-            transition: all 0.5s ease;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(40px);
         }
 
-        .capability-card::before {
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card:hover {
+            border-color: rgba(0,255,136,0.3);
+            transform: translateY(-4px);
+        }
+
+        .service-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            top: 0; left: 0;
+            width: 60px; height: 3px;
+            background: linear-gradient(90deg, var(--tactical-green), transparent);
         }
 
-        .capability-card:hover::before {
-            opacity: 1;
-        }
-
-        .capability-card:hover {
-            background: var(--stealth-gray);
-        }
-
-        .capability-number {
-            font-family: var(--font-display);
-            font-size: 64px;
-            font-weight: 800;
-            color: var(--panel-gray);
+        .card-number {
+            position: absolute;
+            top: 1.5rem; right: 1.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.03);
             line-height: 1;
-            margin-bottom: 24px;
-            transition: color 0.3s ease;
         }
 
-        .capability-card:hover .capability-number {
-            color: var(--cyber-green-dim);
+        .service-icon {
+            width: 48px; height: 48px;
+            margin-bottom: 1.5rem;
         }
 
-        .capability-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 24px;
-            stroke: var(--cyber-green);
-            stroke-width: 1;
+        .service-icon svg {
+            width: 100%; height: 100%;
             fill: none;
+            stroke: var(--tactical-green);
+            stroke-width: 1.5;
         }
 
-        .capability-title {
-            font-family: var(--font-display);
-            font-size: 18px;
+        .service-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.5rem;
             font-weight: 600;
-            letter-spacing: 0.15em;
-            color: var(--white);
-            margin-bottom: 16px;
-            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            color: var(--ghost-white);
         }
 
-        .capability-desc {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 24px;
+        .service-card p {
+            font-size: 0.95rem;
+            color: var(--muted-white);
+            line-height: 1.7;
         }
 
-        .capability-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        /* ========== ABOUT ========== */
+        .about {
+            padding: 6rem 4rem;
         }
 
-        .capability-tag {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 0.1em;
-            padding: 4px 10px;
-            background: var(--panel-gray);
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        /* ═══════════════════════════════════════════════════════════════
-           INTEL SECTION (Timeline/History style)
-        ═══════════════════════════════════════════════════════════════ */
-        .intel-section {
-            padding: 120px 48px;
-            position: relative;
-        }
-
-        .intel-container {
+        .about-container {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 80px;
+            gap: 4rem;
             align-items: center;
         }
 
-        @media (max-width: 900px) {
-            .intel-container { grid-template-columns: 1fr; }
-        }
-
-        .intel-visual {
+        .about-visual {
             position: relative;
-            height: 500px;
-        }
-
-        .radar-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
             height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .radar-ring {
+        .stealth-graphic {
+            position: relative;
+            width: 300px; height: 300px;
+        }
+
+        .orbit-ring {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid var(--border-gray);
+            border: 1px solid rgba(0,255,136,0.2);
             border-radius: 50%;
+            animation: orbit 20s linear infinite;
         }
 
-        .radar-ring.ring-1 { width: 100%; height: 100%; }
-        .radar-ring.ring-2 { width: 70%; height: 70%; }
-        .radar-ring.ring-3 { width: 40%; height: 40%; }
+        .orbit-ring.ring-1 { width: 100%; height: 100%; top: 0; left: 0; }
+        .orbit-ring.ring-2 {
+            width: 70%; height: 70%;
+            top: 15%; left: 15%;
+            border-color: rgba(153,69,255,0.2);
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
 
-        .radar-sweep {
+        @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .stealth-shape {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--cyber-green), transparent);
-            transform-origin: left center;
-            animation: radarSweep 4s linear infinite;
+            width: 40%; height: 40%;
+            top: 30%; left: 30%;
+            background: linear-gradient(135deg, var(--tactical-green), var(--electric-violet));
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: pulse-shape 3s ease-in-out infinite;
         }
 
-        @keyframes radarSweep {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        @keyframes pulse-shape { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
 
-        .radar-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 12px;
-            height: 12px;
-            background: var(--cyber-green);
-            border-radius: 50%;
-            box-shadow: 0 0 20px var(--cyber-green);
-        }
-
-        .radar-blip {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: var(--threat-red);
-            border-radius: 50%;
-            animation: blipPulse 2s ease-in-out infinite;
-        }
-
-        .radar-blip.blip-1 { top: 20%; left: 60%; animation-delay: 0s; }
-        .radar-blip.blip-2 { top: 70%; left: 30%; animation-delay: 0.5s; }
-        .radar-blip.blip-3 { top: 40%; left: 80%; animation-delay: 1s; }
-
-        @keyframes blipPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.5); }
-        }
-
-        .intel-content h2 {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4vw, 42px);
+        .about-content h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
             font-weight: 700;
             letter-spacing: 0.05em;
-            color: var(--white);
-            margin-bottom: 32px;
-            line-height: 1.2;
+            margin-bottom: 1.5rem;
         }
 
-        .intel-content h2 span {
-            color: var(--cyber-green);
-        }
+        .about-content h2 span { color: var(--tactical-green); }
 
-        .intel-content p {
-            font-size: 16px;
-            color: var(--text-muted);
-            margin-bottom: 24px;
+        .about-content p {
+            color: var(--muted-white);
+            margin-bottom: 1rem;
+            font-size: 1rem;
             line-height: 1.8;
         }
 
-        .intel-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            margin-top: 48px;
-            padding-top: 48px;
-            border-top: 1px solid var(--border-gray);
+        .stats-row {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .intel-stat {
-            text-align: center;
-        }
+        .stat { text-align: center; }
 
-        .intel-stat-value {
-            font-family: var(--font-display);
-            font-size: 32px;
+        .stat-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--cyber-green);
-            margin-bottom: 8px;
+            color: var(--tactical-green);
         }
 
-        .intel-stat-label {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.2em;
-            color: var(--text-dim);
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted-white);
             text-transform: uppercase;
-        }
-
-        /* ═══════════════════════════════════════════════════════════════
-           DOSSIER / VALUES
-        ═══════════════════════════════════════════════════════════════ */
-        .dossier-section {
-            padding: 120px 48px;
-            background: var(--abyss);
-        }
-
-        .dossier-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .dossier-item {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-            gap: 48px;
-            padding: 48px 0;
-            border-bottom: 1px solid var(--border-gray);
-            opacity: 0;
-            transform: translateX(-30px);
-        }
-
-        .dossier-item.visible {
-            opacity: 1;
-            transform: translateX(0);
-            transition: all 0.8s ease;
-        }
-
-        .dossier-number {
-            font-family: var(--font-display);
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--panel-gray);
-            line-height: 1;
-        }
-
-        .dossier-content h3 {
-            font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 600;
             letter-spacing: 0.1em;
-            color: var(--white);
-            margin-bottom: 16px;
-            text-transform: uppercase;
         }
 
-        .dossier-content p {
-            font-size: 15px;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-
-        /* ═══════════════════════════════════════════════════════════════
-           AFFILIATION BAR
-        ═══════════════════════════════════════════════════════════════ */
+        /* ========== AFFILIATION ========== */
         .affiliation {
-            padding: 60px 48px;
-            background: var(--deep-black);
-            border-top: 1px solid var(--border-gray);
-            border-bottom: 1px solid var(--border-gray);
             text-align: center;
+            padding: 3rem;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
 
         .affiliation-text {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.4em;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: var(--muted-white);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--text-dim);
         }
 
-        .affiliation-text span {
-            color: var(--cyber-green);
-            font-weight: 600;
-        }
+        .affiliation-text span { color: var(--tactical-green); font-weight: 600; }
 
-        /* ═══════════════════════════════════════════════════════════════
-           CONTACT / ENGAGE
-        ═══════════════════════════════════════════════════════════════ */
-        .contact-section {
-            padding: 120px 48px;
-        }
+        /* ========== CONTACT ========== */
+        .contact { padding: 6rem 4rem; }
 
         .contact-container {
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
         .contact-form {
-            background: var(--deep-black);
-            border: 1px solid var(--border-gray);
-            padding: 48px;
+            background: linear-gradient(135deg, var(--steel-gray), var(--deep-navy));
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 3rem;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
+            gap: 1rem;
         }
 
-        @media (max-width: 600px) {
-            .form-row { grid-template-columns: 1fr; }
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 24px;
-        }
+        .form-group { margin-bottom: 1.5rem; }
 
         .form-group label {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            display: block;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 8px;
+            letter-spacing: 0.1em;
+            color: var(--muted-white);
+            margin-bottom: 0.5rem;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         .form-group input,
         .form-group textarea {
-            background: var(--stealth-gray);
-            border: 1px solid var(--border-gray);
-            padding: 14px 16px;
-            color: var(--text-light);
-            font-family: var(--font-body);
-            font-size: 14px;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--ghost-white);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--cyber-green);
-            box-shadow: 0 0 0 1px var(--cyber-green-dim);
+            border-color: var(--tactical-green);
+            background: rgba(0,255,136,0.05);
         }
 
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
+        .form-group textarea { min-height: 150px; resize: vertical; }
 
         .submit-btn {
             width: 100%;
-            padding: 18px;
-            background: var(--cyber-green);
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
             border: none;
-            color: var(--void);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.3em;
+            color: var(--obsidian);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
         }
 
         .submit-btn:hover {
-            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,255,136,0.3);
         }
 
-        /* ═══════════════════════════════════════════════════════════════
-           FOOTER
-        ═══════════════════════════════════════════════════════════════ */
+        /* ========== FOOTER ========== */
         footer {
-            padding: 80px 48px;
-            background: var(--void);
-            border-top: 1px solid var(--border-gray);
+            padding: 4rem;
             text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .footer-logo {
-            font-family: var(--font-display);
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: 0.4em;
-            color: var(--white);
-            margin-bottom: 16px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
         }
 
         .footer-tagline {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            margin-bottom: 40px;
+            font-size: 0.9rem;
+            color: var(--muted-white);
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
         }
 
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
+            gap: 2rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
         }
 
         .footer-links a {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            color: var(--muted-white);
             text-decoration: none;
+            font-size: 0.85rem;
             transition: color 0.3s ease;
         }
 
-        .footer-links a:hover {
-            color: var(--cyber-green);
-        }
+        .footer-links a:hover { color: var(--tactical-green); }
 
         .copyright {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
+            font-size: 0.8rem;
+            color: var(--muted-white);
+            opacity: 0.6;
         }
 
-        .copyright a {
-            color: var(--cyber-green);
-            text-decoration: none;
-        }
+        .copyright a { color: var(--tactical-green); text-decoration: none; }
 
-        /* ═══════════════════════════════════════════════════════════════
-           RESPONSIVE
-        ═══════════════════════════════════════════════════════════════ */
+        /* ========== MOBILE ========== */
         @media (max-width: 768px) {
-            .nav-container {
-                padding: 16px 24px;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-
-            .nav-status {
-                display: none;
-            }
-
-            .hero-content {
-                padding: 0 20px;
-            }
-
-            .capabilities,
-            .intel-section,
-            .dossier-section,
-            .contact-section {
-                padding: 80px 24px;
-            }
-
-            .hud-corner {
-                display: none;
-            }
-
-            .hud-label {
-                display: none;
-            }
-
-            .intel-visual {
-                height: 300px;
-            }
-
-            .radar-display {
-                width: 280px;
-                height: 280px;
-            }
-
-            .dossier-item {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .services, .about, .contact { padding: 4rem 1.5rem; }
+            .hero { padding: 1rem; }
+            .about-container { grid-template-columns: 1fr; }
+            .about-visual { height: 250px; }
+            .hud-corner, .hud-label { display: none; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Boot Sequence -->
-    <div class="boot-sequence" id="bootSequence">
-        <div class="boot-logo" id="bootLogo">SSI</div>
-        <div class="boot-text" id="bootText"></div>
-        <div class="boot-progress">
-            <div class="boot-progress-bar" id="bootProgress"></div>
-        </div>
-        <div class="boot-status" id="bootStatus">STANDBY</div>
-    </div>
 
-    <!-- Background Effects -->
-    <div class="tactical-grid"></div>
+    <!-- Background -->
+    <div class="geo-grid"></div>
     <div class="scan-line"></div>
-    <div class="noise-overlay"></div>
 
     <!-- Navigation -->
-    <nav class="nav-container">
-        <div class="nav-logo">
-            <div class="logo-mark">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
-                    <path d="M12 22V12"/>
-                    <path d="M2 7l10 5 10-5"/>
-                </svg>
-            </div>
-            <div>
-                <div class="logo-text">SSI</div>
-                <div class="logo-class">// CLASSIFIED</div>
-            </div>
-        </div>
-
+    <nav>
+        <a href="#" class="logo">SSI</a>
         <ul class="nav-links">
-            <li><a href="#capabilities">Capabilities</a></li>
-            <li><a href="#intel">Intel</a></li>
-            <li><a href="#protocol">Protocol</a></li>
-            <li><a href="/Apps/" class="nav-highlight">Apps</a></li>
-            <li><a href="/Zenith/" class="nav-highlight enterprise">Enterprise</a></li>
-            <li><a href="#engage">Engage</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
         </ul>
-
         <div class="nav-status">
-            <span class="status-dot"></span>
+            <div class="status-dot"></div>
             <span>SYSTEMS NOMINAL</span>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
-        <!-- Stealth Bomber Background -->
-        <div class="stealth-bomber">
-            <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
-                <!-- B-2 Spirit inspired silhouette -->
-                <path d="M400 50 L200 150 L50 180 L30 185 L50 190 L200 170 L350 180 L400 200 L450 180 L600 170 L750 190 L770 185 L750 180 L600 150 L400 50Z"/>
-                <path d="M400 80 L350 120 L400 130 L450 120 L400 80Z" fill="rgba(255,255,255,0.3)"/>
-            </svg>
-        </div>
-
-        <!-- HUD Frame -->
-        <div class="hud-frame">
-            <div class="hud-corner top-left"></div>
-            <div class="hud-corner top-right"></div>
-            <div class="hud-corner bottom-left"></div>
-            <div class="hud-corner bottom-right"></div>
+        <div class="hero-bg">
+            <div class="angular-shape shape-1"></div>
+            <div class="angular-shape shape-2"></div>
+            <div class="angular-shape shape-3"></div>
+            <div class="accent-line line-1"></div>
+            <div class="accent-line line-2"></div>
+            <div class="hud-corner tl"></div>
+            <div class="hud-corner tr"></div>
+            <div class="hud-corner bl"></div>
+            <div class="hud-corner br"></div>
             <div class="hud-label coords">LAT: [REDACTED] / LON: [REDACTED]</div>
-            <div class="hud-label timestamp" id="timestamp"></div>
-            <div class="hud-label classification">◆ TOP SECRET // SSI</div>
+            <div class="hud-label ts" id="timestamp"></div>
+            <div class="hud-label class">// TOP SECRET // SSI</div>
         </div>
 
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <div class="hero-classification">
-                <span>CLEARANCE LEVEL: RESTRICTED</span>
-            </div>
-            
-            <h1 class="hero-title" id="heroTitle">
-                <span class="title-text">STEALTH</span>
+        <div class="hero-content" id="heroContent">
+            <div class="hero-badge">Covert Operations &bull; Elite Solutions</div>
+            <h1 class="hero-title">
+                <span>STEALTH SERVICES</span>
             </h1>
-            
-            <p class="hero-subtitle">
-                SERVICES <span>INTELLIGENCE</span>
-            </p>
-            
             <p class="hero-tagline">
                 <strong>Precise.</strong> Perfect. <strong>Delivered.</strong>
             </p>
-
-            <div class="hero-cta">
-                <a href="#engage" class="btn btn-primary">INITIATE CONTACT</a>
-                <a href="#capabilities" class="btn btn-secondary">VIEW CAPABILITIES</a>
+            <div class="cta-group">
+                <a href="#contact" class="btn btn-primary">Engage Now</a>
+                <a href="#services" class="btn btn-secondary">Our Capabilities</a>
             </div>
         </div>
 
-        <!-- Scroll Indicator -->
         <div class="scroll-indicator">
             <span class="scroll-text">Scroll to Declassify</span>
             <div class="scroll-line"></div>
         </div>
     </section>
 
-    <!-- Capabilities Section -->
-    <section class="capabilities" id="capabilities">
+    <!-- Services -->
+    <section class="services" id="services">
         <div class="section-header">
-            <div class="section-number">// 001</div>
-            <p class="section-label">Operational Parameters</p>
-            <h2 class="section-title">CAPABILITIES</h2>
+            <p class="section-label">// 001 &mdash; Operational Parameters</p>
+            <h2 class="section-title">Capabilities</h2>
         </div>
 
-        <div class="capabilities-grid">
-            <div class="capability-card">
-                <div class="capability-number">01</div>
-                <svg class="capability-icon" viewBox="0 0 24 24">
-                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
-                    <path d="M9 12l2 2 4-4"/>
-                </svg>
-                <h3 class="capability-title">Security Consulting</h3>
-                <p class="capability-desc">Comprehensive threat assessment and mitigation strategies. Defense architecture designed for the modern threat landscape. Vulnerability identification before exploitation.</p>
-                <div class="capability-tags">
-                    <span class="capability-tag">Threat Analysis</span>
-                    <span class="capability-tag">Penetration</span>
-                    <span class="capability-tag">Architecture</span>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="card-number">01</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
                 </div>
+                <h3>Security Consulting</h3>
+                <p>Comprehensive threat assessment and mitigation strategies. We identify vulnerabilities before they become liabilities. Defense architecture designed for the modern threat landscape.</p>
             </div>
 
-            <div class="capability-card">
-                <div class="capability-number">02</div>
-                <svg class="capability-icon" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                    <path d="M11 8v6M8 11h6"/>
-                </svg>
-                <h3 class="capability-title">Intelligence Research</h3>
-                <p class="capability-desc">Deep-dive analysis and actionable intelligence. Transform raw data into strategic advantage. Discrete investigations with verified findings.</p>
-                <div class="capability-tags">
-                    <span class="capability-tag">OSINT</span>
-                    <span class="capability-tag">HUMINT</span>
-                    <span class="capability-tag">Analytics</span>
+            <div class="service-card">
+                <span class="card-number">02</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                        <path d="M11 8v6M8 11h6"/>
+                    </svg>
                 </div>
+                <h3>Intelligence Research</h3>
+                <p>Deep-dive analysis and actionable intelligence. We transform raw data into strategic advantage. Discrete investigations with comprehensive reporting and verified findings.</p>
             </div>
 
-            <div class="capability-card">
-                <div class="capability-number">03</div>
-                <svg class="capability-icon" viewBox="0 0 24 24">
-                    <polyline points="16 18 22 12 16 6"/>
-                    <polyline points="8 6 2 12 8 18"/>
-                    <line x1="12" y1="2" x2="12" y2="22"/>
-                </svg>
-                <h3 class="capability-title">Technology Solutions</h3>
-                <p class="capability-desc">Custom-engineered systems built for performance and security. Secure platforms to integrated solutions. Technology that operates at mission speed.</p>
-                <div class="capability-tags">
-                    <span class="capability-tag">Development</span>
-                    <span class="capability-tag">Integration</span>
-                    <span class="capability-tag">Encryption</span>
+            <div class="service-card">
+                <span class="card-number">03</span>
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                        <line x1="12" y1="2" x2="12" y2="22"/>
+                    </svg>
                 </div>
+                <h3>Technology Solutions</h3>
+                <p>Custom-engineered systems built for performance and security. From secure platforms to integrated solutions, we architect technology that operates at mission speed.</p>
             </div>
         </div>
     </section>
 
-    <!-- Intel Section -->
-    <section class="intel-section" id="intel">
-        <div class="intel-container">
-            <div class="intel-visual">
-                <div class="radar-display">
-                    <div class="radar-ring ring-1"></div>
-                    <div class="radar-ring ring-2"></div>
-                    <div class="radar-ring ring-3"></div>
-                    <div class="radar-sweep"></div>
-                    <div class="radar-center"></div>
-                    <div class="radar-blip blip-1"></div>
-                    <div class="radar-blip blip-2"></div>
-                    <div class="radar-blip blip-3"></div>
+    <!-- About -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-visual">
+                <div class="stealth-graphic">
+                    <div class="orbit-ring ring-1"></div>
+                    <div class="orbit-ring ring-2"></div>
+                    <div class="stealth-shape"></div>
                 </div>
             </div>
 
-            <div class="intel-content">
-                <p class="section-label">// OPERATIONAL BRIEF</p>
+            <div class="about-content">
+                <p class="section-label">// Operational Brief</p>
                 <h2>Invisible Until <span>Impact</span></h2>
                 <p>Stealth Services Inc. operates at the intersection of security, intelligence, and technology. We exist to provide elite solutions for those who demand precision without compromise.</p>
                 <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect.</p>
-                <p>Part of the <strong style="color: var(--cyber-green);">Main Street Group</strong> portfolio — where legacy meets innovation.</p>
+                <p>Part of the <strong style="color: var(--tactical-green);">Main Street Group</strong> portfolio &mdash; where legacy meets innovation.</p>
 
-                <div class="intel-stats">
-                    <div class="intel-stat">
-                        <div class="intel-stat-value">100%</div>
-                        <div class="intel-stat-label">Discretion</div>
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Discretion</div>
                     </div>
-                    <div class="intel-stat">
-                        <div class="intel-stat-value">24/7</div>
-                        <div class="intel-stat-label">Operations</div>
+                    <div class="stat">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Operations</div>
                     </div>
-                    <div class="intel-stat">
-                        <div class="intel-stat-value">ELITE</div>
-                        <div class="intel-stat-label">Standards</div>
+                    <div class="stat">
+                        <div class="stat-value">Elite</div>
+                        <div class="stat-label">Standards</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Dossier / Protocol Section -->
-    <section class="dossier-section" id="protocol">
-        <div class="section-header">
-            <div class="section-number">// 002</div>
-            <p class="section-label">Operational Protocol</p>
-            <h2 class="section-title">CORE DIRECTIVES</h2>
-        </div>
-
-        <div class="dossier-container">
-            <div class="dossier-item">
-                <div class="dossier-number">01</div>
-                <div class="dossier-content">
-                    <h3>Absolute Discretion</h3>
-                    <p>Every operation is compartmentalized. Information flows on a need-to-know basis. Our clients' identities and objectives remain protected at all costs.</p>
-                </div>
-            </div>
-
-            <div class="dossier-item">
-                <div class="dossier-number">02</div>
-                <div class="dossier-content">
-                    <h3>Precision Execution</h3>
-                    <p>No collateral. No noise. Every action is calculated for maximum effect with minimum exposure. We operate with surgical precision.</p>
-                </div>
-            </div>
-
-            <div class="dossier-item">
-                <div class="dossier-number">03</div>
-                <div class="dossier-content">
-                    <h3>Adaptive Intelligence</h3>
-                    <p>Threats evolve. So do we. Continuous monitoring and real-time adaptation ensure our methods remain ahead of emerging challenges.</p>
-                </div>
-            </div>
-
-            <div class="dossier-item">
-                <div class="dossier-number">04</div>
-                <div class="dossier-content">
-                    <h3>Zero Compromise</h3>
-                    <p>Excellence is not negotiable. We maintain the highest operational standards regardless of scope, scale, or complexity.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Affiliation -->
+    <!-- MSG Affiliation -->
     <div class="affiliation">
         <p class="affiliation-text">A <span>Main Street Group</span> Company</p>
     </div>
 
-    <!-- Contact Section -->
-    <section class="contact-section" id="engage">
+    <!-- Contact -->
+    <section class="contact" id="contact">
         <div class="section-header">
-            <div class="section-number">// 003</div>
-            <p class="section-label">Secure Channel</p>
-            <h2 class="section-title">INITIATE CONTACT</h2>
+            <p class="section-label">// 003 &mdash; Secure Channel</p>
+            <h2 class="section-title">Initiate Contact</h2>
         </div>
 
         <div class="contact-container">
             <form class="contact-form" id="contactForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="callsign">Callsign</label>
-                        <input type="text" id="callsign" name="callsign" required autocomplete="off">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="channel">Comm Channel</label>
-                        <input type="email" id="channel" name="channel" required autocomplete="off">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="subject">Subject Classification</label>
+                    <label for="subject">Subject</label>
                     <input type="text" id="subject" name="subject" required autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <label for="transmission">Transmission</label>
-                    <textarea id="transmission" name="transmission" required></textarea>
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">TRANSMIT MESSAGE</button>
+                <button type="submit" class="submit-btn">Transmit</button>
             </form>
         </div>
     </section>
@@ -1428,254 +882,83 @@
     <!-- Footer -->
     <footer>
         <div class="footer-logo">SSI</div>
-        <p class="footer-tagline">EXCELLENCE. EXECUTED.</p>
+        <p class="footer-tagline">Excellence. Executed.</p>
         <div class="footer-links">
-            <a href="#capabilities">Capabilities</a>
-            <a href="#intel">Intel</a>
-            <a href="#protocol">Protocol</a>
-            <a href="/Apps/">Apps</a>
-            <a href="/Zenith/">Enterprise</a>
-            <a href="#engage">Engage</a>
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
         </div>
-        <p class="copyright">© 2025 Stealth Services Inc. — A <a href="#">Main Street Group</a> Company</p>
+        <p class="copyright">&copy; 2025 Stealth Services Inc. &mdash; A <a href="#">Main Street Group</a> Company</p>
     </footer>
 
     <script>
-        // ═══════════════════════════════════════════════════════════════
-        // BOOT SEQUENCE
-        // ═══════════════════════════════════════════════════════════════
-        gsap.registerPlugin(ScrollTrigger, TextPlugin);
+        gsap.registerPlugin(ScrollTrigger);
 
-        const bootMessages = [
-            'INITIALIZING SECURE PROTOCOLS...',
-            'ESTABLISHING ENCRYPTED CONNECTION...',
-            'VERIFYING CLEARANCE LEVEL...',
-            'LOADING TACTICAL INTERFACE...',
-            'SYSTEM READY'
-        ];
+        // Hero fade in
+        gsap.to('#heroContent', {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', delay: 0.3
+        });
 
-        let messageIndex = 0;
-
-        function runBootSequence() {
-            const bootLogo = document.getElementById('bootLogo');
-            const bootText = document.getElementById('bootText');
-            const bootProgress = document.getElementById('bootProgress');
-            const bootStatus = document.getElementById('bootStatus');
-            const bootSequence = document.getElementById('bootSequence');
-
-            // Animate logo
-            gsap.to(bootLogo, {
-                opacity: 1,
-                duration: 0.5,
-                delay: 0.3
-            });
-
-            // Progress bar
-            gsap.to(bootProgress, {
-                width: '100%',
-                duration: 3,
-                ease: 'power1.inOut'
-            });
-
-            // Cycle through messages
-            function showMessage() {
-                if (messageIndex < bootMessages.length) {
-                    bootText.textContent = bootMessages[messageIndex];
-                    messageIndex++;
-                    setTimeout(showMessage, 600);
-                }
-            }
-            setTimeout(showMessage, 500);
-
-            // Status updates
-            setTimeout(() => { bootStatus.textContent = 'CONNECTING'; }, 800);
-            setTimeout(() => { bootStatus.textContent = 'AUTHENTICATING'; }, 1600);
-            setTimeout(() => { bootStatus.textContent = 'AUTHORIZED'; bootStatus.style.color = 'var(--cyber-green)'; }, 2400);
-
-            // Hide boot sequence
-            setTimeout(() => {
-                bootSequence.classList.add('complete');
-                initAnimations();
-            }, 3200);
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // MAIN ANIMATIONS
-        // ═══════════════════════════════════════════════════════════════
-        function initAnimations() {
-            // Hero title character animation
-            const heroTitle = document.getElementById('heroTitle');
-            const titleText = heroTitle.querySelector('.title-text');
-            const chars = titleText.textContent.split('');
-            titleText.innerHTML = chars.map(char => `<span class="char">${char}</span>`).join('');
-
-            gsap.to('.char', {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                stagger: 0.05,
-                ease: 'power3.out',
-                delay: 0.3
-            });
-
-            // Fade in other hero elements
-            gsap.from('.hero-classification', {
-                opacity: 0,
-                y: 20,
-                duration: 0.8,
-                delay: 0.1
-            });
-
-            gsap.from('.hero-subtitle', {
-                opacity: 0,
-                y: 20,
-                duration: 0.8,
-                delay: 0.8
-            });
-
-            gsap.from('.hero-tagline', {
-                opacity: 0,
-                y: 20,
-                duration: 0.8,
-                delay: 1
-            });
-
-            gsap.from('.hero-cta', {
-                opacity: 0,
-                y: 20,
-                duration: 0.8,
-                delay: 1.2
-            });
-
-            // Capability cards scroll animation
-            gsap.utils.toArray('.capability-card').forEach((card, i) => {
-                gsap.from(card, {
+        // Service cards on scroll
+        gsap.utils.toArray('.service-card').forEach((card, i) => {
+            gsap.fromTo(card,
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1, y: 0,
+                    duration: 0.8,
+                    delay: i * 0.15,
+                    ease: 'power2.out',
                     scrollTrigger: {
                         trigger: card,
-                        start: 'top 80%',
+                        start: 'top 85%',
                         toggleActions: 'play none none none'
-                    },
-                    opacity: 0,
-                    y: 60,
-                    duration: 0.8,
-                    delay: i * 0.15
-                });
-            });
+                    }
+                }
+            );
+        });
 
-            // Intel section parallax
-            gsap.from('.radar-display', {
-                scrollTrigger: {
-                    trigger: '.intel-section',
-                    start: 'top 70%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                scale: 0.8,
-                duration: 1,
-                ease: 'power2.out'
-            });
+        // About section
+        gsap.from('.about-visual', {
+            opacity: 0, x: -50, duration: 1,
+            scrollTrigger: { trigger: '.about', start: 'top 70%' }
+        });
 
-            gsap.from('.intel-content', {
-                scrollTrigger: {
-                    trigger: '.intel-section',
-                    start: 'top 70%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                x: 50,
-                duration: 1,
-                ease: 'power2.out'
-            });
+        gsap.from('.about-content', {
+            opacity: 0, x: 50, duration: 1,
+            scrollTrigger: { trigger: '.about', start: 'top 70%' }
+        });
 
-            // Dossier items
-            gsap.utils.toArray('.dossier-item').forEach((item, i) => {
-                gsap.from(item, {
-                    scrollTrigger: {
-                        trigger: item,
-                        start: 'top 80%',
-                        toggleActions: 'play none none none'
-                    },
-                    opacity: 0,
-                    x: -30,
-                    duration: 0.8,
-                    delay: i * 0.1
-                });
-            });
-
-            // Section headers
-            gsap.utils.toArray('.section-header').forEach(header => {
-                gsap.from(header, {
-                    scrollTrigger: {
-                        trigger: header,
-                        start: 'top 80%',
-                        toggleActions: 'play none none none'
-                    },
-                    opacity: 0,
-                    y: 30,
-                    duration: 0.8
-                });
-            });
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // TIMESTAMP
-        // ═══════════════════════════════════════════════════════════════
+        // Timestamp
         function updateTimestamp() {
-            const now = new Date();
-            const timestamp = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-            document.getElementById('timestamp').textContent = timestamp;
+            const ts = document.getElementById('timestamp');
+            if (ts) ts.textContent = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
         }
-        
         setInterval(updateTimestamp, 1000);
         updateTimestamp();
 
-        // ═══════════════════════════════════════════════════════════════
-        // SMOOTH SCROLL
-        // ═══════════════════════════════════════════════════════════════
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    gsap.to(window, {
-                        duration: 1,
-                        scrollTo: { y: target, offsetY: 80 },
-                        ease: 'power2.inOut'
-                    });
-                }
+                const target = document.querySelector(href);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
-        // ═══════════════════════════════════════════════════════════════
-        // FORM HANDLING
-        // ═══════════════════════════════════════════════════════════════
+        // Contact form
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('.submit-btn');
-            const originalText = btn.textContent;
-            
-            btn.textContent = 'ENCRYPTING...';
-            btn.style.background = 'var(--warning-amber)';
-            
+            btn.textContent = 'Transmitted';
+            btn.style.background = 'linear-gradient(135deg, var(--electric-violet), var(--shimmer-purple))';
             setTimeout(() => {
-                btn.textContent = 'TRANSMITTED';
-                btn.style.background = 'var(--intel-blue)';
-            }, 1000);
-            
-            setTimeout(() => {
-                btn.textContent = originalText;
+                btn.textContent = 'Transmit';
                 btn.style.background = '';
                 this.reset();
             }, 3000);
         });
-
-        // ═══════════════════════════════════════════════════════════════
-        // INIT
-        // ═══════════════════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', runBootSequence);
     </script>
-
-    <!-- GSAP ScrollTo Plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
 </body>
 </html>
