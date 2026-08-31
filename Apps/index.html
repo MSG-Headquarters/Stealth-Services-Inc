@@ -3,493 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSI | APPLICATIONS</title>
-    <meta name="description" content="Stealth Services Inc. — Application Ecosystem">
-    
+    <title>Apps | Stealth Services Inc.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --void: #000000;
-            --abyss: #030508;
-            --deep-black: #0a0c0f;
-            --stealth-gray: #12151a;
-            --panel-gray: #1a1d24;
-            --border-gray: #2a2f38;
-            --text-dim: #4a5568;
-            --text-muted: #718096;
-            --text-light: #a0aec0;
-            --text-bright: #e2e8f0;
-            --white: #ffffff;
-            --cyber-green: #00ff88;
-            --cyber-green-dim: rgba(0,255,136,0.15);
-            --threat-red: #ff2d55;
-            --threat-red-dim: rgba(255,45,85,0.15);
-            --intel-blue: #00d4ff;
-            --intel-blue-dim: rgba(0,212,255,0.1);
-            --warning-amber: #ffaa00;
-            --font-mono: 'Share Tech Mono', monospace;
-            --font-display: 'Orbitron', sans-serif;
-            --font-body: 'Rajdhani', sans-serif;
+            --umbra-black: #0A0A0F;
+            --umbra-deep: #0D1117;
+            --umbra-surface: #161B22;
+            --umbra-border: #21262D;
+            --cyan-glow: #06B6D4;
+            --cyan-dim: #0891B2;
+            --gold-accent: #F59E0B;
+            --emerald: #10B981;
+            --violet: #8B5CF6;
+            --sunday-primary: #3B82F6;
+            --sunday-secondary: #60A5FA;
+            --text-primary: #F0F6FC;
+            --text-secondary: #8B949E;
+            --text-muted: #6E7681;
+            --gradient-cyan: linear-gradient(135deg, #06B6D4, #0891B2);
+            --gradient-sunday: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            --glow-cyan: 0 0 30px rgba(6, 182, 212, 0.3);
+            --glow-sunday: 0 0 30px rgba(59, 130, 246, 0.4);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        html { scroll-behavior: smooth; }
         body {
-            font-family: var(--font-body);
-            background: var(--void);
-            color: var(--text-light);
-            overflow-x: hidden;
-            line-height: 1.6;
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--umbra-black);
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .tactical-grid {
-            position: fixed; top: 0; left: 0;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none; z-index: 0; opacity: 0.03;
-            background-image: 
-                linear-gradient(0deg, var(--cyber-green) 1px, transparent 1px),
-                linear-gradient(90deg, var(--cyber-green) 1px, transparent 1px);
-            background-size: 80px 80px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
         }
 
-        .scan-line {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0.1; z-index: 1;
-            animation: scanMove 8s linear infinite;
+        /* Login Overlay */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--umbra-black);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .login-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .login-container {
+            text-align: center;
+            max-width: 480px;
+            padding: 3rem;
+            animation: fadeInUp 0.8s ease;
         }
 
-        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
-
-        /* Navigation */
-        .nav-container {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            padding: 24px 48px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 100%);
-            backdrop-filter: blur(10px);
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .nav-logo { display: flex; align-items: center; gap: 16px; text-decoration: none; }
-
-        .logo-mark {
-            width: 40px; height: 40px;
-            border: 1px solid var(--cyber-green);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            display: flex; align-items: center; justify-content: center;
-            background: var(--cyber-green-dim);
+        .ssi-hero-logo {
+            width: 80px; height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-cyan);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--umbra-black);
+            box-shadow: var(--glow-cyan);
         }
 
-        .logo-mark svg { width: 20px; height: 20px; fill: none; stroke: var(--cyber-green); stroke-width: 1.5; }
-        .logo-text { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: 0.4em; color: var(--white); }
-        .logo-class { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.2em; margin-top: 2px; }
+        .login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-        .nav-back {
-            font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em;
-            color: var(--text-muted); text-decoration: none;
-            padding: 8px 16px; border: 1px solid var(--border-gray);
+        .login-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        .sunday-signin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 320px;
+            padding: 1.1rem 2rem;
+            background: var(--gradient-sunday);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
+        .sunday-signin-btn:hover { transform: translateY(-3px); box-shadow: var(--glow-sunday); }
 
-        .nav-back:hover { color: var(--cyber-green); border-color: var(--cyber-green); }
-        .nav-back::before { content: '← '; }
-
-        /* Page Content */
-        .page-content {
-            position: relative; z-index: 5;
-            max-width: 1200px; margin: 0 auto;
-            padding: 140px 48px 80px;
+        .sunday-icon {
+            width: 28px; height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
         }
 
-        .page-header { text-align: center; margin-bottom: 80px; }
+        .register-link { margin-top: 2rem; font-size: 0.95rem; color: var(--text-secondary); }
+        .register-link a { color: var(--sunday-secondary); text-decoration: none; font-weight: 600; }
+        .register-link a:hover { color: var(--cyan-glow); }
 
-        .page-number {
-            font-family: var(--font-mono); font-size: 11px;
-            letter-spacing: 0.3em; color: var(--text-dim); margin-bottom: 16px;
+        .sunday-tagline { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--umbra-border); }
+        .sunday-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
         }
 
-        .page-label {
-            font-family: var(--font-mono); font-size: 11px;
-            letter-spacing: 0.4em; text-transform: uppercase;
-            color: var(--cyber-green); margin-bottom: 16px;
+        .auth-features { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .auth-feature { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+        .auth-feature-icon { color: var(--emerald); }
+
+        .login-loading { display: none; flex-direction: column; align-items: center; gap: 1rem; }
+        .login-loading.active { display: flex; }
+        .login-content.loading { display: none; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 3px solid var(--umbra-border);
+            border-top-color: var(--sunday-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 1rem; color: var(--text-secondary); }
+
+        /* Main App */
+        .app-container { display: none; min-height: 100vh; }
+        .app-container.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Navigation */
+        .nav-header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--umbra-border);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        .nav-brand { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .brand-icon {
+            width: 42px; height: 42px;
+            background: var(--gradient-cyan);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--umbra-black);
+        }
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .brand-text span { color: var(--cyan-glow); }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover { color: var(--cyan-glow); }
+        .nav-link.active { color: var(--cyan-glow); }
+
+        .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--umbra-surface);
+            border: 1px solid var(--umbra-border);
+            border-radius: 10px;
+        }
+        .user-avatar {
+            width: 32px; height: 32px;
+            background: var(--gradient-sunday);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+        }
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+        .user-verified { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; color: var(--emerald); }
+        .user-verified.unverified { color: var(--text-muted); }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--umbra-border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover { border-color: #EF4444; color: #EF4444; }
+
+        /* Main Content */
+        .main-content { padding-top: 100px; min-height: 100vh; }
+
+        .page-header { text-align: center; margin-bottom: 3rem; padding: 0 2rem; }
         .page-title {
-            font-family: var(--font-display);
-            font-size: clamp(32px, 6vw, 56px); font-weight: 700;
-            letter-spacing: 0.1em; color: var(--white); margin-bottom: 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: var(--gradient-cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        .page-subtitle {
-            font-family: var(--font-body); font-size: 16px;
-            color: var(--text-muted); max-width: 600px; margin: 0 auto;
-        }
+        .page-subtitle { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
 
         /* Apps Grid */
         .apps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 2px; background: var(--border-gray);
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
         }
 
         .app-card {
-            background: var(--deep-black); padding: 40px;
-            position: relative; overflow: hidden;
-            transition: all 0.5s ease;
-            text-decoration: none; color: inherit; display: block;
+            background: linear-gradient(180deg, var(--umbra-surface) 0%, var(--umbra-deep) 100%);
+            border: 1px solid var(--umbra-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: block;
         }
-
         .app-card::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
-            opacity: 0; transition: opacity 0.3s ease;
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: var(--gradient-cyan);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
         }
-
-        .app-card:hover::before { opacity: 1; }
-        .app-card:hover { background: var(--stealth-gray); }
-
-        /* Inactive */
-        .app-card.inactive {
-            opacity: 0.35; pointer-events: none;
-        }
-        .app-card.inactive::before { display: none; }
-        .app-card.inactive .app-icon {
-            border-color: var(--border-gray);
-            background: rgba(42,47,56,0.3);
-            filter: grayscale(1);
-        }
-        .app-card.inactive .app-name { color: var(--text-muted); }
-
-        /* Coming soon */
-        .app-card.coming-soon { cursor: default; }
-        .app-card.coming-soon:hover { background: var(--deep-black); }
-        .app-card.coming-soon::before {
-            background: linear-gradient(90deg, transparent, var(--warning-amber), transparent);
-        }
-        .app-card.coming-soon .app-icon {
-            border-color: rgba(255,170,0,0.3);
-            background: rgba(255,170,0,0.05);
-        }
-
-        .app-card-header {
-            display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
-        }
+        .app-card:hover { transform: translateY(-8px); border-color: var(--cyan-dim); box-shadow: var(--glow-cyan); }
+        .app-card:hover::before { transform: scaleX(1); }
 
         .app-icon {
-            width: 56px; height: 56px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px;
-            border: 1px solid var(--border-gray);
-            background: var(--panel-gray);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            transition: all 0.3s ease;
+            width: 64px; height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
         }
+        .app-icon.iaxis { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+        .app-icon.axis-fit { background: linear-gradient(135deg, #10B981, #059669); }
+        .app-icon.covrd { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .app-icon.be-still { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .app-icon.sunday { background: var(--gradient-sunday); }
 
-        .app-card:not(.inactive):not(.coming-soon):hover .app-icon {
-            border-color: var(--cyber-green);
-            background: var(--cyber-green-dim);
+        .app-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            padding: 0.25rem 0.5rem;
+            background: var(--emerald);
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--umbra-black);
+            text-transform: uppercase;
         }
+        .app-badge.coming-soon { background: var(--gold-accent); }
 
-        .app-name {
-            font-family: var(--font-display); font-size: 18px; font-weight: 600;
-            letter-spacing: 0.1em; color: var(--white); text-transform: uppercase;
-        }
-
-        .app-category {
-            font-family: var(--font-mono); font-size: 9px;
-            letter-spacing: 0.15em; color: var(--text-dim);
-            text-transform: uppercase; margin-top: 4px;
-        }
-
-        .app-desc {
-            font-size: 14px; color: var(--text-muted);
-            line-height: 1.8; margin-bottom: 20px;
-        }
-
-        .app-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-
+        .app-name { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-primary); }
+        .app-tagline { font-size: 0.85rem; color: var(--cyan-glow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .app-description { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem; }
+        .app-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
         .app-tag {
-            font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
-            padding: 4px 10px; background: var(--panel-gray);
-            color: var(--text-dim); text-transform: uppercase;
+            padding: 0.35rem 0.75rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--cyan-glow);
+            font-family: 'Space Mono', monospace;
         }
-
-        .app-footer {
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .app-status {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: var(--font-mono); font-size: 10px;
-            letter-spacing: 0.15em; text-transform: uppercase;
-        }
-
-        .app-status.live { color: var(--cyber-green); }
-        .app-status.live::before {
-            content: ''; width: 6px; height: 6px;
-            background: var(--cyber-green); border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .app-status.inactive-label { color: var(--text-dim); }
-        .app-status.inactive-label::before {
-            content: ''; width: 6px; height: 6px;
-            background: var(--text-dim); border-radius: 50%; opacity: 0.5;
-        }
-
-        .app-status.coming { color: var(--warning-amber); }
-        .app-status.coming::before {
-            content: ''; width: 6px; height: 6px;
-            background: var(--warning-amber); border-radius: 50%; opacity: 0.6;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--cyber-green); }
-            50% { opacity: 0.5; box-shadow: 0 0 0 8px transparent; }
-        }
-
-        .app-action {
-            font-family: var(--font-mono); font-size: 10px;
-            letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--cyber-green); transition: all 0.3s ease;
-        }
-
-        .app-card:not(.inactive):not(.coming-soon):hover .app-action {
-            letter-spacing: 0.35em;
-        }
-
-        /* Install Section */
-        .install-section {
-            margin-top: 80px; padding: 40px;
-            background: var(--deep-black);
-            border: 1px solid var(--border-gray);
-            text-align: center;
-        }
-
-        .install-section h4 {
-            font-family: var(--font-display); font-size: 14px;
-            letter-spacing: 0.15em; color: var(--white);
-            margin-bottom: 12px; text-transform: uppercase;
-        }
-
-        .install-section p {
-            font-family: var(--font-mono); font-size: 11px;
-            color: var(--text-muted); letter-spacing: 0.05em;
-        }
-
-        .install-section strong { color: var(--cyber-green); }
 
         /* Footer */
-        footer {
-            padding: 60px 48px; border-top: 1px solid var(--border-gray);
-            text-align: center; position: relative; z-index: 5;
+        .footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--umbra-border);
+            text-align: center;
         }
+        .footer-brand { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .footer-tagline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .footer-crown { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .footer-faith { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--gold-accent); letter-spacing: 2px; }
 
-        .footer-logo {
-            font-family: var(--font-display); font-size: 24px; font-weight: 800;
-            letter-spacing: 0.4em; color: var(--white); margin-bottom: 12px;
-        }
-
-        .footer-tagline {
-            font-family: var(--font-mono); font-size: 10px;
-            letter-spacing: 0.3em; color: var(--text-dim); margin-bottom: 24px;
-        }
-
-        .copyright {
-            font-family: var(--font-mono); font-size: 10px;
-            color: var(--text-dim); letter-spacing: 0.1em;
-        }
-
-        .copyright a { color: var(--cyber-green); text-decoration: none; }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .nav-container { padding: 16px 24px; }
-            .page-content { padding: 120px 24px 60px; }
-            .apps-grid { grid-template-columns: 1fr; }
-            .app-card { padding: 32px 24px; }
+            .nav-header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.75rem; }
+            .nav-links { display: none; }
+            .user-info { display: none; }
+            .page-title { font-size: 1.8rem; }
+            .apps-grid { grid-template-columns: 1fr; padding: 0 1rem 3rem; }
+            .auth-features { flex-direction: column; gap: 0.75rem; }
         }
     </style>
 </head>
 <body>
-    <div class="tactical-grid"></div>
-    <div class="scan-line"></div>
-
-    <!-- Navigation -->
-    <nav class="nav-container">
-        <a href="/" class="nav-logo">
-            <div class="logo-mark">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
-                    <path d="M12 22V12"/>
-                    <path d="M2 7l10 5 10-5"/>
-                </svg>
+    <!-- LOGIN OVERLAY -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <div class="login-loading" id="loginLoading">
+                <div class="spinner"></div>
+                <p class="loading-text">Authenticating with Sunday...</p>
             </div>
-            <div>
-                <div class="logo-text">SSI</div>
-                <div class="logo-class">// APPLICATIONS</div>
-            </div>
-        </a>
-        <a href="/" class="nav-back">RETURN TO BASE</a>
-    </nav>
-
-    <!-- Page Content -->
-    <div class="page-content">
-        <div class="page-header">
-            <div class="page-number">// 004</div>
-            <p class="page-label">Operational Toolkit</p>
-            <h1 class="page-title">APPLICATIONS</h1>
-            <p class="page-subtitle">Secure, mission-ready applications engineered by Stealth Services Inc. Install as apps on your device or access directly in your browser.</p>
-        </div>
-
-        <div class="apps-grid">
-
-            <!-- MACRA — LIVE -->
-            <a href="https://macra.umbrassi.com" class="app-card" target="_blank">
-                <div class="app-card-header">
-                    <div class="app-icon">🏋️</div>
-                    <div>
-                        <div class="app-name">MACRA</div>
-                        <div class="app-category">AI Fitness Tracking</div>
+            <div class="login-content" id="loginContent">
+                <div class="ssi-hero-logo">S</div>
+                <h1 class="login-title">SSI Apps</h1>
+                <p class="login-subtitle">Sign in with your Sunday account to access applications</p>
+                <button class="sunday-signin-btn" id="sundaySigninBtn">
+                    <span class="sunday-icon">📬</span>
+                    Sign in with Sunday
+                </button>
+                <p class="register-link">
+                    Don't have a Sunday account? <a href="/Sunday/">Create one free</a>
+                </p>
+                <div class="sunday-tagline">
+                    <div class="sunday-badge">
+                        <span>🔐</span>
+                        Secured by Sunday Authentication
                     </div>
-                </div>
-                <p class="app-desc">AI-powered daily weight tracking, food parsing, workout analysis, and Athlete Code community features. Your intelligent fitness companion.</p>
-                <div class="app-tags">
-                    <span class="app-tag">AI Parsing</span>
-                    <span class="app-tag">Weight</span>
-                    <span class="app-tag">Nutrition</span>
-                    <span class="app-tag">Athlete Code</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status live">OPERATIONAL</span>
-                    <span class="app-action">LAUNCH →</span>
-                </div>
-            </a>
-
-            <!-- COVRD — LIVE -->
-            <a href="/covrd/" class="app-card">
-                <div class="app-card-header">
-                    <div class="app-icon">🛡️</div>
-                    <div>
-                        <div class="app-name">COVRD</div>
-                        <div class="app-category">Roofing + Solar</div>
+                    <div class="auth-features">
+                        <div class="auth-feature"><span class="auth-feature-icon">✓</span> Passkey Auth</div>
+                        <div class="auth-feature"><span class="auth-feature-icon">✓</span> Identity Verified</div>
+                        <div class="auth-feature"><span class="auth-feature-icon">✓</span> CPiD Enabled</div>
                     </div>
-                </div>
-                <p class="app-desc">Instant roofing and solar quotes with hurricane-ready intro. Multi-step wizard, dynamic pricing, satellite roof scanning, and contractor matching for Southwest Florida.</p>
-                <div class="app-tags">
-                    <span class="app-tag">Roofing</span>
-                    <span class="app-tag">Solar</span>
-                    <span class="app-tag">Hurricane</span>
-                    <span class="app-tag">Local</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status live">OPERATIONAL</span>
-                    <span class="app-action">GET QUOTE →</span>
-                </div>
-            </a>
-
-            <!-- Still Waters — LIVE -->
-            <a href="https://app.stillwaters.umbrassi.com" class="app-card" target="_blank">
-                <div class="app-card-header">
-                    <div class="app-icon">🌊</div>
-                    <div>
-                        <div class="app-name">Still Waters</div>
-                        <div class="app-category">Faith + Wellness</div>
-                    </div>
-                </div>
-                <p class="app-desc">A sacred digital space for spiritual growth, reflection, and wellness. Daily devotionals, guided prayer, scripture study, and moments of peace.</p>
-                <div class="app-tags">
-                    <span class="app-tag">Devotional</span>
-                    <span class="app-tag">Prayer</span>
-                    <span class="app-tag">Scripture</span>
-                    <span class="app-tag">Wellness</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status live">OPERATIONAL</span>
-                    <span class="app-action">LAUNCH →</span>
-                </div>
-            </a>
-
-            <!-- FL RE Adapt — LIVE -->
-            <a href="https://fl-re-adapt.umbrassi.com" class="app-card" target="_blank">
-                <div class="app-card-header">
-                    <div class="app-icon">🎓</div>
-                    <div>
-                        <div class="app-name">FL RE Adapt</div>
-                        <div class="app-category">Real Estate Exam Prep</div>
-                    </div>
-                </div>
-                <p class="app-desc">Adaptive study platform for the Florida Real Estate exam. Spaced repetition flashcards, practice exams, gamified progress tracking, and AI-powered quiz generation.</p>
-                <div class="app-tags">
-                    <span class="app-tag">Spaced Repetition</span>
-                    <span class="app-tag">Flashcards</span>
-                    <span class="app-tag">Practice Exams</span>
-                    <span class="app-tag">Gamified</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status live">OPERATIONAL</span>
-                    <span class="app-action">LAUNCH →</span>
-                </div>
-            </a>
-
-            <!-- Be Still — COMING SOON -->
-            <div class="app-card coming-soon">
-                <div class="app-card-header">
-                    <div class="app-icon">🕊️</div>
-                    <div>
-                        <div class="app-name">Be Still</div>
-                        <div class="app-category">Faith + Meditation</div>
-                    </div>
-                </div>
-                <p class="app-desc">A sacred space for reflection, prayer, and guided meditation. Daily devotionals, scripture study, and guided moments of stillness.</p>
-                <div class="app-tags">
-                    <span class="app-tag">Meditation</span>
-                    <span class="app-tag">Prayer</span>
-                    <span class="app-tag">Stillness</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status coming">INCOMING</span>
                 </div>
             </div>
-
-            <!-- iAXIS Hub — INACTIVE -->
-            <div class="app-card inactive">
-                <div class="app-card-header">
-                    <div class="app-icon">🎯</div>
-                    <div>
-                        <div class="app-name">iAXIS Hub</div>
-                        <div class="app-category">Personal Command Center</div>
-                    </div>
-                </div>
-                <p class="app-desc">Your personal command center for tracking mental, physical, time, and mission metrics. AI-powered insights and comprehensive life dashboard.</p>
-                <div class="app-tags">
-                    <span class="app-tag">Analytics</span>
-                    <span class="app-tag">Goals</span>
-                    <span class="app-tag">Dashboard</span>
-                </div>
-                <div class="app-footer">
-                    <span class="app-status inactive-label">INACTIVE</span>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="install-section">
-            <h4>Install on Your Device</h4>
-            <p>Open any app → Tap <strong>Share</strong> (iOS) or <strong>Menu</strong> (Android) → <strong>"Add to Home Screen"</strong></p>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo">SSI</div>
-        <p class="footer-tagline">EXCELLENCE. EXECUTED.</p>
-        <p class="copyright">© 2025 Stealth Services Inc. — A <a href="/">Main Street Group</a> Company</p>
-    </footer>
+    <!-- MAIN APPLICATION -->
+    <div class="app-container" id="appContainer">
+        <nav class="nav-header">
+            <a href="/" class="nav-brand">
+                <div class="brand-icon">S</div>
+                <div class="brand-text">STEALTH <span>SERVICES</span></div>
+            </a>
+            <div class="nav-links">
+                <a href="/apps/" class="nav-link active">Apps</a>
+                <a href="/enterprise/" class="nav-link">Enterprise</a>
+                <a href="/#services" class="nav-link">Services</a>
+                <a href="/#about" class="nav-link">About</a>
+                <a href="/#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-right">
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Loading...</span>
+                        <span class="user-verified" id="userVerified"><span>●</span> Verified</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Sign Out</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Applications</h1>
+                <p class="page-subtitle">Your suite of intelligent tools. Built for performance. Designed for you.</p>
+            </div>
+            
+            <div class="apps-grid">
+                <a href="/Sunday/" class="app-card">
+                    <div class="app-icon sunday">📬<span class="app-badge">Live</span></div>
+                    <h3 class="app-name">Sunday</h3>
+                    <p class="app-tagline">Identity Platform</p>
+                    <p class="app-description">Your verified identity hub. Manage passkeys, verify your identity, claim CPiDs, and control connected apps from The Locker.</p>
+                    <div class="app-tags"><span class="app-tag">Identity</span><span class="app-tag">Passkeys</span><span class="app-tag">CPiD</span></div>
+                </a>
+
+                <a href="/iaxis/" class="app-card">
+                    <div class="app-icon iaxis">🎯<span class="app-badge">Live</span></div>
+                    <h3 class="app-name">iAXIS Hub</h3>
+                    <p class="app-tagline">Command Center</p>
+                    <p class="app-description">Real estate portfolio command center. Track properties, analyze performance, and manage your investments from one unified dashboard.</p>
+                    <div class="app-tags"><span class="app-tag">Portfolio</span><span class="app-tag">Analytics</span><span class="app-tag">Properties</span></div>
+                </a>
+                
+                <a href="/axis-fit/" class="app-card">
+                    <div class="app-icon axis-fit">💪<span class="app-badge">Live</span></div>
+                    <h3 class="app-name">AXIS Fit</h3>
+                    <p class="app-tagline">Personal Fitness</p>
+                    <p class="app-description">AI-powered fitness tracking with video workout analysis. Log exercises, track nutrition, and let Claude analyze your form in real-time.</p>
+                    <div class="app-tags"><span class="app-tag">Workouts</span><span class="app-tag">Nutrition</span><span class="app-tag">AI Vision</span></div>
+                </a>
+                
+                <a href="/covrd/" class="app-card">
+                    <div class="app-icon covrd">🛡️<span class="app-badge">Live</span></div>
+                    <h3 class="app-name">COVRD</h3>
+                    <p class="app-tagline">Roofing + Solar</p>
+                    <p class="app-description">Instant roofing and solar quotes powered by real roof data. Hurricane-ready protection for Southwest Florida homeowners.</p>
+                    <div class="app-tags"><span class="app-tag">Roofing</span><span class="app-tag">Solar</span><span class="app-tag">Hurricane</span></div>
+                </a>
+                
+                <a href="/be-still/" class="app-card">
+                    <div class="app-icon be-still">🕊️<span class="app-badge coming-soon">Coming</span></div>
+                    <h3 class="app-name">Be Still</h3>
+                    <p class="app-tagline">Faith & Meditation</p>
+                    <p class="app-description">A sacred space for reflection, prayer, and meditation. Daily devotionals, scripture study, and guided moments of stillness.</p>
+                    <div class="app-tags"><span class="app-tag">Devotional</span><span class="app-tag">Prayer</span><span class="app-tag">Scripture</span></div>
+                </a>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-crown">👑</div>
+            <p class="footer-brand">Main Street Group • Stealth Services Inc</p>
+            <p class="footer-tagline">umbrassi.com</p>
+            <p class="footer-faith">CHRIST IS KING</p>
+        </footer>
+    </div>
+
+    <script>
+        const SUNDAY = {
+            API_URL: 'https://sunday-platform.onrender.com',
+            FRONTEND_URL: 'https://www.umbrassi.com/Sunday/',
+            APP_ID: 'ssi'
+        };
+
+        const state = { isAuthenticated: false, user: null };
+
+        function checkSundayAuth() {
+            const token = localStorage.getItem('sunday_token');
+            const user = localStorage.getItem('sunday_user');
+            if (token && user) return { token, user: JSON.parse(user) };
+            return null;
+        }
+
+        function loginWithSunday() {
+            document.getElementById('loginContent').classList.add('loading');
+            document.getElementById('loginLoading').classList.add('active');
+            const redirect = encodeURIComponent(window.location.href);
+            window.location.href = `${SUNDAY.FRONTEND_URL}?app=${SUNDAY.APP_ID}&redirect=${redirect}`;
+        }
+
+        function signOutSunday() {
+            localStorage.removeItem('sunday_token');
+            localStorage.removeItem('sunday_user');
+            window.location.reload();
+        }
+
+        function handleAuthSuccess(authData) {
+            state.isAuthenticated = true;
+            state.user = authData.user;
+            
+            const initial = state.user.name ? state.user.name.charAt(0).toUpperCase() : '?';
+            document.getElementById('userAvatar').textContent = initial;
+            document.getElementById('userName').textContent = state.user.name || 'User';
+            
+            const verifiedEl = document.getElementById('userVerified');
+            if (state.user.isIdentityVerified) {
+                verifiedEl.innerHTML = '<span>●</span> Verified';
+                verifiedEl.classList.remove('unverified');
+            } else {
+                verifiedEl.innerHTML = '<span>○</span> Unverified';
+                verifiedEl.classList.add('unverified');
+            }
+            
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('active');
+        }
+
+        document.getElementById('sundaySigninBtn').addEventListener('click', loginWithSunday);
+        document.getElementById('logoutBtn').addEventListener('click', signOutSunday);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const authData = checkSundayAuth();
+            if (authData) {
+                handleAuthSuccess(authData);
+            } else {
+                document.getElementById('loginOverlay').classList.remove('hidden');
+                document.getElementById('appContainer').classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

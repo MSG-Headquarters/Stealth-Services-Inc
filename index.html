@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSI | Stealth Services Inc.</title>
     <meta name="description" content="Precise. Perfect. Delivered. Security consulting, intelligence research, and technology solutions.">
-
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
+    
     <style>
         :root {
             --deep-navy: #0A1628;
@@ -24,6 +23,8 @@
             --steel-gray: #1a2332;
             --ghost-white: #E8E8E8;
             --muted-white: #B8B8B8;
+            --sunday-blue: #0EA5E9;
+            --sunday-teal: #14B8A6;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,36 +35,103 @@
             color: var(--ghost-white);
             overflow-x: hidden;
             line-height: 1.6;
-            cursor: crosshair;
         }
 
-        ::selection { background: var(--tactical-green); color: var(--obsidian); }
+        /* ========== AUTH GATE OVERLAY ========== */
+        .auth-gate {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--obsidian);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
 
-        /* ========== GRID BACKGROUND ========== */
+        .auth-gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .auth-gate-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: 0.5em;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .auth-gate-message {
+            font-size: 1rem;
+            color: var(--muted-white);
+            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .auth-gate-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--steel-gray);
+            border-top-color: var(--tactical-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .auth-gate-btn {
+            padding: 16px 48px;
+            background: linear-gradient(135deg, var(--sunday-blue), var(--sunday-teal));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .auth-gate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+        }
+
+        .auth-gate.needs-login .auth-gate-spinner { display: none; }
+        .auth-gate.needs-login .auth-gate-btn { display: block; }
+        .auth-gate.needs-login .auth-gate-message { display: none; }
+
+        /* ========== GEOMETRIC BACKGROUND ========== */
         .geo-grid {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.025;
-            background-image:
+            opacity: 0.03;
+            background-image: 
                 linear-gradient(30deg, var(--tactical-green) 1px, transparent 1px),
                 linear-gradient(150deg, var(--electric-violet) 1px, transparent 1px);
             background-size: 60px 60px;
         }
-
-        .scan-line {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--tactical-green), transparent);
-            opacity: 0.08;
-            z-index: 1;
-            animation: scanMove 10s linear infinite;
-        }
-
-        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
         /* ========== NAVIGATION ========== */
         nav {
@@ -91,8 +159,10 @@
         .logo::before {
             content: '';
             position: absolute;
-            bottom: -4px; left: 0;
-            width: 100%; height: 2px;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
             background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
             clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
@@ -120,34 +190,56 @@
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -6px; left: 0;
-            width: 0; height: 1px;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 1px;
             background: var(--tactical-green);
             transition: width 0.3s ease;
         }
 
         .nav-links a:hover::after { width: 100%; }
 
-        .nav-status {
+        .user-badge {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
+            padding: 8px 16px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 100px;
+            font-size: 0.8rem;
             color: var(--tactical-green);
         }
 
-        .status-dot {
-            width: 6px; height: 6px;
-            background: var(--tactical-green);
+        .user-badge-avatar {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--tactical-green), var(--electric-violet));
             border-radius: 50%;
-            animation: blink 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--obsidian);
+            font-weight: 700;
         }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--muted-white);
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-left: 8px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
 
-        /* ========== HERO ========== */
+        .logout-btn:hover { opacity: 1; color: var(--tactical-green); }
+
+        /* ========== HERO SECTION ========== */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -199,43 +291,22 @@
             z-index: 2;
         }
 
-        .accent-line.line-1 { width: 60%; top: 25%; left: 20%; transform: rotate(-15deg); }
+        .accent-line.line-1 {
+            width: 60%; top: 25%; left: 20%;
+            transform: rotate(-15deg);
+        }
+
         .accent-line.line-2 {
             width: 40%; top: 75%; right: 10%;
             transform: rotate(20deg);
             background: linear-gradient(90deg, transparent, var(--electric-violet), transparent);
         }
 
-        /* HUD corners */
-        .hud-corner {
-            position: absolute;
-            width: 60px; height: 60px;
-            border: 1px solid rgba(0,255,136,0.2);
-            z-index: 3;
-        }
-        .hud-corner.tl { top: 80px; left: 40px; border-right: none; border-bottom: none; }
-        .hud-corner.tr { top: 80px; right: 40px; border-left: none; border-bottom: none; }
-        .hud-corner.bl { bottom: 60px; left: 40px; border-right: none; border-top: none; }
-        .hud-corner.br { bottom: 60px; right: 40px; border-left: none; border-top: none; }
-
-        .hud-label {
-            position: absolute;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            color: rgba(0,255,136,0.4);
-            z-index: 3;
-        }
-        .hud-label.coords { bottom: 80px; left: 60px; }
-        .hud-label.ts { bottom: 80px; right: 60px; }
-        .hud-label.class { top: 90px; right: 60px; color: rgba(255,60,60,0.5); }
-
         .hero-content {
             position: relative;
             z-index: 10;
             text-align: center;
             max-width: 900px;
-            opacity: 0;
         }
 
         .hero-badge {
@@ -274,7 +345,9 @@
             letter-spacing: 0.1em;
         }
 
-        .hero-tagline strong { color: var(--tactical-green); }
+        .hero-tagline strong {
+            color: var(--tactical-green);
+        }
 
         .cta-group {
             display: flex;
@@ -293,14 +366,14 @@
             text-decoration: none;
             border-radius: 4px;
             transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            display: inline-block;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--tactical-green) 0%, var(--muted-emerald) 100%);
             color: var(--obsidian);
+            border: none;
         }
 
         .btn-primary:hover {
@@ -311,7 +384,7 @@
         .btn-secondary {
             background: transparent;
             color: var(--ghost-white);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid var(--ghost-white);
         }
 
         .btn-secondary:hover {
@@ -320,35 +393,12 @@
             color: var(--tactical-green);
         }
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px; left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+        /* ========== SERVICES SECTION ========== */
+        .services {
+            padding: 8rem 4rem;
+            position: relative;
             z-index: 10;
         }
-
-        .scroll-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.3em;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-        }
-
-        .scroll-line {
-            width: 1px; height: 50px;
-            background: linear-gradient(180deg, var(--tactical-green), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
-
-        /* ========== SECTIONS ========== */
-        section { position: relative; z-index: 5; }
 
         .section-header {
             text-align: center;
@@ -361,7 +411,6 @@
             text-transform: uppercase;
             color: var(--tactical-green);
             margin-bottom: 1rem;
-            font-family: 'Rajdhani', sans-serif;
         }
 
         .section-title {
@@ -369,12 +418,6 @@
             font-size: 3rem;
             font-weight: 700;
             letter-spacing: 0.1em;
-        }
-
-        /* ========== SERVICES ========== */
-        .services {
-            padding: 8rem 4rem;
-            background: linear-gradient(180deg, transparent 0%, rgba(10,22,40,0.3) 50%, transparent 100%);
         }
 
         .services-grid {
@@ -391,14 +434,7 @@
             padding: 2.5rem;
             position: relative;
             clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        .service-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+            transition: all 0.3s ease;
         }
 
         .service-card:hover {
@@ -451,9 +487,10 @@
             line-height: 1.7;
         }
 
-        /* ========== ABOUT ========== */
+        /* ========== ABOUT SECTION ========== */
         .about {
             padding: 6rem 4rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(10,22,40,0.5) 50%, transparent 100%);
         }
 
         .about-container {
@@ -463,6 +500,10 @@
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .about-container { grid-template-columns: 1fr; }
         }
 
         .about-visual {
@@ -485,7 +526,11 @@
             animation: orbit 20s linear infinite;
         }
 
-        .orbit-ring.ring-1 { width: 100%; height: 100%; top: 0; left: 0; }
+        .orbit-ring.ring-1 {
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+        }
+
         .orbit-ring.ring-2 {
             width: 70%; height: 70%;
             top: 15%; left: 15%;
@@ -494,7 +539,10 @@
             animation-duration: 15s;
         }
 
-        @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
         .stealth-shape {
             position: absolute;
@@ -505,7 +553,10 @@
             animation: pulse-shape 3s ease-in-out infinite;
         }
 
-        @keyframes pulse-shape { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes pulse-shape {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
 
         .about-content h2 {
             font-family: 'Rajdhani', sans-serif;
@@ -553,22 +604,23 @@
             text-align: center;
             padding: 3rem;
             background: rgba(0,0,0,0.3);
-            border-top: 1px solid rgba(255,255,255,0.04);
-            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
 
         .affiliation-text {
-            font-family: 'Rajdhani', sans-serif;
             font-size: 0.9rem;
             color: var(--muted-white);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
-        .affiliation-text span { color: var(--tactical-green); font-weight: 600; }
+        .affiliation-text span {
+            color: var(--tactical-green);
+            font-weight: 600;
+        }
 
-        /* ========== CONTACT ========== */
-        .contact { padding: 6rem 4rem; }
+        /* ========== CONTACT SECTION ========== */
+        .contact {
+            padding: 6rem 4rem;
+        }
 
         .contact-container {
             max-width: 600px;
@@ -588,7 +640,13 @@
             gap: 1rem;
         }
 
-        .form-group { margin-bottom: 1.5rem; }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
         .form-group label {
             display: block;
@@ -597,7 +655,6 @@
             letter-spacing: 0.1em;
             color: var(--muted-white);
             margin-bottom: 0.5rem;
-            font-family: 'Rajdhani', sans-serif;
         }
 
         .form-group input,
@@ -619,7 +676,10 @@
             background: rgba(0,255,136,0.05);
         }
 
-        .form-group textarea { min-height: 150px; resize: vertical; }
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
 
         .submit-btn {
             width: 100%;
@@ -660,7 +720,6 @@
             font-size: 0.9rem;
             color: var(--muted-white);
             margin-bottom: 2rem;
-            letter-spacing: 0.1em;
         }
 
         .footer-links {
@@ -668,7 +727,6 @@
             justify-content: center;
             gap: 2rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
         }
 
         .footer-links a {
@@ -694,34 +752,44 @@
             .nav-links { gap: 1.5rem; }
             .services, .about, .contact { padding: 4rem 1.5rem; }
             .hero { padding: 1rem; }
-            .about-container { grid-template-columns: 1fr; }
-            .about-visual { height: 250px; }
-            .hud-corner, .hud-label { display: none; }
-            .form-row { grid-template-columns: 1fr; }
+            .user-badge span:not(.user-badge-avatar) { display: none; }
         }
     </style>
 </head>
 <body>
+    <!-- Auth Gate -->
+    <div class="auth-gate" id="authGate">
+        <div class="auth-gate-logo">SSI</div>
+        <div class="auth-gate-message">Verifying Identity...</div>
+        <div class="auth-gate-spinner"></div>
+        <button class="auth-gate-btn" onclick="SundayAuth.redirectToSunday()">
+            🌅 Sign in with Sunday
+        </button>
+    </div>
 
     <!-- Background -->
     <div class="geo-grid"></div>
-    <div class="scan-line"></div>
 
     <!-- Navigation -->
     <nav>
         <a href="#" class="logo">SSI</a>
         <ul class="nav-links">
+            <li><a href="apps.html">Apps</a></li>
+            <li><a href="enterprise.html">Enterprise</a></li>
             <li><a href="#services">Services</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li>
+                <div class="user-badge" id="userBadge" style="display: none;">
+                    <span class="user-badge-avatar" id="userAvatar">?</span>
+                    <span id="userName">User</span>
+                    <button class="logout-btn" onclick="SundayAuth.logout()">×</button>
+                </div>
+            </li>
         </ul>
-        <div class="nav-status">
-            <div class="status-dot"></div>
-            <span>SYSTEMS NOMINAL</span>
-        </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-bg">
             <div class="angular-shape shape-1"></div>
@@ -729,17 +797,10 @@
             <div class="angular-shape shape-3"></div>
             <div class="accent-line line-1"></div>
             <div class="accent-line line-2"></div>
-            <div class="hud-corner tl"></div>
-            <div class="hud-corner tr"></div>
-            <div class="hud-corner bl"></div>
-            <div class="hud-corner br"></div>
-            <div class="hud-label coords">LAT: [REDACTED] / LON: [REDACTED]</div>
-            <div class="hud-label ts" id="timestamp"></div>
-            <div class="hud-label class">// TOP SECRET // SSI</div>
         </div>
 
-        <div class="hero-content" id="heroContent">
-            <div class="hero-badge">Covert Operations &bull; Elite Solutions</div>
+        <div class="hero-content">
+            <div class="hero-badge">Covert Operations • Elite Solutions</div>
             <h1 class="hero-title">
                 <span>STEALTH SERVICES</span>
             </h1>
@@ -751,17 +812,12 @@
                 <a href="#services" class="btn btn-secondary">Our Capabilities</a>
             </div>
         </div>
-
-        <div class="scroll-indicator">
-            <span class="scroll-text">Scroll to Declassify</span>
-            <div class="scroll-line"></div>
-        </div>
     </section>
 
-    <!-- Services -->
+    <!-- Services Section -->
     <section class="services" id="services">
         <div class="section-header">
-            <p class="section-label">// 001 &mdash; Operational Parameters</p>
+            <p class="section-label">What We Do</p>
             <h2 class="section-title">Capabilities</h2>
         </div>
 
@@ -801,12 +857,12 @@
                     </svg>
                 </div>
                 <h3>Technology Solutions</h3>
-                <p>Custom-engineered systems built for performance and security. From secure platforms to integrated solutions, we architect technology that operates at mission speed.</p>
+                <p>Custom-engineered systems built for performance and security. From secure platforms to integrated solutions, we architect technology that operates at the speed of now.</p>
             </div>
         </div>
     </section>
 
-    <!-- About -->
+    <!-- About Section -->
     <section class="about" id="about">
         <div class="about-container">
             <div class="about-visual">
@@ -818,11 +874,10 @@
             </div>
 
             <div class="about-content">
-                <p class="section-label">// Operational Brief</p>
                 <h2>Invisible Until <span>Impact</span></h2>
                 <p>Stealth Services Inc. operates at the intersection of security, intelligence, and technology. We exist to provide elite solutions for those who demand precision without compromise.</p>
-                <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect.</p>
-                <p>Part of the <strong style="color: var(--tactical-green);">Main Street Group</strong> portfolio &mdash; where legacy meets innovation.</p>
+                <p>Our methodology is simple: assess, strategize, execute, deliver. Every engagement is handled with the discretion and excellence that our clients expect and deserve.</p>
+                <p>Part of the <strong>Main Street Group</strong> portfolio — where legacy meets innovation.</p>
 
                 <div class="stats-row">
                     <div class="stat">
@@ -847,11 +902,11 @@
         <p class="affiliation-text">A <span>Main Street Group</span> Company</p>
     </div>
 
-    <!-- Contact -->
+    <!-- Contact Section -->
     <section class="contact" id="contact">
         <div class="section-header">
-            <p class="section-label">// 003 &mdash; Secure Channel</p>
-            <h2 class="section-title">Initiate Contact</h2>
+            <p class="section-label">Initiate Contact</p>
+            <h2 class="section-title">Engage</h2>
         </div>
 
         <div class="contact-container">
@@ -859,16 +914,16 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required autocomplete="off">
+                        <input type="text" id="name" name="name" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required autocomplete="off">
+                        <input type="email" id="email" name="email" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="subject">Subject</label>
-                    <input type="text" id="subject" name="subject" required autocomplete="off">
+                    <input type="text" id="subject" name="subject" required>
                 </div>
                 <div class="form-group">
                     <label for="message">Message</label>
@@ -884,80 +939,98 @@
         <div class="footer-logo">SSI</div>
         <p class="footer-tagline">Excellence. Executed.</p>
         <div class="footer-links">
+            <a href="apps.html">Apps</a>
+            <a href="enterprise.html">Enterprise</a>
             <a href="#services">Services</a>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </div>
-        <p class="copyright">&copy; 2025 Stealth Services Inc. &mdash; A <a href="#">Main Street Group</a> Company</p>
+        <p class="copyright">© 2025 Stealth Services Inc. — A <a href="#">Main Street Group</a> Company</p>
     </footer>
 
+    <!-- Sunday Auth SDK -->
+    <script src="js/sunday-auth.js"></script>
     <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Hero fade in
-        gsap.to('#heroContent', {
-            opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', delay: 0.3
-        });
-
-        // Service cards on scroll
-        gsap.utils.toArray('.service-card').forEach((card, i) => {
-            gsap.fromTo(card,
-                { opacity: 0, y: 50 },
-                {
-                    opacity: 1, y: 0,
-                    duration: 0.8,
-                    delay: i * 0.15,
-                    ease: 'power2.out',
-                    scrollTrigger: {
-                        trigger: card,
-                        start: 'top 85%',
-                        toggleActions: 'play none none none'
+        // Initialize Sunday Auth
+        document.addEventListener('DOMContentLoaded', async function() {
+            const authGate = document.getElementById('authGate');
+            
+            try {
+                const user = await SundayAuth.init({
+                    appId: 'ssi',
+                    requireAuth: true,
+                    onAuthSuccess: function(user) {
+                        console.log('[SSI] Auth success:', user.name);
+                        
+                        // Hide auth gate
+                        authGate.classList.add('hidden');
+                        
+                        // Show user badge
+                        const badge = document.getElementById('userBadge');
+                        const avatar = document.getElementById('userAvatar');
+                        const userName = document.getElementById('userName');
+                        
+                        if (user && badge) {
+                            badge.style.display = 'flex';
+                            avatar.textContent = (user.name || 'U').charAt(0).toUpperCase();
+                            userName.textContent = user.name || 'User';
+                        }
+                        
+                        // Pre-fill contact form
+                        if (user.name) document.getElementById('name').value = user.name;
+                        if (user.phone) document.getElementById('email').value = user.phone;
+                    },
+                    onAuthFailure: function(error) {
+                        console.error('[SSI] Auth failed:', error);
+                        authGate.classList.add('needs-login');
                     }
+                });
+                
+                if (!user) {
+                    // Show login button
+                    authGate.classList.add('needs-login');
                 }
-            );
+                
+            } catch (error) {
+                console.error('[SSI] Init error:', error);
+                authGate.classList.add('needs-login');
+            }
         });
 
-        // About section
-        gsap.from('.about-visual', {
-            opacity: 0, x: -50, duration: 1,
-            scrollTrigger: { trigger: '.about', start: 'top 70%' }
-        });
-
-        gsap.from('.about-content', {
-            opacity: 0, x: 50, duration: 1,
-            scrollTrigger: { trigger: '.about', start: 'top 70%' }
-        });
-
-        // Timestamp
-        function updateTimestamp() {
-            const ts = document.getElementById('timestamp');
-            if (ts) ts.textContent = new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-        }
-        setInterval(updateTimestamp, 1000);
-        updateTimestamp();
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === '#') return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        });
-
-        // Contact form
+        // Contact form handling
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('.submit-btn');
             btn.textContent = 'Transmitted';
-            btn.style.background = 'linear-gradient(135deg, var(--electric-violet), var(--shimmer-purple))';
+            btn.style.background = 'linear-gradient(135deg, var(--electric-violet) 0%, var(--shimmer-purple) 100%)';
+            
+            // Here you would send to your backend/Cloudflare Worker
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value,
+                user: SundayAuth.getUser()
+            };
+            
+            console.log('[SSI] Contact form submitted:', formData);
+            
             setTimeout(() => {
                 btn.textContent = 'Transmit';
                 btn.style.background = '';
                 this.reset();
             }, 3000);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         });
     </script>
 </body>

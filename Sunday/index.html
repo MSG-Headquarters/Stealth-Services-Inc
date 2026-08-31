@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunday | Your Digital Mailbox</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📬</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <style>
+        :root {
+            --bg-white: #FFFFFF;
+            --bg-light: #F0F9FF;
+            --bg-gray: #F1F5F9;
+            --primary: #0EA5E9;
+            --primary-dark: #0284C7;
+            --primary-light: #E0F2FE;
+            --accent-teal: #14B8A6;
+            --accent-emerald: #10B981;
+            --accent-amber: #F59E0B;
+            --accent-rose: #F43F5E;
+            --accent-violet: #8B5CF6;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --gradient-start: #0EA5E9;
+            --gradient-end: #14B8A6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-light); color: var(--text-primary); min-height: 100vh; }
+
+        /* Auth Screens */
+        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, var(--bg-light) 0%, #D1FAE5 100%); }
+        .auth-card { background: var(--bg-white); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); padding: 40px; width: 100%; max-width: 420px; }
+        .auth-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 32px; }
+        .auth-logo-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+        .auth-logo-text { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-title { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+        .auth-subtitle { font-size: 15px; color: var(--text-muted); text-align: center; margin-bottom: 28px; }
+
+        /* OAuth App Banner */
+        .oauth-app-banner { background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(20,184,166,0.1)); border: 1px solid var(--primary-light); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: center; }
+        .oauth-app-banner-icon { font-size: 32px; margin-bottom: 8px; }
+        .oauth-app-banner-text { font-size: 14px; color: var(--text-secondary); }
+        .oauth-app-banner-name { font-weight: 700; color: var(--primary); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+        .input-field { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; transition: all 0.2s; background: var(--bg-gray); }
+        .input-field:focus { outline: none; border-color: var(--primary); background: var(--bg-white); box-shadow: 0 0 0 4px rgba(14,165,233,0.1); }
+        .input-row { display: flex; gap: 12px; }
+        .input-row .input-group { flex: 1; }
+
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: white; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,165,233,0.4); }
+        .btn-success { background: var(--accent-emerald); color: white; }
+        .btn-warning { background: var(--accent-amber); color: white; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 12px; }
+        .btn-outline:hover { background: var(--primary-light); }
+        .btn-ghost { background: var(--bg-gray); color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--border); }
+        .btn-sm { padding: 10px 16px; font-size: 14px; width: auto; }
+
+        .error-box { background: rgba(239,68,68,0.1); border-left: 4px solid var(--accent-rose); padding: 14px; margin-top: 16px; color: var(--accent-rose); font-size: 14px; border-radius: 0 12px 12px 0; }
+        .success-box { background: rgba(16,185,129,0.1); border-left: 4px solid var(--accent-emerald); padding: 14px; margin-top: 16px; color: var(--accent-emerald); font-size: 14px; border-radius: 0 12px 12px 0; }
+        .hidden { display: none !important; }
+
+        /* Dashboard */
+        .dashboard { min-height: 100vh; background: var(--bg-light); }
+        
+        /* Top Navigation */
+        .topnav { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .topnav-logo { display: flex; align-items: center; gap: 10px; }
+        .topnav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .topnav-logo-text { font-size: 20px; font-weight: 800; color: var(--text-primary); }
+        .topnav-actions { display: flex; align-items: center; gap: 16px; }
+        .topnav-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .topnav-link:hover { color: var(--primary); }
+        .error-banner { background: var(--accent-rose); color: white; padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+
+        /* Welcome Header */
+        .welcome-header { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); padding: 32px; margin: 24px 32px; border-radius: 20px; color: white; }
+        .welcome-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .welcome-subtitle { font-size: 15px; opacity: 0.9; }
+
+        /* Tab Navigation */
+        .tab-nav { display: flex; gap: 8px; padding: 0 32px; margin-bottom: 24px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .tab-btn:hover { background: var(--bg-white); color: var(--text-primary); }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+
+        /* Main Content */
+        .main-content { padding: 0 32px 32px; }
+        .content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+
+        /* Cards */
+        .card { background: var(--bg-white); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+        .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .card-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+        .card-body { padding: 24px; }
+
+        /* Quick Stats */
+        .quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-item { padding: 16px; border-radius: 12px; text-align: center; }
+        .stat-item.blue { background: #DBEAFE; }
+        .stat-item.yellow { background: #FEF3C7; }
+        .stat-item.green { background: #D1FAE5; }
+        .stat-item.purple { background: #EDE9FE; }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-item.blue .stat-value { color: var(--primary); }
+        .stat-item.yellow .stat-value { color: var(--accent-amber); }
+        .stat-item.green .stat-value { color: var(--accent-emerald); }
+        .stat-item.purple .stat-value { color: var(--accent-violet); }
+        .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Quick Actions */
+        .quick-actions { display: flex; flex-direction: column; gap: 10px; }
+        .action-btn { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: none; background: var(--bg-gray); cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; }
+        .action-btn:hover { background: var(--border); transform: translateX(4px); }
+        .action-btn.primary { background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(20,184,166,0.1)); }
+        .action-btn.primary:hover { background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(20,184,166,0.2)); }
+        .action-icon { font-size: 20px; }
+        .action-text { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+        /* Address List */
+        .address-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .address-title { font-size: 18px; font-weight: 700; }
+        .address-empty { text-align: center; padding: 48px 24px; }
+        .address-empty-icon { font-size: 64px; margin-bottom: 16px; }
+        .address-empty-title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .address-empty-text { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+        .address-empty-link { color: var(--primary); font-weight: 600; cursor: pointer; }
+        .address-empty-link:hover { text-decoration: underline; }
+
+        .address-card { background: var(--bg-gray); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+        .address-card-header { display: flex; align-items: start; justify-content: space-between; margin-bottom: 12px; }
+        .address-card-icon { font-size: 28px; }
+        .address-card-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; background: rgba(16,185,129,0.15); color: var(--accent-emerald); }
+        .address-card-street { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .address-card-city { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+        .address-card-cpid { font-family: 'SF Mono', Monaco, monospace; font-size: 12px; color: var(--primary); background: var(--primary-light); padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .copy-btn { background: none; border: none; cursor: pointer; font-size: 14px; }
+
+        /* Message List */
+        .message-item { display: flex; align-items: start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
+        .message-item:hover { background: var(--bg-light); }
+        .message-item:last-child { border-bottom: none; }
+        .message-item.unread { background: rgba(14,165,233,0.05); }
+        .message-item.unread .message-subject { font-weight: 700; }
+        .message-dot { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+        .message-dot.read { background: transparent; }
+        .message-content { flex: 1; min-width: 0; }
+        .message-from { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .message-subject { font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+        .message-preview { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message-meta { text-align: right; flex-shrink: 0; }
+        .message-date { font-size: 12px; color: var(--text-muted); }
+        .message-address-tag { font-size: 11px; color: var(--primary); background: var(--primary-light); padding: 4px 8px; border-radius: 6px; margin-top: 6px; display: inline-block; }
+
+        /* Message View */
+        .message-view { padding: 32px; }
+        .message-view-header { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .message-view-subject { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+        .message-view-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; color: var(--text-secondary); }
+        .message-view-body { font-size: 16px; line-height: 1.8; color: var(--text-primary); white-space: pre-wrap; }
+
+        /* Compose Form */
+        .compose-form textarea { width: 100%; min-height: 200px; padding: 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; font-family: inherit; resize: vertical; background: var(--bg-gray); }
+        .compose-form textarea:focus { outline: none; border-color: var(--primary); background: var(--bg-white); }
+
+        /* Claim Form */
+        .claim-preview { background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(20,184,166,0.1)); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .claim-preview-label { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .claim-preview-text { font-size: 15px; color: var(--text-primary); }
+
+        /* The Locker - Connected Apps */
+        .locker-app { background: var(--bg-gray); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+        .locker-app-icon { font-size: 32px; }
+        .locker-app-info { flex: 1; }
+        .locker-app-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .locker-app-date { font-size: 12px; color: var(--text-muted); }
+        .locker-app-status { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+        .locker-app-status.active { background: rgba(16,185,129,0.15); color: var(--accent-emerald); }
+        .locker-app-status.revoked { background: rgba(239,68,68,0.15); color: var(--accent-rose); }
+        .locker-revoke-btn { background: none; border: 1px solid var(--accent-rose); color: var(--accent-rose); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        .locker-revoke-btn:hover { background: rgba(239,68,68,0.1); }
+
+        /* Camera */
+        .camera-container { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+        .camera-video { width: 100%; height: 100%; object-fit: cover; }
+        .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .camera-frame { border: 3px dashed rgba(255,255,255,0.6); border-radius: 12px; width: 85%; height: 60%; }
+        .camera-frame.selfie { width: 60%; height: 75%; border-radius: 50%; }
+        .capture-preview { width: 100%; border-radius: 16px; margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; margin: 20px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); transition: width 0.3s; }
+
+        /* Mobile */
+        @media (max-width: 1024px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .topnav { padding: 0 16px; }
+            .welcome-header { margin: 16px; }
+            .tab-nav { padding: 0 16px; overflow-x: auto; }
+            .main-content { padding: 0 16px 16px; }
+        }
+        @media (max-width: 640px) {
+            .welcome-title { font-size: 22px; }
+            .tab-btn { padding: 10px 14px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- AUTH: Registration -->
+    <div class="auth-container" id="screen-register">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
+            </div>
+            <!-- OAuth App Banner (shown when redirected from another app) -->
+            <div class="oauth-app-banner hidden" id="oauth-banner-register">
+                <div class="oauth-app-banner-icon" id="oauth-app-icon-register">👑</div>
+                <div class="oauth-app-banner-text">
+                    Sign in to continue to <span class="oauth-app-banner-name" id="oauth-app-name-register">App</span>
+                </div>
+            </div>
+            <h2 class="auth-title">Create Your Account</h2>
+            <p class="auth-subtitle">Secure, passwordless digital mailbox</p>
+            <div class="input-group">
+                <label class="input-label">Display Name</label>
+                <input type="text" class="input-field" id="reg-name" placeholder="Your name">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Phone Number</label>
+                <input type="tel" class="input-field" id="reg-phone" placeholder="+1 (555) 123-4567">
+            </div>
+            <button class="btn btn-primary" onclick="startRegistration()">
+                <span>🔐</span> Register with Face ID
+            </button>
+            <button class="btn btn-outline" onclick="showScreen('login')">Already have an account? Sign in</button>
+            <div id="reg-error" class="error-box hidden"></div>
+        </div>
+    </div>
+
+    <!-- AUTH: Login -->
+    <div class="auth-container hidden" id="screen-login">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
+            </div>
+            <!-- OAuth App Banner (shown when redirected from another app) -->
+            <div class="oauth-app-banner hidden" id="oauth-banner-login">
+                <div class="oauth-app-banner-icon" id="oauth-app-icon-login">👑</div>
+                <div class="oauth-app-banner-text">
+                    Sign in to continue to <span class="oauth-app-banner-name" id="oauth-app-name-login">App</span>
+                </div>
+            </div>
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in with your biometric</p>
+            <button class="btn btn-primary" onclick="startLogin()">
+                <span>👆</span> Sign in with Face ID
+            </button>
+            <button class="btn btn-outline" onclick="showScreen('register')">Need an account? Register</button>
+            <div id="login-error" class="error-box hidden"></div>
+        </div>
+    </div>
+
+    <!-- AUTH: Identity Verification -->
+    <div class="auth-container hidden" id="screen-verify">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">📬</div>
+                <span class="auth-logo-text">SUNDAY</span>
+            </div>
+            <h2 class="auth-title">Verify Your Identity</h2>
+            <p class="auth-subtitle" id="verify-subtitle">Scan your driver's license</p>
+            
+            <div id="verify-dl-section">
+                <div class="camera-container">
+                    <video id="dl-video" class="camera-video" autoplay playsinline></video>
+                    <div class="camera-overlay"><div class="camera-frame"></div></div>
+                </div>
+                <img id="dl-preview" class="capture-preview hidden">
+                <button class="btn btn-primary" id="btn-capture-dl" onclick="captureDL()">📸 Capture DL</button>
+                <button class="btn btn-ghost hidden" id="btn-retake-dl" onclick="retakeDL()">Retake</button>
+                <button class="btn btn-success hidden" id="btn-confirm-dl" onclick="confirmDL()">✓ Continue to Selfie</button>
+            </div>
+            
+            <div id="verify-selfie-section" class="hidden">
+                <div class="camera-container">
+                    <video id="selfie-video" class="camera-video" autoplay playsinline></video>
+                    <div class="camera-overlay"><div class="camera-frame selfie"></div></div>
+                </div>
+                <img id="selfie-preview" class="capture-preview hidden">
+                <button class="btn btn-primary" id="btn-capture-selfie" onclick="captureSelfie()">🤳 Take Selfie</button>
+                <button class="btn btn-ghost hidden" id="btn-retake-selfie" onclick="retakeSelfie()">Retake</button>
+                <button class="btn btn-success hidden" id="btn-confirm-selfie" onclick="confirmSelfie()">✓ Verify Identity</button>
+            </div>
+            
+            <div id="verify-processing-section" class="hidden" style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 56px; margin-bottom: 20px;">🔍</div>
+                <div class="progress-bar"><div class="progress-fill" id="verify-progress" style="width: 0%"></div></div>
+                <p id="verify-status" style="color: var(--text-muted); font-size: 15px;">Processing...</p>
+            </div>
+            
+            <button class="btn btn-outline" onclick="skipVerification()" style="margin-top: 16px;">Skip for now</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard hidden" id="screen-dashboard">
+        <!-- Top Navigation -->
+        <nav class="topnav">
+            <div class="topnav-logo">
+                <div class="topnav-logo-icon">📬</div>
+                <span class="topnav-logo-text">SUNDAY</span>
+            </div>
+            <div id="error-banner" class="error-banner hidden">
+                <span>⚠️</span> <span id="error-banner-text">Error</span>
+                <button onclick="this.parentElement.classList.add('hidden')" style="background:none;border:none;color:white;cursor:pointer;">×</button>
+            </div>
+            <div class="topnav-actions">
+                <a href="#" class="topnav-link" onclick="setTab('inbox')">✉️ Inbox</a>
+                <a href="#" class="topnav-link" onclick="setTab('compose')">📤 Send</a>
+                <a href="#" class="topnav-link" onclick="signOut()">🚪</a>
+            </div>
+        </nav>
+
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1 class="welcome-title">Welcome back! <span>👋</span></h1>
+            <p class="welcome-subtitle" id="welcome-message">Your inbox is empty. Claim an address to start receiving messages!</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="setTab('inbox')">📥 Inbox</button>
+            <button class="tab-btn" onclick="setTab('sent')">📤 Sent</button>
+            <button class="tab-btn" onclick="setTab('addresses')">🏠 My Addresses</button>
+            <button class="tab-btn" onclick="setTab('locker')">🔐 The Locker</button>
+            <button class="tab-btn" onclick="setTab('market')">🛒 Market</button>
+            <button class="tab-btn" onclick="setTab('settings')">⚙️ Settings</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-grid">
+                <!-- Left Column - Main Content -->
+                <div>
+                    <!-- Tab: Inbox -->
+                    <div id="tab-inbox" class="card">
+                        <div class="card-body" id="inbox-content"></div>
+                    </div>
+
+                    <!-- Tab: Sent -->
+                    <div id="tab-sent" class="card hidden">
+                        <div class="card-body" id="sent-content">
+                            <div class="address-empty">
+                                <div class="address-empty-icon">📤</div>
+                                <div class="address-empty-title">No sent messages</div>
+                                <div class="address-empty-text">Messages you send will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Addresses -->
+                    <div id="tab-addresses" class="card hidden">
+                        <div class="card-body" id="addresses-content"></div>
+                    </div>
+
+                    <!-- Tab: The Locker (Connected Apps) -->
+                    <div id="tab-locker" class="card hidden">
+                        <div class="card-header">
+                            <span class="card-title">🔐 The Locker - Connected Apps</span>
+                        </div>
+                        <div class="card-body" id="locker-content"></div>
+                    </div>
+
+                    <!-- Tab: Market -->
+                    <div id="tab-market" class="card hidden">
+                        <div class="card-body">
+                            <div class="address-empty">
+                                <div class="address-empty-icon">🛒</div>
+                                <div class="address-empty-title">Sunday Market</div>
+                                <div class="address-empty-text">Browse and discover services coming soon</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Settings -->
+                    <div id="tab-settings" class="card hidden">
+                        <div class="card-body" id="settings-content"></div>
+                    </div>
+
+                    <!-- Tab: Compose -->
+                    <div id="tab-compose" class="card hidden">
+                        <div class="card-header">
+                            <span class="card-title">✉️ Compose Message</span>
+                        </div>
+                        <div class="card-body" id="compose-content"></div>
+                    </div>
+
+                    <!-- Tab: Claim -->
+                    <div id="tab-claim" class="card hidden">
+                        <div class="card-header">
+                            <span class="card-title">🏠 Claim New Address</span>
+                        </div>
+                        <div class="card-body" id="claim-content"></div>
+                    </div>
+
+                    <!-- Tab: Message View -->
+                    <div id="tab-message-view" class="card hidden">
+                        <div id="message-view-content"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Stats & Actions -->
+                <div>
+                    <!-- Quick Stats -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header">
+                            <span class="card-title">📊 Quick Stats</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-stats">
+                                <div class="stat-item blue">
+                                    <div class="stat-value" id="stat-received">0</div>
+                                    <div class="stat-label">Received</div>
+                                </div>
+                                <div class="stat-item yellow">
+                                    <div class="stat-value" id="stat-sent">0</div>
+                                    <div class="stat-label">Sent</div>
+                                </div>
+                                <div class="stat-item purple">
+                                    <div class="stat-value" id="stat-escrow">0</div>
+                                    <div class="stat-label">In Escrow</div>
+                                </div>
+                                <div class="stat-item green">
+                                    <div class="stat-value" id="stat-earned">$0</div>
+                                    <div class="stat-label">Earned</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">⚡ Quick Actions</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <button class="action-btn primary" onclick="setTab('compose')">
+                                    <span class="action-icon">✉️</span>
+                                    <span class="action-text">Send a Message</span>
+                                </button>
+                                <button class="action-btn primary" onclick="setTab('claim')">
+                                    <span class="action-icon">🏠</span>
+                                    <span class="action-text">Claim New Address</span>
+                                </button>
+                                <button class="action-btn" onclick="setTab('locker')">
+                                    <span class="action-icon">🔐</span>
+                                    <span class="action-text">Manage Connected Apps</span>
+                                </button>
+                                <button class="action-btn" onclick="shareCPiD()">
+                                    <span class="action-icon">🔗</span>
+                                    <span class="action-text">Share My CPiD</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -------------------------------------------------------------------
+        // CONFIGURATION
+        // -------------------------------------------------------------------
+        const API_BASE = 'https://sunday-platform.onrender.com';
+        const RP_ID = 'umbrassi.com';
+        
+        // Registered OAuth Apps
+        const REGISTERED_APPS = {
+            'ssi': { name: 'Stealth Services Inc', icon: '👑' },
+            'zenith': { name: 'Zenith OS', icon: '🔐' },
+            'iaxis': { name: 'iAXIS Hub', icon: '🎯' },
+            'axisfit': { name: 'AXIS Fit', icon: '💪' },
+            'covrd': { name: 'COVRD Insurance', icon: '🛡️' }
+        };
+        
+        // -------------------------------------------------------------------
+        // STATE
+        // -------------------------------------------------------------------
+        let currentToken = null;
+        let currentUser = null;
+        let verifiedDLInfo = null;
+        let messages = [];
+        let claims = [];
+        let connectedApps = [];
+        let currentTab = 'inbox';
+        
+        // OAuth redirect state
+        let oauthAppId = null;
+        let oauthRedirectUrl = null;
+        
+        let dlStream = null, selfieStream = null;
+        let dlImageData = null, selfieImageData = null;
+        let faceApiLoaded = false;
+
+        // -------------------------------------------------------------------
+        // OAUTH REDIRECT HANDLING
+        // -------------------------------------------------------------------
+        function parseOAuthParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            oauthAppId = urlParams.get('app');
+            oauthRedirectUrl = urlParams.get('redirect');
+            
+            if (oauthAppId && REGISTERED_APPS[oauthAppId]) {
+                const app = REGISTERED_APPS[oauthAppId];
+                
+                // Show OAuth banner on login/register screens
+                ['register', 'login'].forEach(screen => {
+                    const banner = document.getElementById(`oauth-banner-${screen}`);
+                    const icon = document.getElementById(`oauth-app-icon-${screen}`);
+                    const name = document.getElementById(`oauth-app-name-${screen}`);
+                    
+                    if (banner) {
+                        banner.classList.remove('hidden');
+                        icon.textContent = app.icon;
+                        name.textContent = app.name;
+                    }
+                });
+                
+                // Store in session for after auth
+                sessionStorage.setItem('sunday_oauth_app', oauthAppId);
+                sessionStorage.setItem('sunday_oauth_redirect', oauthRedirectUrl || '');
+                
+                console.log(`OAuth flow initiated for ${app.name}`);
+            }
+        }
+        
+        function handleOAuthRedirect() {
+            // Check for stored OAuth redirect after successful auth
+            const storedApp = sessionStorage.getItem('sunday_oauth_app');
+            const storedRedirect = sessionStorage.getItem('sunday_oauth_redirect');
+            
+            if (storedApp && storedRedirect) {
+                console.log(`Completing OAuth redirect to ${storedRedirect}`);
+                
+                // Clear the stored OAuth data
+                sessionStorage.removeItem('sunday_oauth_app');
+                sessionStorage.removeItem('sunday_oauth_redirect');
+                
+                // Log the app connection
+                logAppConnection(storedApp);
+                
+                // Redirect back to the requesting app
+                window.location.href = decodeURIComponent(storedRedirect);
+                return true;
+            }
+            return false;
+        }
+        
+        async function logAppConnection(appId) {
+            // Log this connection in The Locker via OAuth API
+            try {
+                await fetch(`${API_BASE}/api/oauth/authorize`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({
+                        app_id: appId,
+                        scope: 'basic'
+                    })
+                });
+            } catch (e) {
+                console.error('Failed to log app connection:', e);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // SCREENS
+        // -------------------------------------------------------------------
+        function showScreen(screen) {
+            document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`screen-${screen}`).classList.remove('hidden');
+        }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+        }
+
+        function hideError(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        }
+
+        function showBanner(msg) {
+            document.getElementById('error-banner-text').textContent = msg;
+            document.getElementById('error-banner').classList.remove('hidden');
+        }
+
+        // -------------------------------------------------------------------
+        // WEBAUTHN
+        // -------------------------------------------------------------------
+        function base64URLToBuffer(b64) {
+            const base64 = b64.replace(/-/g, '+').replace(/_/g, '/');
+            const pad = base64.length % 4;
+            const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
+            const binary = atob(padded);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            return bytes.buffer;
+        }
+
+        function bufferToBase64URL(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        }
+
+        async function startRegistration() {
+            const name = document.getElementById('reg-name').value.trim() || 'User';
+            const phone = document.getElementById('reg-phone').value.trim();
+            if (!phone) { showError('reg-error', 'Please enter phone number'); return; }
+            hideError('reg-error');
+
+            try {
+                const optRes = await fetch(`${API_BASE}/api/auth/webauthn/register-options`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, displayName: name })
+                });
+                if (!optRes.ok) throw new Error((await optRes.json()).error);
+                const { options, userId } = await optRes.json();
+
+                const cred = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: base64URLToBuffer(options.challenge),
+                        rp: { id: RP_ID, name: options.rp.name },
+                        user: { id: base64URLToBuffer(options.user.id), name: options.user.name, displayName: options.user.displayName },
+                        pubKeyCredParams: options.pubKeyCredParams,
+                        timeout: 60000, attestation: 'none',
+                        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'required', requireResidentKey: true }
+                    }
+                });
+
+                const verRes = await fetch(`${API_BASE}/api/auth/webauthn/register-verify`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        credential: {
+                            id: cred.id, rawId: bufferToBase64URL(cred.rawId), type: cred.type,
+                            response: {
+                                clientDataJSON: bufferToBase64URL(cred.response.clientDataJSON),
+                                attestationObject: bufferToBase64URL(cred.response.attestationObject),
+                                transports: cred.response.getTransports?.() || ['internal']
+                            }
+                        }
+                    })
+                });
+                if (!verRes.ok) throw new Error((await verRes.json()).error);
+                const { token } = await verRes.json();
+
+                currentToken = token;
+                currentUser = { name, phone };
+                saveAuthToStorage();
+
+                const status = await checkIdentityStatus();
+                if (!status.identity) {
+                    showScreen('verify');
+                    startDLCamera();
+                } else {
+                    completeAuthFlow();
+                }
+            } catch (e) {
+                showError('reg-error', e.message);
+            }
+        }
+
+        async function startLogin() {
+            hideError('login-error');
+            try {
+                const optRes = await fetch(`${API_BASE}/api/auth/webauthn/login-options`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
+                });
+                if (!optRes.ok) throw new Error((await optRes.json()).error);
+                const { options, challengeKey } = await optRes.json();
+
+                const cred = await navigator.credentials.get({
+                    publicKey: { challenge: base64URLToBuffer(options.challenge), rpId: RP_ID, timeout: 60000, userVerification: 'required' }
+                });
+
+                const verRes = await fetch(`${API_BASE}/api/auth/webauthn/login-verify`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        challengeKey,
+                        credential: {
+                            id: cred.id, rawId: bufferToBase64URL(cred.rawId), type: cred.type,
+                            response: {
+                                clientDataJSON: bufferToBase64URL(cred.response.clientDataJSON),
+                                authenticatorData: bufferToBase64URL(cred.response.authenticatorData),
+                                signature: bufferToBase64URL(cred.response.signature),
+                                userHandle: cred.response.userHandle ? bufferToBase64URL(cred.response.userHandle) : null
+                            }
+                        }
+                    })
+                });
+                if (!verRes.ok) throw new Error((await verRes.json()).error);
+                const { token, user } = await verRes.json();
+
+                currentToken = token;
+                currentUser = user;
+                saveAuthToStorage();
+
+                const status = await checkIdentityStatus();
+                if (!status.identity) {
+                    showScreen('verify');
+                    startDLCamera();
+                } else {
+                    completeAuthFlow();
+                }
+            } catch (e) {
+                showError('login-error', e.message);
+            }
+        }
+        
+        function saveAuthToStorage() {
+            localStorage.setItem('sunday_token', currentToken);
+            localStorage.setItem('sunday_user', JSON.stringify(currentUser));
+        }
+        
+        function completeAuthFlow() {
+            // Check if this is an OAuth redirect flow
+            if (handleOAuthRedirect()) {
+                return; // Will redirect, don't load dashboard
+            }
+            // Normal flow - load dashboard
+            loadDashboard();
+        }
+
+        async function checkIdentityStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api/identity/status`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                if (!res.ok) return { identity: false };
+                return await res.json();
+            } catch { return { identity: false }; }
+        }
+
+        function signOut() {
+            currentToken = null; currentUser = null;
+            localStorage.removeItem('sunday_token');
+            localStorage.removeItem('sunday_user');
+            localStorage.removeItem('sunday_dl_info');
+            sessionStorage.removeItem('sunday_oauth_app');
+            sessionStorage.removeItem('sunday_oauth_redirect');
+            showScreen('register');
+        }
+
+        function skipVerification() {
+            stopCameras();
+            completeAuthFlow();
+        }
+
+        // -------------------------------------------------------------------
+        // IDENTITY VERIFICATION (keeping existing code)
+        // -------------------------------------------------------------------
+        async function startDLCamera() {
+            try {
+                dlStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                document.getElementById('dl-video').srcObject = dlStream;
+            } catch (e) { console.error(e); }
+        }
+
+        function stopCameras() {
+            dlStream?.getTracks().forEach(t => t.stop());
+            selfieStream?.getTracks().forEach(t => t.stop());
+        }
+
+        function captureDL() {
+            const video = document.getElementById('dl-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            dlImageData = canvas.toDataURL('image/jpeg', 0.9);
+            document.getElementById('dl-preview').src = dlImageData;
+            document.getElementById('dl-preview').classList.remove('hidden');
+            document.getElementById('dl-video').parentElement.classList.add('hidden');
+            document.getElementById('btn-capture-dl').classList.add('hidden');
+            document.getElementById('btn-retake-dl').classList.remove('hidden');
+            document.getElementById('btn-confirm-dl').classList.remove('hidden');
+            dlStream?.getTracks().forEach(t => t.stop());
+        }
+
+        async function retakeDL() {
+            document.getElementById('dl-preview').classList.add('hidden');
+            document.getElementById('dl-video').parentElement.classList.remove('hidden');
+            document.getElementById('btn-capture-dl').classList.remove('hidden');
+            document.getElementById('btn-retake-dl').classList.add('hidden');
+            document.getElementById('btn-confirm-dl').classList.add('hidden');
+            await startDLCamera();
+        }
+
+        async function confirmDL() {
+            document.getElementById('verify-dl-section').classList.add('hidden');
+            document.getElementById('verify-selfie-section').classList.remove('hidden');
+            document.getElementById('verify-subtitle').textContent = 'Take a selfie';
+            selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            document.getElementById('selfie-video').srcObject = selfieStream;
+        }
+
+        function captureSelfie() {
+            const video = document.getElementById('selfie-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            selfieImageData = canvas.toDataURL('image/jpeg', 0.9);
+            document.getElementById('selfie-preview').src = selfieImageData;
+            document.getElementById('selfie-preview').classList.remove('hidden');
+            document.getElementById('selfie-video').parentElement.classList.add('hidden');
+            document.getElementById('btn-capture-selfie').classList.add('hidden');
+            document.getElementById('btn-retake-selfie').classList.remove('hidden');
+            document.getElementById('btn-confirm-selfie').classList.remove('hidden');
+            selfieStream?.getTracks().forEach(t => t.stop());
+        }
+
+        async function retakeSelfie() {
+            document.getElementById('selfie-preview').classList.add('hidden');
+            document.getElementById('selfie-video').parentElement.classList.remove('hidden');
+            document.getElementById('btn-capture-selfie').classList.remove('hidden');
+            document.getElementById('btn-retake-selfie').classList.add('hidden');
+            document.getElementById('btn-confirm-selfie').classList.add('hidden');
+            selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            document.getElementById('selfie-video').srcObject = selfieStream;
+        }
+
+        async function confirmSelfie() {
+            document.getElementById('verify-selfie-section').classList.add('hidden');
+            document.getElementById('verify-processing-section').classList.remove('hidden');
+            document.getElementById('verify-subtitle').textContent = 'Verifying...';
+
+            try {
+                updateVerifyProgress(10, 'Loading face detection...');
+                if (!faceApiLoaded) {
+                    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                    await Promise.all([
+                        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                    ]);
+                    faceApiLoaded = true;
+                }
+
+                updateVerifyProgress(25, 'Reading driver\'s license...');
+                const ocr = await Tesseract.recognize(dlImageData, 'eng');
+                const dlInfo = parseDLText(ocr.data.text);
+
+                updateVerifyProgress(50, 'Detecting faces...');
+                const dlImg = await loadImage(dlImageData);
+                const selfieImg = await loadImage(selfieImageData);
+
+                const dlFace = await faceapi.detectSingleFace(dlImg, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+                if (!dlFace) throw new Error('No face found in DL');
+
+                updateVerifyProgress(75, 'Comparing faces...');
+                const selfieFace = await faceapi.detectSingleFace(selfieImg, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+                if (!selfieFace) throw new Error('No face found in selfie');
+
+                const distance = faceapi.euclideanDistance(dlFace.descriptor, selfieFace.descriptor);
+                const confidence = Math.round((1 - distance) * 100);
+                if (distance > 0.6) throw new Error(`Face match failed (${confidence}%)`);
+
+                updateVerifyProgress(90, 'Saving verification...');
+                await fetch(`${API_BASE}/api/identity/save-verification`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ name: dlInfo.name, address: dlInfo.address, faceMatchConfidence: confidence })
+                });
+
+                verifiedDLInfo = dlInfo;
+                localStorage.setItem('sunday_dl_info', JSON.stringify(dlInfo));
+                if (dlInfo.name) { 
+                    currentUser.name = dlInfo.name; 
+                    currentUser.isIdentityVerified = true;
+                    saveAuthToStorage();
+                }
+
+                updateVerifyProgress(100, 'Complete!');
+                setTimeout(() => completeAuthFlow(), 500);
+            } catch (e) {
+                alert('Verification failed: ' + e.message);
+                completeAuthFlow();
+            }
+        }
+
+        function updateVerifyProgress(pct, status) {
+            document.getElementById('verify-progress').style.width = pct + '%';
+            document.getElementById('verify-status').textContent = status;
+        }
+
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        function parseDLText(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+            let name = '', address = '';
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].toUpperCase();
+                if ((line.includes('LN ') || line.includes('LAST')) && lines[i+1]) name = lines[i+1];
+                if ((line.includes('FN ') || line.includes('FIRST')) && lines[i+1]) name = lines[i+1] + ' ' + name;
+                if (/^\d+\s+\w+/.test(lines[i]) && !lines[i].match(/^\d{2}[\/\-]/)) {
+                    address = lines[i];
+                    if (lines[i+1] && /[A-Z]{2}\s+\d{5}/.test(lines[i+1].toUpperCase())) address += ', ' + lines[i+1];
+                }
+            }
+            if (!name) { for (const l of lines) if (/^[A-Z][a-z]+\s+[A-Z][a-z]+/.test(l)) { name = l; break; } }
+            return { name: name.trim(), address: address.trim() };
+        }
+
+        // -------------------------------------------------------------------
+        // DASHBOARD
+        // -------------------------------------------------------------------
+        async function loadDashboard() {
+            showScreen('dashboard');
+            
+            const storedDL = localStorage.getItem('sunday_dl_info');
+            if (storedDL) verifiedDLInfo = JSON.parse(storedDL);
+
+            await Promise.all([loadInbox(), loadClaims(), loadConnectedApps()]);
+            updateWelcomeMessage();
+            
+            // Check for pending send from deep link
+            const pendingSend = localStorage.getItem('sunday_pending_send');
+            if (pendingSend) {
+                localStorage.removeItem('sunday_pending_send');
+                setTab('compose');
+                setTimeout(() => {
+                    const toField = document.getElementById('compose-to');
+                    if (toField) toField.value = pendingSend;
+                }, 100);
+            } else {
+                setTab('inbox');
+            }
+        }
+
+        function updateWelcomeMessage() {
+            const msg = document.getElementById('welcome-message');
+            const name = currentUser?.name || 'there';
+            document.querySelector('.welcome-title').innerHTML = `Welcome back, ${name}! <span>👋</span>`;
+            
+            if (messages.length > 0) {
+                const unread = messages.filter(m => !m.isRead).length;
+                msg.textContent = unread > 0 ? `You have ${unread} unread message${unread > 1 ? 's' : ''}!` : `You have ${messages.length} messages in your inbox.`;
+            } else if (claims.length === 0) {
+                msg.textContent = 'Your inbox is empty. Claim an address to start receiving messages!';
+            } else {
+                msg.textContent = `You have ${claims.length} claimed address${claims.length > 1 ? 'es' : ''}. Waiting for messages...`;
+            }
+        }
+
+        async function loadInbox() {
+            try {
+                const res = await fetch(`${API_BASE}/api/messages/inbox`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                if (!res.ok) { showBanner('Invalid token'); return; }
+                const data = await res.json();
+                messages = data.messages || [];
+                document.getElementById('stat-received').textContent = messages.length;
+            } catch (e) { 
+                messages = []; 
+                showBanner('Could not load inbox');
+            }
+        }
+
+        async function loadClaims() {
+            try {
+                const res = await fetch(`${API_BASE}/api/claim/my-claims`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    claims = data.claims || [];
+                }
+            } catch { claims = []; }
+        }
+        
+        async function loadConnectedApps() {
+            try {
+                const res = await fetch(`${API_BASE}/api/oauth/apps`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    connectedApps = data.apps || [];
+                }
+            } catch { connectedApps = []; }
+        }
+
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-btn[onclick="setTab('${tab}')"]`)?.classList.add('active');
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`)?.classList.remove('hidden');
+
+            if (tab === 'inbox') renderInbox();
+            else if (tab === 'addresses') renderAddresses();
+            else if (tab === 'locker') renderLocker();
+            else if (tab === 'compose') renderCompose();
+            else if (tab === 'claim') renderClaim();
+            else if (tab === 'settings') renderSettings();
+        }
+
+        function renderInbox() {
+            const container = document.getElementById('inbox-content');
+            if (messages.length === 0) {
+                if (claims.length === 0) {
+                    container.innerHTML = `
+                        <div class="address-empty">
+                            <div class="address-empty-icon">📭</div>
+                            <div class="address-empty-title">Your inbox is empty</div>
+                            <div class="address-empty-text">Claim an address to start receiving encrypted messages</div>
+                            <span class="address-empty-link" onclick="setTab('claim')">Claim your first address →</span>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="address-empty">
+                            <div class="address-empty-icon">📬</div>
+                            <div class="address-empty-title">No messages yet</div>
+                            <div class="address-empty-text">You have ${claims.length} claimed address${claims.length > 1 ? 'es' : ''}. Share your CPiD to receive messages!</div>
+                            <span class="address-empty-link" onclick="shareCPiD()">Share my CPiD →</span>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            container.innerHTML = messages.map(m => `
+                <div class="message-item ${m.isRead ? '' : 'unread'}" onclick="viewMessage('${m.id}')">
+                    <div class="message-dot ${m.isRead ? 'read' : ''}"></div>
+                    <div class="message-content">
+                        <div class="message-from">From: ${m.fromPhone}</div>
+                        <div class="message-subject">${m.subject}</div>
+                        <div class="message-preview">${m.content}</div>
+                    </div>
+                    <div class="message-meta">
+                        <div class="message-date">${formatDate(m.createdAt)}</div>
+                        ${m.toAddress ? `<div class="message-address-tag">${m.toAddress.split(',')[0]}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (!msg) return;
+            
+            fetch(`${API_BASE}/api/messages/${id}/read`, { method: 'PUT', headers: { 'Authorization': `Bearer ${currentToken}` } });
+            msg.isRead = true;
+
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            const container = document.getElementById('tab-message-view');
+            container.classList.remove('hidden');
+            document.getElementById('message-view-content').innerHTML = `
+                <button class="btn btn-ghost btn-sm" onclick="setTab('inbox')" style="margin: 16px 24px;">← Back to Inbox</button>
+                <div class="message-view">
+                    <div class="message-view-header">
+                        <div class="message-view-subject">${msg.subject}</div>
+                        <div class="message-view-meta">
+                            <span><strong>From:</strong> ${msg.fromPhone}</span>
+                            <span><strong>To:</strong> ${msg.toAddress || 'Your address'}</span>
+                            <span><strong>Date:</strong> ${new Date(msg.createdAt).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="message-view-body">${msg.content}</div>
+                </div>
+            `;
+        }
+
+        function renderAddresses() {
+            const container = document.getElementById('addresses-content');
+            container.innerHTML = `
+                <div class="address-header">
+                    <h2 class="address-title">My Addresses</h2>
+                    <button class="btn btn-primary btn-sm" onclick="setTab('claim')">+ Claim New Address</button>
+                </div>
+            `;
+            
+            if (claims.length === 0) {
+                container.innerHTML += `
+                    <div class="address-empty">
+                        <div class="address-empty-icon">🏠</div>
+                        <div class="address-empty-title">No addresses claimed yet</div>
+                        <div class="address-empty-text">Claim your address to start receiving encrypted messages</div>
+                        <span class="address-empty-link" onclick="setTab('claim')">Claim your first address →</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            claims.forEach(c => {
+                container.innerHTML += `
+                    <div class="address-card">
+                        <div class="address-card-header">
+                            <span class="address-card-icon">🏠</span>
+                            <span class="address-card-badge">✓ Claimed</span>
+                        </div>
+                        <div class="address-card-street">${c.street}</div>
+                        <div class="address-card-city">${c.city}, ${c.state} ${c.postalCode}</div>
+                        <div class="address-card-cpid">
+                            <span>${c.cryptoPropertyId}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${c.cryptoPropertyId}')">📋</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        // -------------------------------------------------------------------
+        // THE LOCKER - Connected Apps
+        // -------------------------------------------------------------------
+        function renderLocker() {
+            const container = document.getElementById('locker-content');
+            
+            if (connectedApps.length === 0) {
+                container.innerHTML = `
+                    <div class="address-empty">
+                        <div class="address-empty-icon">🔐</div>
+                        <div class="address-empty-title">No connected apps</div>
+                        <div class="address-empty-text">When you sign in to other apps with Sunday, they'll appear here.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = connectedApps.map(app => `
+                <div class="locker-app">
+                    <div class="locker-app-icon">${app.appIcon || '📱'}</div>
+                    <div class="locker-app-info">
+                        <div class="locker-app-name">${app.appName}</div>
+                        <div class="locker-app-date">Connected ${formatDate(app.connectedAt)} • Last used ${formatDate(app.lastUsedAt)}</div>
+                    </div>
+                    <span class="locker-app-status ${app.isActive ? 'active' : 'revoked'}">${app.isActive ? '● Active' : '○ Revoked'}</span>
+                    ${app.isActive ? `<button class="locker-revoke-btn" onclick="revokeApp('${app.appId}')">Revoke</button>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        async function revokeApp(appId) {
+            if (!confirm(`Revoke access for this app? You'll need to sign in again to use it.`)) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/oauth/revoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ app_id: appId })
+                });
+                
+                if (res.ok) {
+                    await loadConnectedApps();
+                    renderLocker();
+                } else {
+                    alert('Failed to revoke access');
+                }
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        function renderCompose() {
+            const container = document.getElementById('compose-content');
+            container.innerHTML = `
+                <div class="compose-form">
+                    <div class="input-group">
+                        <label class="input-label">To (Address or CPiD)</label>
+                        <input type="text" class="input-field" id="compose-to" placeholder="123 Main St, City, State 12345">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Subject</label>
+                        <input type="text" class="input-field" id="compose-subject" placeholder="Message subject">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Message</label>
+                        <textarea id="compose-content-field" placeholder="Write your message..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendMessage()">📤 Send Message</button>
+                    <div id="compose-error" class="error-box hidden"></div>
+                    <div id="compose-success" class="success-box hidden"></div>
+                </div>
+            `;
+        }
+
+        async function sendMessage() {
+            const to = document.getElementById('compose-to').value.trim();
+            const subject = document.getElementById('compose-subject').value.trim();
+            const content = document.getElementById('compose-content-field').value.trim();
+            if (!to || !subject || !content) { showError('compose-error', 'All fields are required'); return; }
+            hideError('compose-error');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/messages/send`, {
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({ toAddress: to, subject, content, fromPhone: currentUser?.phone || 'Unknown' })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Failed to send');
+                
+                const successEl = document.getElementById('compose-success');
+                successEl.textContent = `✓ Message sent! ${data.isInEscrow ? '(Held in escrow until address is claimed)' : ''}`;
+                successEl.classList.remove('hidden');
+                
+                document.getElementById('compose-to').value = '';
+                document.getElementById('compose-subject').value = '';
+                document.getElementById('compose-content-field').value = '';
+                
+                document.getElementById('stat-sent').textContent = parseInt(document.getElementById('stat-sent').textContent) + 1;
+            } catch (e) { showError('compose-error', e.message); }
+        }
+
+        function renderClaim() {
+            const dlAddr = verifiedDLInfo?.address;
+            const container = document.getElementById('claim-content');
+            container.innerHTML = `
+                <div id="claim-step-1">
+                    ${dlAddr ? `
+                        <div class="claim-preview">
+                            <div class="claim-preview-label">📋 Address from your DL</div>
+                            <div class="claim-preview-text">${dlAddr}</div>
+                            <button class="btn btn-outline btn-sm" style="margin-top: 12px;" onclick="useDLAddress()">Use This Address</button>
+                        </div>
+                    ` : ''}
+                    <div class="input-group">
+                        <label class="input-label">Street Address</label>
+                        <input type="text" class="input-field" id="claim-street" placeholder="123 Main Street">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">City</label>
+                            <input type="text" class="input-field" id="claim-city" placeholder="Tampa">
+                        </div>
+                        <div class="input-group" style="max-width: 80px;">
+                            <label class="input-label">State</label>
+                            <input type="text" class="input-field" id="claim-state" placeholder="FL" maxlength="2">
+                        </div>
+                        <div class="input-group" style="max-width: 110px;">
+                            <label class="input-label">ZIP Code</label>
+                            <input type="text" class="input-field" id="claim-zip" placeholder="33602">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="claimAddress()">🏠 Claim This Address</button>
+                    <div id="claim-error" class="error-box hidden"></div>
+                    <div id="claim-success" class="success-box hidden"></div>
+                </div>
+            `;
+        }
+        
+        async function claimAddress() {
+            const street = document.getElementById('claim-street').value.trim();
+            const city = document.getElementById('claim-city').value.trim();
+            const state = document.getElementById('claim-state').value.trim().toUpperCase();
+            const postalCode = document.getElementById('claim-zip').value.trim();
+            
+            if (!street || !city || !state || !postalCode) {
+                showError('claim-error', 'All fields are required');
+                return;
+            }
+            hideError('claim-error');
+            
+            try {
+                // Lookup address
+                const lookupRes = await fetch(`${API_BASE}/api/addresses/lookup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ street, city, state, postalCode })
+                });
+                const lookupData = await lookupRes.json();
+                
+                if (lookupData.address?.isClaimed) {
+                    showError('claim-error', 'This address is already claimed');
+                    return;
+                }
+                
+                // Claim
+                const claimRes = await fetch(`${API_BASE}/api/claim`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                    body: JSON.stringify({ addressId: lookupData.address.id })
+                });
+                const claimData = await claimRes.json();
+                
+                if (!claimRes.ok) throw new Error(claimData.message || 'Failed to claim');
+                
+                const successEl = document.getElementById('claim-success');
+                successEl.innerHTML = `
+                    <div style="font-weight: 700; margin-bottom: 8px;">🎉 Address Claimed!</div>
+                    <div style="font-family: monospace; color: var(--primary);">${claimData.claim.cryptoPropertyId}</div>
+                `;
+                successEl.classList.remove('hidden');
+                
+                await loadClaims();
+                updateWelcomeMessage();
+                
+            } catch (e) {
+                showError('claim-error', e.message);
+            }
+        }
+
+        function useDLAddress() {
+            if (!verifiedDLInfo?.address) return;
+            const parts = verifiedDLInfo.address.split(',').map(p => p.trim());
+            if (parts[0]) document.getElementById('claim-street').value = parts[0];
+            if (parts[1]) {
+                const match = parts[1].match(/(.+?)\s+([A-Z]{2})\s*(\d{5})?/i);
+                if (match) {
+                    document.getElementById('claim-city').value = match[1].trim();
+                    document.getElementById('claim-state').value = match[2].toUpperCase();
+                    if (match[3]) document.getElementById('claim-zip').value = match[3];
+                }
+            }
+        }
+
+        function renderSettings() {
+            const container = document.getElementById('settings-content');
+            container.innerHTML = `
+                <h3 style="margin-bottom: 20px;">Account Settings</h3>
+                <div class="input-group">
+                    <label class="input-label">Name</label>
+                    <input type="text" class="input-field" value="${currentUser?.name || ''}" disabled>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Phone</label>
+                    <input type="text" class="input-field" value="${currentUser?.phone || ''}" disabled>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Identity Status</label>
+                    <input type="text" class="input-field" value="${currentUser?.isIdentityVerified || verifiedDLInfo ? '✓ Verified' : 'Not Verified'}" disabled>
+                </div>
+                <button class="btn btn-outline" onclick="setTab('locker')" style="margin-top: 12px;">🔐 Manage Connected Apps</button>
+                <button class="btn btn-ghost" onclick="signOut()" style="margin-top: 12px;">🚪 Sign Out</button>
+            `;
+        }
+
+        function shareCPiD() {
+            if (claims.length === 0) {
+                alert('You need to claim an address first!');
+                setTab('claim');
+                return;
+            }
+            const cpid = claims[0].cryptoPropertyId;
+            const shareUrl = `https://www.umbrassi.com/Sunday/?send=${cpid}`;
+            if (navigator.share) {
+                navigator.share({ title: 'My Sunday CPiD', text: `Send me secure mail at: ${cpid}`, url: shareUrl });
+            } else {
+                copyToClipboard(shareUrl);
+                alert('Share link copied to clipboard!');
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+        }
+
+        function formatDate(d) {
+            const date = new Date(d);
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 86400000) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (diff < 604800000) return date.toLocaleDateString([], { weekday: 'short' });
+            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+
+        // -------------------------------------------------------------------
+        // INIT
+        // -------------------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            // Parse OAuth params first
+            parseOAuthParams();
+            
+            // Check for deep link parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const sendToCPiD = urlParams.get('send');
+            
+            const token = localStorage.getItem('sunday_token');
+            const user = localStorage.getItem('sunday_user');
+            
+            if (token && user) {
+                currentToken = token;
+                currentUser = JSON.parse(user);
+                
+                // If OAuth flow and already logged in, handle redirect immediately
+                if (oauthAppId && oauthRedirectUrl) {
+                    handleOAuthRedirect();
+                    return;
+                }
+                
+                loadDashboard().then(() => {
+                    // If deep link, go to compose with CPiD pre-filled
+                    if (sendToCPiD) {
+                        setTab('compose');
+                        setTimeout(() => {
+                            const toField = document.getElementById('compose-to');
+                            if (toField) toField.value = sendToCPiD;
+                        }, 100);
+                    }
+                });
+            } else if (sendToCPiD) {
+                // Not logged in but has deep link - save it and show register
+                localStorage.setItem('sunday_pending_send', sendToCPiD);
+                showScreen('register');
+            } else if (oauthAppId) {
+                // OAuth flow - show login screen (they likely have an account)
+                showScreen('login');
+            }
+        });
+    </script>
+</body>
+</html>
