@@ -1,0 +1,15 @@
+# Never upload these to the edge.
+#
+# The asset directory is the repo root (the bundle IS the repo), so without this
+# file `wrangler deploy` would publish the tooling, the capture notes and the
+# screenshots to umbrassi.com. Read by Workers Static Assets from the assets
+# directory at deploy time.
+
+tools/
+docs/
+.github/
+CAPTURE.md
+README.md
+wrangler.toml
+.assetsignore
+.gitignore
