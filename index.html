@@ -929,17 +929,26 @@
 
     <script>
 
-        /* ⚠️ THE ONE VALUE KODA MUST CONFIRM BEFORE THIS DEPLOYS.
+        /* The published contact route. CONFIRMED 2026-09-01 — no longer an
+         * assumption.
          *
-         * umbrassi.com has MX records (Namecheap forwarding, eforward1-5.
-         * registrar-servers.com), so an address on this domain can work — but
-         * WHICH local-part forwards is not something this session could verify,
-         * and publishing an address that bounces is worse than publishing none.
-         * `contact@` is the conventional choice and is a STATED ASSUMPTION, not
-         * a verified fact.
+         * It shipped as a stated assumption: `contact@` was the conventional
+         * guess, umbrassi.com had Namecheap forwarding MX, and which local-part
+         * actually delivered was unverifiable from a build session. Publishing
+         * an address that bounces is worse than publishing none, so the
+         * uncertainty was written down rather than glossed.
          *
-         * Change this one string and the matching text in the Contact section
-         * below, and the whole site is consistent.
+         * Koda has since moved the domain's inbound mail to Cloudflare Email
+         * Routing and confirmed this address lands. Visible in DNS:
+         *
+         *   MX   route1/2/3.mx.cloudflare.net   (was eforward1-5.registrar-servers.com)
+         *   TXT  v=spf1 include:_spf.mx.cloudflare.net ~all
+         *
+         * DNS proves the route exists; that a person reads the inbox is Koda's
+         * word, which is the only thing that could establish it.
+         *
+         * If it ever changes: this one string, plus the matching text printed in
+         * the Contact section and on /terms and /privacy.
          */
         var SSI_CONTACT_EMAIL = 'contact@umbrassi.com';
 
