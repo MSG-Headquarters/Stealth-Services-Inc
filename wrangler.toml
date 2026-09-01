@@ -38,19 +38,44 @@
 name = "ssi"
 compatibility_date = "2026-09-01"
 
+# ⚠️ THESE TWO KEYS MUST STAY ABOVE `[assets]`, AND THAT IS NOT A STYLE POINT.
+#
+# In TOML every key after a table header belongs to THAT TABLE. The first
+# version of this file put `workers_dev = false` at the bottom, so it parsed as
+# `assets.workers_dev` — a key wrangler does not read — and the top-level
+# setting silently kept its default. The first deploy therefore ENABLED the
+# workers.dev route, which is the exact second door §6 item 2 exists to close.
+# Wrangler said so in a warning nobody would have read as "your config did not
+# take effect".
+#
+# §6 item 2: `ssi.real-elite-ck.workers.dev` served the same content on a
+# hostname nobody audits — a second front door to keep in step forever. Off.
+workers_dev = false
+
+# And the preview URLs the same deploy turned on by default, for the same
+# reason: another hostname serving this content that nobody is watching.
+preview_urls = false
+
 # No Worker script yet — this is a pure static asset bundle, exactly as the
 # capture found it. Phase B (real Sign in with Sunday) is what introduces a
 # `main` entry point and the OIDC callback route.
+#
+# ⚠️ NEVER POINT THIS AT THE REPO ROOT. IT WAS, AND IT LEAKED.
+#
+# `directory = "./"` plus an `.assetsignore` denylist uploaded the entire
+# repository to a public website on the first deploy — .git/objects, .git/refs,
+# .git/logs — because the ignore file forgot `.git/`. Correcting the list did
+# not help: wrangler still reported "Read 243 files" whatever the ignore said,
+# so with the root as the asset directory the denylist was not being honoured
+# at all.
+#
+# `dist/` is built by tools/build-bundle.mjs from `git ls-files` — an ALLOWLIST
+# derived from version control, minus tooling. Nothing untracked can reach the
+# edge: not .git, not .wrangler, not an editor swap file, not a .env somebody
+# drops in the root next month. The script refuses to build if the count exceeds
+# 60 files, and prints every file it ships.
+#
+# Deploy is therefore two steps, always:
+#     node tools/build-bundle.mjs && npx wrangler deploy
 [assets]
-directory = "./"
-
-# Exclusions live in `.assetsignore` beside this file, not here — Workers Static
-# Assets reads that file from the assets directory. (An earlier draft of this
-# config invented an `[[assets.exclude]]` table, which wrangler would have
-# rejected on the first run.) The bundle is the repo root, so that ignore file
-# is the only thing keeping tooling and notes off the edge.
-
-# §6 item 2: the workers.dev second door. `ssi.real-elite-ck.workers.dev` served
-# the same content on a hostname nobody audits, which is a second front door to
-# keep in step forever. Off.
-workers_dev = false
+directory = "./dist"
