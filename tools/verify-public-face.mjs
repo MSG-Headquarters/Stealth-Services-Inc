@@ -124,10 +124,44 @@ for (const path of PAGES) {
     for (const required of [
       'Stealth Services Inc.',
       'contact@umbrassi.com',
+      // "c/o" is the whole point: post reaches this business at that mailbox,
+      // which is a fact about a place. Asserted WITH the prefix so a future
+      // edit that drops it — turning the line back into a bare company address
+      // — fails here rather than on a reviewer's desk.
+      'c/o Main Street Group LLC',
       '400 N Tampa St Ste 1550 #520419',
       'Tampa, FL 33602',
     ]) {
       if (!info.text.includes(required)) fail(`/ does not display "${required}"`);
+    }
+
+    // ── THE INVERSE ASSERTION ────────────────────────────────────────────
+    //
+    // Stealth Services Inc is owned 100% by one person; the entity whose
+    // mailbox is above is separately owned. There is no parent/subsidiary
+    // relationship on paper, so the rendered page may not assert one — and
+    // this is the surface a carrier reviewer cross-checks against Sunbiz.
+    //
+    // Checked on innerText rather than the source, because what matters is
+    // what a person READS. The claim reached `main` once already by being
+    // written into copy that nobody re-read; a green test is what stops the
+    // next well-meaning edit putting it back.
+    for (const forbidden of [
+      'A Main Street Group LLC company',
+      'A Main Street Group Company',
+      'A Main Street Group LLC Company',
+      'Main Street Group portfolio',
+    ]) {
+      if (info.text.includes(forbidden)) fail(`/ displays the ownership claim "${forbidden}"`);
+    }
+
+    // Belt and braces: the entity name may appear on the rendered page ONLY as
+    // part of the c/o postal line. Catches a phrasing the list above has not
+    // thought of.
+    const mentions = info.text.split('Main Street Group').length - 1;
+    const allowed = info.text.split('c/o Main Street Group LLC').length - 1;
+    if (mentions !== allowed) {
+      fail(`/ mentions the other entity ${mentions}× but only ${allowed}× as "c/o"`);
     }
   }
 
