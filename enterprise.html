@@ -19,16 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Exo 2', sans-serif; background: var(--obsidian); color: var(--ghost-white); min-height: 100vh; line-height: 1.6; }
 
-        .auth-gate { position: fixed; inset: 0; background: var(--obsidian); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.5s; }
-        .auth-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .auth-gate-logo { font-family: 'Rajdhani', sans-serif; font-size: 4rem; font-weight: 700; letter-spacing: 0.5em; margin-bottom: 2rem; background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .auth-gate-message { font-size: 1rem; color: var(--muted-white); margin-bottom: 2rem; letter-spacing: 0.2em; text-transform: uppercase; }
-        .auth-gate-spinner { width: 40px; height: 40px; border: 3px solid var(--steel-gray); border-top-color: var(--tactical-green); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .auth-gate-btn { padding: 16px 48px; background: linear-gradient(135deg, var(--sunday-blue), var(--sunday-teal)); border: none; border-radius: 12px; color: white; font-family: 'Exo 2', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; display: none; }
-        .auth-gate.needs-login .auth-gate-spinner { display: none; }
-        .auth-gate.needs-login .auth-gate-btn { display: block; }
-        .auth-gate.needs-login .auth-gate-message { display: none; }
 
         .geo-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(30deg, var(--zenith-gold) 1px, transparent 1px), linear-gradient(150deg, var(--electric-violet) 1px, transparent 1px); background-size: 60px 60px; }
 
@@ -38,10 +28,6 @@
         .nav-links a { color: var(--muted-white); text-decoration: none; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
         .nav-links a:hover { color: var(--tactical-green); }
         .nav-links a.active { color: var(--zenith-gold); }
-        .user-badge { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); border-radius: 100px; font-size: 0.8rem; color: var(--tactical-green); }
-        .user-badge-avatar { width: 28px; height: 28px; background: linear-gradient(135deg, var(--tactical-green), var(--electric-violet)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--obsidian); font-weight: 700; }
-        .logout-btn { background: none; border: none; color: var(--muted-white); font-size: 0.8rem; cursor: pointer; padding: 4px 8px; margin-left: 8px; opacity: 0.7; }
-        .logout-btn:hover { opacity: 1; }
 
         .hero { padding: 180px 4rem 100px; text-align: center; position: relative; z-index: 10; }
         .hero-badge { display: inline-block; padding: 8px 20px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 100px; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--zenith-gold); margin-bottom: 2rem; }
@@ -113,12 +99,6 @@
     </style>
 </head>
 <body>
-    <div class="auth-gate" id="authGate">
-        <div class="auth-gate-logo">SSI</div>
-        <div class="auth-gate-message">Verifying Identity...</div>
-        <div class="auth-gate-spinner"></div>
-        <button class="auth-gate-btn" onclick="SundayAuth.redirectToSunday()">🌅 Sign in with Sunday</button>
-    </div>
 
     <div class="geo-grid"></div>
 
@@ -129,13 +109,6 @@
             <li><a href="enterprise.html" class="active">Enterprise</a></li>
             <li><a href="index.html#services">Services</a></li>
             <li><a href="index.html#contact">Contact</a></li>
-            <li>
-                <div class="user-badge" id="userBadge" style="display: none;">
-                    <span class="user-badge-avatar" id="userAvatar">?</span>
-                    <span id="userName">User</span>
-                    <button class="logout-btn" onclick="SundayAuth.logout()">×</button>
-                </div>
-            </li>
         </ul>
     </nav>
 
@@ -232,26 +205,13 @@
         </div>
     </section>
 
-    <footer><p class="footer-text">© 2025 <a href="index.html">Stealth Services Inc.</a> — A Main Street Group Company</p></footer>
+    <footer><p class="footer-text">© 2026 <a href="index.html">Stealth Services Inc.</a> — A Main Street Group LLC Company<br>
+        <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="index.html#contact">Contact</a></p></footer>
 
-    <script src="js/sunday-auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             const authGate = document.getElementById('authGate');
             try {
-                const user = await SundayAuth.init({
-                    appId: 'ssi',
-                    requireAuth: true,
-                    onAuthSuccess: function(user) {
-                        authGate.classList.add('hidden');
-                        document.getElementById('userBadge').style.display = 'flex';
-                        document.getElementById('userAvatar').textContent = (user.name || 'U').charAt(0).toUpperCase();
-                        document.getElementById('userName').textContent = user.name || 'User';
-                        if (user.name) document.getElementById('contactName').value = user.name;
-                        if (user.phone) document.getElementById('contactEmail').value = user.phone;
-                    },
-                    onAuthFailure: () => authGate.classList.add('needs-login')
-                });
                 if (!user) authGate.classList.add('needs-login');
             } catch (e) { authGate.classList.add('needs-login'); }
         });

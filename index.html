@@ -37,87 +37,12 @@
             line-height: 1.6;
         }
 
-        /* ========== AUTH GATE OVERLAY ========== */
-        .auth-gate {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--obsidian);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .auth-gate.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .auth-gate-logo {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 4rem;
-            font-weight: 700;
-            letter-spacing: 0.5em;
-            margin-bottom: 2rem;
-            background: linear-gradient(90deg, var(--tactical-green), var(--electric-violet));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse 2s ease-in-out infinite;
-        }
 
         @keyframes pulse {
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
 
-        .auth-gate-message {
-            font-size: 1rem;
-            color: var(--muted-white);
-            margin-bottom: 2rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        .auth-gate-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--steel-gray);
-            border-top-color: var(--tactical-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .auth-gate-btn {
-            padding: 16px 48px;
-            background: linear-gradient(135deg, var(--sunday-blue), var(--sunday-teal));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Exo 2', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: none;
-        }
-
-        .auth-gate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
-        }
-
-        .auth-gate.needs-login .auth-gate-spinner { display: none; }
-        .auth-gate.needs-login .auth-gate-btn { display: block; }
-        .auth-gate.needs-login .auth-gate-message { display: none; }
 
         /* ========== GEOMETRIC BACKGROUND ========== */
         .geo-grid {
@@ -200,44 +125,6 @@
 
         .nav-links a:hover::after { width: 100%; }
 
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 100px;
-            font-size: 0.8rem;
-            color: var(--tactical-green);
-        }
-
-        .user-badge-avatar {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--tactical-green), var(--electric-violet));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: var(--obsidian);
-            font-weight: 700;
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--muted-white);
-            font-size: 0.8rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            margin-left: 8px;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .logout-btn:hover { opacity: 1; color: var(--tactical-green); }
 
         /* ========== HERO SECTION ========== */
         .hero {
@@ -738,6 +625,46 @@
 
         .footer-links a:hover { color: var(--tactical-green); }
 
+        /* ========== BUSINESS INFORMATION (Twilio 30919) ========== */
+        .business-info {
+            margin-top: 3rem;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .business-info h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.75rem;
+            color: var(--ghost-white);
+        }
+
+        .business-info p { color: var(--muted-white); margin-bottom: 1.25rem; }
+
+        .business-info dl { display: grid; gap: 1rem; }
+
+        .business-info dt {
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--tactical-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .business-info dd { margin: 0; color: var(--ghost-white); line-height: 1.7; }
+        .business-info dd a { color: var(--ghost-white); text-decoration: underline; }
+        .business-info dd a:hover { color: var(--tactical-green); }
+
+        .business-info-note {
+            margin-top: 1.5rem;
+            margin-bottom: 0;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
         .copyright {
             font-size: 0.8rem;
             color: var(--muted-white);
@@ -758,14 +685,6 @@
 </head>
 <body>
     <!-- Auth Gate -->
-    <div class="auth-gate" id="authGate">
-        <div class="auth-gate-logo">SSI</div>
-        <div class="auth-gate-message">Verifying Identity...</div>
-        <div class="auth-gate-spinner"></div>
-        <button class="auth-gate-btn" onclick="SundayAuth.redirectToSunday()">
-            🌅 Sign in with Sunday
-        </button>
-    </div>
 
     <!-- Background -->
     <div class="geo-grid"></div>
@@ -779,13 +698,6 @@
             <li><a href="#services">Services</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li>
-                <div class="user-badge" id="userBadge" style="display: none;">
-                    <span class="user-badge-avatar" id="userAvatar">?</span>
-                    <span id="userName">User</span>
-                    <button class="logout-btn" onclick="SundayAuth.logout()">×</button>
-                </div>
-            </li>
         </ul>
     </nav>
 
@@ -931,6 +843,41 @@
                 </div>
                 <button type="submit" class="submit-btn">Transmit</button>
             </form>
+
+            <!--
+              ── WHO THIS BUSINESS IS — Twilio 30919 ──────────────────────────
+              The campaign was rejected because a reviewer could not tell, from
+              this website, who was behind the messages. Before this block the
+              page carried no address, no email and no phone: the only contact
+              route was a form that silently discarded everything typed into it.
+
+              Printed as text rather than hidden behind the form, because the
+              reviewer's question is "can I see who this is", and a form is not
+              an answer to it.
+            -->
+            <div class="business-info">
+                <h3>Stealth Services Inc.</h3>
+                <p>
+                    Security consulting, intelligence research, and technology
+                    solutions. A Main Street Group LLC company.
+                </p>
+                <dl>
+                    <dt>Email</dt>
+                    <dd><a href="mailto:contact@umbrassi.com">contact@umbrassi.com</a></dd>
+
+                    <dt>Post</dt>
+                    <dd>
+                        Main Street Group LLC<br>
+                        400 N Tampa St Ste 1550 #520419<br>
+                        Tampa, FL 33602<br>
+                        United States
+                    </dd>
+                </dl>
+                <p class="business-info-note">
+                    No phone line is published. We would rather list nothing than
+                    list a number that does not ring.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -944,83 +891,78 @@
             <a href="#services">Services</a>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
+            <!-- Twilio 30882 / 30908: a reviewer looks for these two links in
+                 the footer, and until now neither page existed. -->
+            <a href="terms.html">Terms</a>
+            <a href="privacy.html">Privacy</a>
         </div>
         <p class="copyright">© 2025 Stealth Services Inc. — A <a href="#">Main Street Group</a> Company</p>
     </footer>
 
-    <!-- Sunday Auth SDK -->
-    <script src="js/sunday-auth.js"></script>
     <script>
-        // Initialize Sunday Auth
-        document.addEventListener('DOMContentLoaded', async function() {
-            const authGate = document.getElementById('authGate');
-            
-            try {
-                const user = await SundayAuth.init({
-                    appId: 'ssi',
-                    requireAuth: true,
-                    onAuthSuccess: function(user) {
-                        console.log('[SSI] Auth success:', user.name);
-                        
-                        // Hide auth gate
-                        authGate.classList.add('hidden');
-                        
-                        // Show user badge
-                        const badge = document.getElementById('userBadge');
-                        const avatar = document.getElementById('userAvatar');
-                        const userName = document.getElementById('userName');
-                        
-                        if (user && badge) {
-                            badge.style.display = 'flex';
-                            avatar.textContent = (user.name || 'U').charAt(0).toUpperCase();
-                            userName.textContent = user.name || 'User';
-                        }
-                        
-                        // Pre-fill contact form
-                        if (user.name) document.getElementById('name').value = user.name;
-                        if (user.phone) document.getElementById('email').value = user.phone;
-                    },
-                    onAuthFailure: function(error) {
-                        console.error('[SSI] Auth failed:', error);
-                        authGate.classList.add('needs-login');
-                    }
-                });
-                
-                if (!user) {
-                    // Show login button
-                    authGate.classList.add('needs-login');
-                }
-                
-            } catch (error) {
-                console.error('[SSI] Init error:', error);
-                authGate.classList.add('needs-login');
-            }
-        });
 
-        // Contact form handling
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('.submit-btn');
-            btn.textContent = 'Transmitted';
-            btn.style.background = 'linear-gradient(135deg, var(--electric-violet) 0%, var(--shimmer-purple) 100%)';
-            
-            // Here you would send to your backend/Cloudflare Worker
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                user: SundayAuth.getUser()
-            };
-            
-            console.log('[SSI] Contact form submitted:', formData);
-            
-            setTimeout(() => {
-                btn.textContent = 'Transmit';
-                btn.style.background = '';
-                this.reset();
-            }, 3000);
-        });
+        /* ⚠️ THE ONE VALUE KODA MUST CONFIRM BEFORE THIS DEPLOYS.
+         *
+         * umbrassi.com has MX records (Namecheap forwarding, eforward1-5.
+         * registrar-servers.com), so an address on this domain can work — but
+         * WHICH local-part forwards is not something this session could verify,
+         * and publishing an address that bounces is worse than publishing none.
+         * `contact@` is the conventional choice and is a STATED ASSUMPTION, not
+         * a verified fact.
+         *
+         * Change this one string and the matching text in the Contact section
+         * below, and the whole site is consistent.
+         */
+        var SSI_CONTACT_EMAIL = 'contact@umbrassi.com';
+
+        /* Contact form — now it actually sends something.
+         *
+         * ── WHAT THIS REPLACED, AND WHY IT WAS THE WORST THING ON THE PAGE ──
+         *
+         * The old handler called preventDefault(), set the button to
+         * "Transmitted", console.log'd the message, and reset the form three
+         * seconds later. It sent NOTHING. Anyone who filled this in was told
+         * their message had gone, and it had gone nowhere — the site's only
+         * contact route, silently discarding every enquiry.
+         *
+         * That is a worse answer to Twilio's 30919 than the fake phone numbers
+         * were: a reviewer asking "how do I reach this business" would have
+         * found a form that lies. It is also the fake-success failure the
+         * rulebook names, in the one place a stranger is most likely to meet it.
+         *
+         * There is no backend on this Worker to post to, and inventing one is
+         * not on the table, so the form composes a mailto: to the published
+         * address and hands off to the person's mail client. Modest, and true:
+         * the message really does end up somewhere a human reads.
+         */
+        (function () {
+            var form = document.getElementById('contactForm');
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = document.getElementById('name').value.trim();
+                var email = document.getElementById('email').value.trim();
+                var subject = document.getElementById('subject').value.trim();
+                var message = document.getElementById('message').value.trim();
+
+                var body =
+                    'From: ' + (name || '(no name given)') + '\n' +
+                    'Reply to: ' + (email || '(no address given)') + '\n\n' +
+                    message;
+
+                window.location.href =
+                    'mailto:' + SSI_CONTACT_EMAIL +
+                    '?subject=' + encodeURIComponent(subject || 'Website enquiry') +
+                    '&body=' + encodeURIComponent(body);
+
+                /* No "Transmitted". The mail client decides whether this is
+                 * actually sent, and claiming success on its behalf would be
+                 * the same lie in a new costume. */
+                var btn = form.querySelector('.submit-btn');
+                if (btn) btn.textContent = 'Opening your email…';
+                setTimeout(function () { if (btn) btn.textContent = 'Transmit'; }, 4000);
+            });
+        })();
 
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
