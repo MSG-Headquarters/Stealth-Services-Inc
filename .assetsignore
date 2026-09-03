@@ -1,13 +1,30 @@
 # Never upload these to the edge.
 #
-# The asset directory is the repo root (the bundle IS the repo), so without this
-# file `wrangler deploy` would publish the tooling, the capture notes and the
-# screenshots to umbrassi.com. Read by Workers Static Assets from the assets
-# directory at deploy time.
+# The asset directory is the repo root (the bundle IS the repo), so this file is
+# the only thing standing between `wrangler deploy` and publishing everything in
+# the working tree.
+#
+# ── THE INCIDENT THAT REWROTE THIS FILE ─────────────────────────────────────
+#
+# The first version listed `.github/` and forgot `.git/`. The first real deploy
+# therefore uploaded 129 files INCLUDING THE ENTIRE REPOSITORY — .git/objects,
+# .git/refs, .git/logs, .git/hooks — to a public website. A served .git
+# directory lets anyone reconstruct the whole repo and its full history,
+# including files deliberately deleted from the tip, which in this repo means
+# the old covrd page and its fake phone numbers.
+#
+# It also uploaded .wrangler/tmp, wrangler's own scratch directory.
+#
+# The lesson, encoded rather than remembered: WATCH THE FILE COUNT. Wrangler
+# prints "Read N files from the assets directory" on every deploy. This bundle
+# is ~28 files. Any three-digit number means this file is not doing its job.
 
-tools/
-docs/
-.github/
+.git
+.github
+.wrangler
+node_modules
+tools
+docs
 CAPTURE.md
 README.md
 wrangler.toml
